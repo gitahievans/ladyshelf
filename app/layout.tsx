@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import type { ReactElement, ReactNode } from "react";
 import { Cormorant_Garamond, DM_Sans } from "next/font/google";
 
+import CartDrawer from "@/components/layout/CartDrawer";
+import Navbar from "@/components/layout/Navbar";
+
 import "./globals.css";
 
 const cormorant = Cormorant_Garamond({
@@ -35,10 +38,15 @@ export default function RootLayout({
       lang="en"
       className={`${cormorant.variable} ${dmSans.variable} h-full antialiased`}
     >
-      <body className="min-h-full bg-ivory text-obsidian">
-        {/* Phase 3: Navbar */}
-        <main className="min-h-screen">{children}</main>
-        {/* Phase 3: Footer */}
+      <body
+        suppressHydrationWarning
+        className="min-h-full bg-ivory text-obsidian"
+      >
+        <Navbar />
+        <CartDrawer />
+        <main className="min-h-screen pt-[60px] lg:pt-[var(--navbar-height)]">
+          {children}
+        </main>
       </body>
     </html>
   );
