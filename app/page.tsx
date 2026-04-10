@@ -1,65 +1,45 @@
-import Image from "next/image";
+import type { ReactElement } from "react";
 
-export default function Home() {
+export default function Home(): ReactElement {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
+    <section className="min-h-screen bg-ivory px-6 py-16 md:px-20 md:py-24">
+      <div className="mx-auto flex max-w-container flex-col gap-10 rounded-lg border border-border-warm bg-cream p-8 shadow-card md:p-12">
+        <div className="flex flex-col gap-4">
+          <p className="font-dm-sans text-label uppercase text-gold">
+            Phase 1 Foundation
+          </p>
+          <h1 className="max-w-3xl font-cormorant text-h2 text-obsidian md:text-h1">
+            Wahi Fashion&apos;s design tokens, typography, and state layer are in
+            place.
           </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+          <p className="max-w-2xl font-dm-sans text-body text-text-secondary">
+            This temporary foundation page exists to verify the Tailwind token
+            pipeline, the Google font wiring, and the base Wahi palette before
+            the real interface components are built in later phases.
           </p>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+
+        <div className="grid gap-6 md:grid-cols-3">
+          <div className="rounded-sm border border-border-warm bg-gold p-6 text-obsidian shadow-card">
+            <p className="font-dm-sans text-label uppercase">Token Check</p>
+            <p className="mt-3 font-cormorant text-h4">bg-gold is active.</p>
+          </div>
+          <div className="rounded-sm border border-border-warm bg-obsidian p-6 text-ivory shadow-card">
+            <p className="font-dm-sans text-label uppercase text-sand">
+              Editorial Type
+            </p>
+            <p className="mt-3 font-cormorant text-h4">Cormorant Garamond</p>
+          </div>
+          <div className="rounded-sm border border-border-warm bg-ivory p-6 text-obsidian shadow-card">
+            <p className="font-dm-sans text-label uppercase text-bark">
+              Interface Type
+            </p>
+            <p className="mt-3 font-dm-sans text-body">
+              DM Sans carries the product UI.
+            </p>
+          </div>
         </div>
-      </main>
-    </div>
+      </div>
+    </section>
   );
 }
