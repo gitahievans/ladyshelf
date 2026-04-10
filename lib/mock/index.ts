@@ -31,6 +31,23 @@ function getProductsByCategory(categorySlug: CategorySlug): Product[] {
   return allProducts.filter((product) => product.categorySlug === categorySlug);
 }
 
+function getAllColors(): { hex: string; name: string }[] {
+  const seen = new Map<string, { hex: string; name: string }>();
+
+  allProducts.forEach((product) => {
+    product.variants.forEach((variant) => {
+      if (!seen.has(variant.color)) {
+        seen.set(variant.color, {
+          hex: variant.colorHex,
+          name: variant.color,
+        });
+      }
+    });
+  });
+
+  return [...seen.values()].sort((a, b) => a.name.localeCompare(b.name));
+}
+
 export {
   accessoryProducts,
   allProducts,
@@ -39,6 +56,7 @@ export {
   featuredProducts,
   getProductBySlug,
   getProductsByCategory,
+  getAllColors,
   mockCartItems,
   mockOrders,
   mockUsers,

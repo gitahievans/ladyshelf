@@ -30,8 +30,6 @@ export const useUIStore = create<UIStore>()((set) => ({
   resetFilters: (): void =>
     set({
       selectedCategory: "all",
-      sortBy: "newest",
-      viewMode: "grid",
       filters: defaultFilters,
     }),
 }));
