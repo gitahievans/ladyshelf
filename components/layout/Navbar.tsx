@@ -38,7 +38,7 @@ export default function Navbar(): ReactElement {
   const reducedMotion = useReducedMotion();
   const [isScrolled, setIsScrolled] = useState<boolean>(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
-  const [allowTransparent, setAllowTransparent] = useState<boolean>(false);
+  const allowTransparent = pathname === "/";
 
   useEffect((): (() => void) => {
     function handleScroll(): void {
@@ -66,12 +66,6 @@ export default function Navbar(): ReactElement {
       window.removeEventListener("resize", handleResize);
     };
   }, []);
-
-  useEffect((): void => {
-    setAllowTransparent(
-      document.querySelector("[data-navbar-overlay='true']") !== null,
-    );
-  }, [pathname]);
 
   const accountHref = isAuthenticated ? "/account" : "/auth/login";
   const accountLabel = isAuthenticated ? "Account" : "Welcome Back";
