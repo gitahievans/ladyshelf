@@ -49,7 +49,7 @@ export const useCartStore = create<CartStore>()(
               )
             : [...state.items, item];
 
-          return buildCartState(nextItems, true);
+          return buildCartState(nextItems, state.isOpen);
         });
       },
       removeItem: (cartItemId): void => {
