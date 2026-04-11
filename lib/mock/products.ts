@@ -13,7 +13,7 @@ export const officeProducts: Product[] = [
     description:
       'A blazer that walks into the room before you say a word. Structured shoulders, a nipped waist, and a clean single-button closure engineered for presence. Cut from a premium ponte fabric that holds its shape through a ten-hour day.',
     images: [
-      'https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=800&q=80',
+      'https://images.unsplash.com/photo-1618244972963-dbee1a7edc95?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
       'https://images.unsplash.com/photo-1581044777550-4cfa60707c03?w=800&q=80',
       'https://images.unsplash.com/photo-1551803091-e20673f15770?w=800&q=80',
     ],
@@ -45,9 +45,9 @@ export const officeProducts: Product[] = [
     description:
       'A midi wrap skirt that moves the way ambition does — with precision and intention. The deep mahogany tone commands attention in any boardroom. Pairs effortlessly with the Obsidian Power Blazer for a complete power look.',
     images: [
-      'https://images.unsplash.com/photo-1583496661160-fb5218ees7e0?w=800&q=80',
-      'https://images.unsplash.com/photo-1571513722275-4b41940f54b8?w=800&q=80',
-      'https://images.unsplash.com/photo-1552902865-b72c031ac5ea?w=800&q=80',
+      'https://plus.unsplash.com/premium_photo-1723780956289-1893c7f074f7?q=80&w=880&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+      'https://images.unsplash.com/photo-1551803091-e20673f15770?w=800&q=80',
+      'https://images.unsplash.com/photo-1581044777550-4cfa60707c03?w=800&q=80',
     ],
     variants: [
       { id: 'v-002-1', size: 'XS', color: 'Deep Mahogany', colorHex: '#3D1F0D', stock: 3, sku: 'WF-OFW-002-XS-MAH' },
@@ -112,9 +112,9 @@ export const officeProducts: Product[] = [
     description:
       'Wide-leg tailored trousers in a warm sand tone that holds its line from the 8am meeting to the evening send-off. A high-rise waist and pressed creases create an elongating silhouette that commands the room.',
     images: [
-      'https://images.unsplash.com/photo-1594938374182-a57369f70b16?w=800&q=80',
+      'https://images.unsplash.com/photo-1552902865-b72c031ac5ea?w=800&q=80',
       'https://images.unsplash.com/photo-1506629082955-511b1aa562c8?w=800&q=80',
-      'https://images.unsplash.com/photo-1509631179647-0177331693ae?w=800&q=80',
+      'https://images.unsplash.com/photo-1580657018950-c7f7d99a1f1d?w=800&q=80',
     ],
     variants: [
       { id: 'v-004-1', size: 'XS', color: 'Warm Sand', colorHex: '#C9A87C', stock: 2, sku: 'WF-OFW-004-XS-SND' },
@@ -518,7 +518,7 @@ export const partyProducts: Product[] = [
     description:
       'A midi bodycon dress with strategic ruching that sculpts the silhouette and creates the most flattering drape. The deep V-neckline and thigh-high side slit add drama without sacrifice. Every celebration deserves this dress.',
     images: [
-      'https://images.unsplash.com/photo-1539109136881-3be0616acf4b?w=800&q=80',
+      'https://images.unsplash.com/photo-1617922001439-4a2e6562f328?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
       'https://images.unsplash.com/photo-1495385794356-15371f348ead?w=800&q=80',
       'https://images.unsplash.com/photo-1566174053879-31528523f8ae?w=800&q=80',
     ],
@@ -585,7 +585,7 @@ export const partyProducts: Product[] = [
     description:
       'A knee-length wrap dress with flutter sleeves and a deep surplice neckline that flatters every body type. The bold geometric print in terracotta and gold is a conversation starter before you even arrive.',
     images: [
-      'https://images.unsplash.com/photo-1518895312237-a9e23508077d?w=800&q=80',
+      'https://plus.unsplash.com/premium_photo-1682125657036-f86a7c5e8926?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
       'https://images.unsplash.com/photo-1566174053879-31528523f8ae?w=800&q=80',
       'https://images.unsplash.com/photo-1539109136881-3be0616acf4b?w=800&q=80',
     ],
@@ -615,9 +615,9 @@ export const partyProducts: Product[] = [
     description:
       'A floor-length off-shoulder gown with a fitted bodice and flowing A-line skirt in blush rose. The sweetheart neckline and boning detail create an hourglass silhouette that photographs beautifully from every angle.',
     images: [
-      'https://images.unsplash.com/photo-1495385794356-15371f348ead?w=800&q=80',
-      'https://images.unsplash.com/photo-1502716119720-b23a93e5fe1b?w=800&q=80',
       'https://images.unsplash.com/photo-1583744946564-b52ac1c389c8?w=800&q=80',
+      'https://images.unsplash.com/photo-1502716119720-b23a93e5fe1b?w=800&q=80',
+      'https://images.unsplash.com/photo-1518895312237-a9e23508077d?w=800&q=80',
     ],
     variants: [
       { id: 'v-019-1', size: 'XS', color: 'Blush Rose', colorHex: '#E8C4B8', stock: 2, sku: 'WF-PEW-019-XS-BLR' },
@@ -654,7 +654,7 @@ export const traditionalProducts: Product[] = [
     description:
       'A sweeping ankara maxi dress in a bold geometric blue and gold print. The off-shoulder neckline and layered ruffle hem are pure statement dressing rooted in African heritage. Wear your culture, wear your confidence.',
     images: [
-      'https://images.unsplash.com/photo-1590735213920-68192a487bc2?w=800&q=80',
+      'https://images.unsplash.com/photo-1611580045568-7201033c7a3b?q=80&w=686&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
       'https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=800&q=80',
       'https://images.unsplash.com/photo-1544441452-d1cbe79fe5a7?w=800&q=80',
     ],
@@ -687,7 +687,7 @@ export const traditionalProducts: Product[] = [
     description:
       'A vibrant kitenge wrap skirt in an exclusive Wahi-commissioned print. The adjustable tie waist, sweep-length hem, and bold colours celebrate East African textile tradition with a modern, wearable silhouette.',
     images: [
-      'https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=800&q=80',
+      'https://images.unsplash.com/photo-1602185922202-6d9c650b957b?q=80&w=685&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
       'https://images.unsplash.com/photo-1590735213920-68192a487bc2?w=800&q=80',
       'https://images.unsplash.com/photo-1544441452-d1cbe79fe5a7?w=800&q=80',
     ],
@@ -717,9 +717,9 @@ export const traditionalProducts: Product[] = [
     description:
       'A structured blazer featuring kente-inspired woven panels on the sleeves and lapels against a deep mahogany base. This is what cultural fusion looks like at its finest — where the boardroom meets heritage.',
     images: [
-      'https://images.unsplash.com/photo-1544441452-d1cbe79fe5a7?w=800&q=80',
-      'https://images.unsplash.com/photo-1590735213920-68192a487bc2?w=800&q=80',
+      'https://images.unsplash.com/photo-1594168087746-d94175b42394?q=80&w=765&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
       'https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=800&q=80',
+      'https://images.unsplash.com/photo-1544441452-d1cbe79fe5a7?w=800&q=80',
     ],
     variants: [
       { id: 'v-022-1', size: 'S', color: 'Mahogany Kente', colorHex: '#3D1F0D', stock: 2, sku: 'WF-TAW-022-S-MKT' },
@@ -749,7 +749,7 @@ export const traditionalProducts: Product[] = [
     description:
       'A cropped ankara top with voluminous puff sleeves and a square neckline. The structured sleeves and vibrant geometric print make this an instant statement piece. Pairs effortlessly with high-waisted jeans or a tailored skirt.',
     images: [
-      'https://images.unsplash.com/photo-1590735213920-68192a487bc2?w=800&q=80',
+      'https://plus.unsplash.com/premium_photo-1769339044563-7e77ab4c90a5?q=80&w=765&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
       'https://images.unsplash.com/photo-1544441452-d1cbe79fe5a7?w=800&q=80',
       'https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=800&q=80',
     ],
@@ -782,7 +782,7 @@ export const traditionalProducts: Product[] = [
     description:
       'A contemporary kaftan gown that bridges tradition and modern luxury. Floor-length, wide sleeves, and a rich hand-embroidered neckline detail. This is cultural pride elevated to its highest form.',
     images: [
-      'https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=800&q=80',
+      'https://plus.unsplash.com/premium_photo-1770306559346-94964f6d0d16?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
       'https://images.unsplash.com/photo-1590735213920-68192a487bc2?w=800&q=80',
       'https://images.unsplash.com/photo-1544441452-d1cbe79fe5a7?w=800&q=80',
     ],
@@ -851,7 +851,7 @@ export const accessoryProducts: Product[] = [
     description:
       'A bold layered statement necklace in 18k gold-plated brass with geometric African-inspired pendants. Three adjustable chains that wear together or separately. The centerpiece of any look you build.',
     images: [
-      'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=800&q=80',
+      'https://images.unsplash.com/photo-1685970731194-e27b477e87ba?q=80&w=688&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
       'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=800&q=80',
       'https://images.unsplash.com/photo-1599643477877-530eb83abc8e?w=800&q=80',
     ],

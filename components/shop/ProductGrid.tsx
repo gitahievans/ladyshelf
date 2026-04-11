@@ -50,7 +50,7 @@ export default function ProductGrid({
         animate="visible"
         className={cn(
           viewMode === "grid"
-            ? "grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-4"
+            ? "grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-3"
             : "flex flex-col gap-4",
         )}
         initial="hidden"
