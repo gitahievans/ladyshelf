@@ -61,6 +61,7 @@ const config = {
       },
       maxWidth: {
         container: "1280px",
+        "auth-card": "420px",
       },
       borderRadius: {
         none: "0",

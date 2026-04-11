@@ -6,6 +6,8 @@ import { createJSONStorage, persist } from "zustand/middleware";
 import { mockUsers } from "@/lib/mock/users-orders";
 import type { AuthStore, RegisterPayload, User } from "@/lib/types";
 
+const MOCK_ERROR_EMAIL = "error@test.com";
+
 function delay(duration: number): Promise<void> {
   return new Promise((resolve) => {
     setTimeout(resolve, duration);
@@ -35,6 +37,16 @@ export const useAuthStore = create<AuthStore>()(
         void password;
         set({ isLoading: true });
         await delay(800);
+
+        if (email.toLowerCase() === MOCK_ERROR_EMAIL) {
+          set({
+            user: null,
+            isAuthenticated: false,
+            isLoading: false,
+          });
+          throw new Error("Mock authentication failed.");
+        }
+
         set({
           user: mockUsers[0] ?? null,
           isAuthenticated: true,

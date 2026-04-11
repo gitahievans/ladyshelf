@@ -2,8 +2,7 @@ import type { Metadata } from "next";
 import type { ReactElement, ReactNode } from "react";
 import { Cormorant_Garamond, DM_Sans } from "next/font/google";
 
-import CartDrawer from "@/components/layout/CartDrawer";
-import Navbar from "@/components/layout/Navbar";
+import AppShell from "@/components/layout/AppShell";
 
 import "./globals.css";
 
@@ -42,11 +41,7 @@ export default function RootLayout({
         suppressHydrationWarning
         className="min-h-full bg-ivory text-obsidian"
       >
-        <Navbar />
-        <CartDrawer />
-        <main className="min-h-screen pt-[60px] lg:pt-[var(--navbar-height)]">
-          {children}
-        </main>
+        <AppShell>{children}</AppShell>
       </body>
     </html>
   );
