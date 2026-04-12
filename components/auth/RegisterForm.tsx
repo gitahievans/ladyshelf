@@ -77,7 +77,9 @@ function getPasswordStrength(password: string): PasswordStrength {
   const hasNumbers = /\d/.test(password);
   const hasLetters = /[A-Za-z]/.test(password);
   const hasSymbols = /[^A-Za-z0-9]/.test(password);
-  const characterGroups = [hasNumbers, hasLetters, hasSymbols].filter(Boolean).length;
+  const characterGroups = [hasNumbers, hasLetters, hasSymbols].filter(
+    Boolean,
+  ).length;
 
   if (password.length > 10 && characterGroups >= 2) {
     return { label: "Strong", tone: "success", width: "100%" };
@@ -96,11 +98,7 @@ function FieldError({ message }: { message?: string }): ReactElement | null {
   return <p className="font-dm-sans text-caption text-error">{message}</p>;
 }
 
-function PasswordStrengthBar({
-  password,
-}: {
-  password: string;
-}): ReactElement {
+function PasswordStrengthBar({ password }: { password: string }): ReactElement {
   const shouldReduceMotion = useReducedMotion();
   const strength = getPasswordStrength(password);
   const toneClassName: Record<StrengthTone, string> = {
@@ -123,10 +121,15 @@ function PasswordStrengthBar({
           animate={{ width: strength.width }}
           className={`h-full rounded-full ${toneClassName[strength.tone]}`}
           initial={false}
-          transition={{ duration: shouldReduceMotion ? 0 : 0.25, ease: "easeOut" }}
+          transition={{
+            duration: shouldReduceMotion ? 0 : 0.25,
+            ease: "easeOut",
+          }}
         />
       </div>
-      <p className={`font-dm-sans text-caption ${textClassName[strength.tone]}`}>
+      <p
+        className={`font-dm-sans text-caption ${textClassName[strength.tone]}`}
+      >
         {strength.label}
       </p>
     </div>
@@ -159,7 +162,9 @@ export default function RegisterForm(): ReactElement {
     setErrors((current) => ({ ...current, [key]: undefined }));
   }
 
-  async function handleSubmit(event: FormEvent<HTMLFormElement>): Promise<void> {
+  async function handleSubmit(
+    event: FormEvent<HTMLFormElement>,
+  ): Promise<void> {
     event.preventDefault();
     const nextErrors = validateRegister(values);
 
@@ -207,8 +212,10 @@ export default function RegisterForm(): ReactElement {
             <Input
               className={formFieldClassName}
               id="firstName"
-              onChange={(event): void => updateField("firstName", event.target.value)}
-              placeholder="Amina"
+              onChange={(event): void =>
+                updateField("firstName", event.target.value)
+              }
+              placeholder="Jon"
               value={values.firstName}
             />
             <FieldError message={errors.firstName} />
@@ -224,7 +231,9 @@ export default function RegisterForm(): ReactElement {
             <Input
               className={formFieldClassName}
               id="lastName"
-              onChange={(event): void => updateField("lastName", event.target.value)}
+              onChange={(event): void =>
+                updateField("lastName", event.target.value)
+              }
               placeholder="Wanjiru"
               value={values.lastName}
             />
@@ -233,7 +242,10 @@ export default function RegisterForm(): ReactElement {
         </div>
 
         <div className="space-y-2">
-          <Label className="font-dm-sans text-body-sm text-obsidian" htmlFor="email">
+          <Label
+            className="font-dm-sans text-body-sm text-obsidian"
+            htmlFor="email"
+          >
             Email
           </Label>
           <Input
@@ -248,7 +260,10 @@ export default function RegisterForm(): ReactElement {
         </div>
 
         <div className="space-y-2">
-          <Label className="font-dm-sans text-body-sm text-obsidian" htmlFor="phone">
+          <Label
+            className="font-dm-sans text-body-sm text-obsidian"
+            htmlFor="phone"
+          >
             Phone
           </Label>
           <Input
@@ -262,14 +277,19 @@ export default function RegisterForm(): ReactElement {
         </div>
 
         <div className="space-y-2">
-          <Label className="font-dm-sans text-body-sm text-obsidian" htmlFor="password">
+          <Label
+            className="font-dm-sans text-body-sm text-obsidian"
+            htmlFor="password"
+          >
             Password
           </Label>
           <div className="relative">
             <Input
               className="h-12 rounded-lg border-border-warm bg-ivory px-4 pr-12 font-dm-sans text-body-sm text-obsidian placeholder:text-text-muted focus-visible:border-gold focus-visible:ring-gold/20"
               id="password"
-              onChange={(event): void => updateField("password", event.target.value)}
+              onChange={(event): void =>
+                updateField("password", event.target.value)
+              }
               placeholder="Create your password"
               type={isPasswordVisible ? "text" : "password"}
               value={values.password}
@@ -280,7 +300,11 @@ export default function RegisterForm(): ReactElement {
               onClick={(): void => setIsPasswordVisible((current) => !current)}
               type="button"
             >
-              {isPasswordVisible ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+              {isPasswordVisible ? (
+                <EyeOff className="size-4" />
+              ) : (
+                <Eye className="size-4" />
+              )}
             </button>
           </div>
           <PasswordStrengthBar password={values.password} />
@@ -326,7 +350,11 @@ export default function RegisterForm(): ReactElement {
         </div>
 
         <div className="pt-2">
-          <Button className={primaryButtonClassName} disabled={isLoading} type="submit">
+          <Button
+            className={primaryButtonClassName}
+            disabled={isLoading}
+            type="submit"
+          >
             {isLoading ? (
               <span className="flex items-center justify-center gap-3">
                 <LoadingSpinner className="border-t-obsidian" size="sm" />

@@ -30,7 +30,8 @@ export default function PaymentMethod({
   onSubmit,
   defaultMethod = "mpesa",
 }: PaymentMethodProps): ReactElement {
-  const [selectedMethod, setSelectedMethod] = useState<PaymentMethodType>(defaultMethod);
+  const [selectedMethod, setSelectedMethod] =
+    useState<PaymentMethodType>(defaultMethod);
   const [mpesaPhone, setMpesaPhone] = useState<string>("");
   const [cardNumber, setCardNumber] = useState<string>("");
   const [expiry, setExpiry] = useState<string>("");
@@ -55,7 +56,8 @@ export default function PaymentMethod({
       if (!cardNumber.trim()) nextErrors.cardNumber = "Add your card number.";
       if (!expiry.trim()) nextErrors.expiry = "Add the expiry date.";
       if (!cvv.trim()) nextErrors.cvv = "Add the CVV.";
-      if (!nameOnCard.trim()) nextErrors.nameOnCard = "Add the cardholder name.";
+      if (!nameOnCard.trim())
+        nextErrors.nameOnCard = "Add the cardholder name.";
     }
 
     if (Object.keys(nextErrors).length > 0) {
@@ -110,7 +112,10 @@ export default function PaymentMethod({
 
           {selectedMethod === "mpesa" ? (
             <div className="mt-4 space-y-2">
-              <Label className="font-dm-sans text-body-sm text-obsidian" htmlFor="mpesaPhone">
+              <Label
+                className="font-dm-sans text-body-sm text-obsidian"
+                htmlFor="mpesaPhone"
+              >
                 M-Pesa Phone Number
               </Label>
               <Input
@@ -155,7 +160,10 @@ export default function PaymentMethod({
           {selectedMethod === "card" ? (
             <div className="mt-4 grid gap-4 md:grid-cols-2">
               <div className="space-y-2 md:col-span-2">
-                <Label className="font-dm-sans text-body-sm text-obsidian" htmlFor="cardNumber">
+                <Label
+                  className="font-dm-sans text-body-sm text-obsidian"
+                  htmlFor="cardNumber"
+                >
                   Card Number
                 </Label>
                 <Input
@@ -168,7 +176,10 @@ export default function PaymentMethod({
                 <PaymentError message={errors.cardNumber} />
               </div>
               <div className="space-y-2">
-                <Label className="font-dm-sans text-body-sm text-obsidian" htmlFor="expiry">
+                <Label
+                  className="font-dm-sans text-body-sm text-obsidian"
+                  htmlFor="expiry"
+                >
                   Expiry
                 </Label>
                 <Input
@@ -181,7 +192,10 @@ export default function PaymentMethod({
                 <PaymentError message={errors.expiry} />
               </div>
               <div className="space-y-2">
-                <Label className="font-dm-sans text-body-sm text-obsidian" htmlFor="cvv">
+                <Label
+                  className="font-dm-sans text-body-sm text-obsidian"
+                  htmlFor="cvv"
+                >
                   CVV
                 </Label>
                 <Input
@@ -194,14 +208,17 @@ export default function PaymentMethod({
                 <PaymentError message={errors.cvv} />
               </div>
               <div className="space-y-2 md:col-span-2">
-                <Label className="font-dm-sans text-body-sm text-obsidian" htmlFor="nameOnCard">
+                <Label
+                  className="font-dm-sans text-body-sm text-obsidian"
+                  htmlFor="nameOnCard"
+                >
                   Name on Card
                 </Label>
                 <Input
                   className={fieldClassName}
                   id="nameOnCard"
                   onChange={(event): void => setNameOnCard(event.target.value)}
-                  placeholder="Amina Wanjiru"
+                  placeholder="Jon Doe"
                   value={nameOnCard}
                 />
                 <PaymentError message={errors.nameOnCard} />

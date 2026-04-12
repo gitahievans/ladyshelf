@@ -1,6 +1,7 @@
 "use client";
 
 import { type ReactElement, useEffect, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
@@ -14,10 +15,13 @@ import {
   X,
 } from "lucide-react";
 
+import SearchOverlay from "@/components/search/SearchOverlay";
+import { brandMedia } from "@/lib/mock/media";
 import { fadeInVariant } from "@/lib/utils/animations";
 import { cn } from "@/lib/utils/cn";
 import { useAuthStore } from "@/stores/authStore";
 import { useCartStore } from "@/stores/cartStore";
+import { useWishlistStore } from "@/stores/wishlistStore";
 
 interface NavigationLink {
   href: string;
@@ -34,10 +38,12 @@ export default function Navbar(): ReactElement {
   const totalItems = useCartStore((state) => state.totalItems);
   const toggleCart = useCartStore((state) => state.toggleCart);
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const wishlistCount = useWishlistStore((state) => state.count);
   const pathname = usePathname();
   const reducedMotion = useReducedMotion();
   const [isScrolled, setIsScrolled] = useState<boolean>(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
+  const [isSearchOpen, setIsSearchOpen] = useState<boolean>(false);
   const allowTransparent = pathname === "/";
 
   useEffect((): (() => void) => {
@@ -73,6 +79,7 @@ export default function Navbar(): ReactElement {
 
   return (
     <>
+      <SearchOverlay onOpenChange={setIsSearchOpen} open={isSearchOpen} />
       <header
         className={cn(
           "fixed top-0 right-0 left-0 z-50 border-b border-transparent transition-all duration-300",
@@ -95,18 +102,29 @@ export default function Navbar(): ReactElement {
               )}
             </button>
             <Link
-              className="hidden font-cormorant text-body-lg font-light tracking-[0.3em] text-ivory lg:inline-block lg:text-h4"
+              className="hidden lg:inline-flex lg:items-center"
               href="/"
             >
-              WAHI FASHION
+              <Image
+                alt="Wahi Fashion logo"
+                className="h-10 w-auto object-contain"
+                height={64}
+                priority
+                src={brandMedia.logo}
+                width={180}
+              />
             </Link>
           </div>
 
-          <Link
-            className="justify-self-center font-cormorant text-body-lg font-light tracking-[0.3em] text-ivory md:text-h4 lg:hidden"
-            href="/"
-          >
-            WAHI FASHION
+          <Link className="justify-self-center lg:hidden" href="/">
+            <Image
+              alt="Wahi Fashion logo"
+              className="h-9 w-auto object-contain"
+              height={64}
+              priority
+              src={brandMedia.logo}
+              width={160}
+            />
           </Link>
 
           <nav className="hidden items-center justify-center gap-8 lg:flex lg:w-1/3">
@@ -140,17 +158,23 @@ export default function Navbar(): ReactElement {
               <button
                 aria-label="Search"
                 className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-ivory/20 text-ivory transition-colors hover:border-gold hover:text-gold"
+                onClick={(): void => setIsSearchOpen(true)}
                 type="button"
               >
                 <Search className="size-5" />
               </button>
-              <button
+              <Link
                 aria-label="Wishlist"
-                className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-ivory/20 text-ivory transition-colors hover:border-gold hover:text-gold"
-                type="button"
+                className="relative inline-flex h-11 w-11 items-center justify-center rounded-full border border-ivory/20 text-ivory transition-colors hover:border-gold hover:text-gold"
+                href="/wishlist"
               >
                 <Heart className="size-5" />
-              </button>
+                {wishlistCount > 0 ? (
+                  <span className="absolute top-1.5 right-1.5 flex min-h-4 min-w-4 items-center justify-center rounded-full bg-gold px-1 font-dm-sans text-[10px] font-semibold text-obsidian">
+                    {wishlistCount > 99 ? "99+" : wishlistCount}
+                  </span>
+                ) : null}
+              </Link>
               <Link
                 aria-label={accountLabel}
                 className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-ivory/20 text-ivory transition-colors hover:border-gold hover:text-gold"
@@ -185,6 +209,13 @@ export default function Navbar(): ReactElement {
           >
             <div className="flex h-full flex-col justify-between">
               <div className="flex flex-col gap-6">
+                <Link
+                  className="font-cormorant text-h2 text-ivory transition-colors hover:text-gold"
+                  href="/search"
+                  onClick={(): void => setIsMobileMenuOpen(false)}
+                >
+                  Search
+                </Link>
                 {navigationLinks.map((link) => (
                   <Link
                     key={link.label}
@@ -195,6 +226,13 @@ export default function Navbar(): ReactElement {
                     {link.label}
                   </Link>
                 ))}
+                <Link
+                  className="font-cormorant text-h2 text-ivory transition-colors hover:text-gold"
+                  href="/wishlist"
+                  onClick={(): void => setIsMobileMenuOpen(false)}
+                >
+                  Wishlist
+                </Link>
               </div>
 
               <div className="flex flex-col gap-3">

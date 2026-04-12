@@ -13,9 +13,9 @@ export const officeProducts: Product[] = [
     description:
       'A blazer that walks into the room before you say a word. Structured shoulders, a nipped waist, and a clean single-button closure engineered for presence. Cut from a premium ponte fabric that holds its shape through a ten-hour day.',
     images: [
-      'https://images.unsplash.com/photo-1618244972963-dbee1a7edc95?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-      'https://images.unsplash.com/photo-1581044777550-4cfa60707c03?w=800&q=80',
-      'https://images.unsplash.com/photo-1551803091-e20673f15770?w=800&q=80',
+      'https://icdvsrhauwfomggyswbt.supabase.co/storage/v1/object/public/wahi/1.jpg',
+      'https://icdvsrhauwfomggyswbt.supabase.co/storage/v1/object/public/wahi/12.jpg',
+      'https://icdvsrhauwfomggyswbt.supabase.co/storage/v1/object/public/wahi/14.jpg'
     ],
     variants: [
       { id: 'v-001-1', size: 'S', color: 'Obsidian Black', colorHex: '#1A1009', stock: 4, sku: 'WF-OFW-001-S-BLK' },
@@ -45,9 +45,9 @@ export const officeProducts: Product[] = [
     description:
       'A midi wrap skirt that moves the way ambition does — with precision and intention. The deep mahogany tone commands attention in any boardroom. Pairs effortlessly with the Obsidian Power Blazer for a complete power look.',
     images: [
-      'https://plus.unsplash.com/premium_photo-1723780956289-1893c7f074f7?q=80&w=880&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-      'https://images.unsplash.com/photo-1551803091-e20673f15770?w=800&q=80',
-      'https://images.unsplash.com/photo-1581044777550-4cfa60707c03?w=800&q=80',
+      'https://icdvsrhauwfomggyswbt.supabase.co/storage/v1/object/public/wahi/15.png',
+      'https://icdvsrhauwfomggyswbt.supabase.co/storage/v1/object/public/wahi/16.jpg',
+      'https://icdvsrhauwfomggyswbt.supabase.co/storage/v1/object/public/wahi/17.jpg'
     ],
     variants: [
       { id: 'v-002-1', size: 'XS', color: 'Deep Mahogany', colorHex: '#3D1F0D', stock: 3, sku: 'WF-OFW-002-XS-MAH' },
@@ -78,9 +78,9 @@ export const officeProducts: Product[] = [
     description:
       'A silk-touch blouse with subtle gold thread weave that catches the light at every turn. Professional enough for the boardroom, striking enough to be remembered. The V-neckline and relaxed tuck-in silhouette flatter every body type.',
     images: [
-      'https://images.unsplash.com/photo-1564257631407-4deb1f99d992?w=800&q=80',
-      'https://images.unsplash.com/photo-1551803091-e20673f15770?w=800&q=80',
-      'https://images.unsplash.com/photo-1509631179647-0177331693ae?w=800&q=80',
+      'https://icdvsrhauwfomggyswbt.supabase.co/storage/v1/object/public/wahi/18.jpg',
+      'https://icdvsrhauwfomggyswbt.supabase.co/storage/v1/object/public/wahi/19.jpg',
+      'https://icdvsrhauwfomggyswbt.supabase.co/storage/v1/object/public/wahi/2.jpg'
     ],
     variants: [
       { id: 'v-003-1', size: 'XS', color: 'Champagne Gold', colorHex: '#D4A853', stock: 4, sku: 'WF-OFW-003-XS-GLD' },
@@ -112,9 +112,9 @@ export const officeProducts: Product[] = [
     description:
       'Wide-leg tailored trousers in a warm sand tone that holds its line from the 8am meeting to the evening send-off. A high-rise waist and pressed creases create an elongating silhouette that commands the room.',
     images: [
-      'https://images.unsplash.com/photo-1552902865-b72c031ac5ea?w=800&q=80',
-      'https://images.unsplash.com/photo-1506629082955-511b1aa562c8?w=800&q=80',
-      'https://images.unsplash.com/photo-1580657018950-c7f7d99a1f1d?w=800&q=80',
+      'https://icdvsrhauwfomggyswbt.supabase.co/storage/v1/object/public/wahi/20.jpg',
+      'https://icdvsrhauwfomggyswbt.supabase.co/storage/v1/object/public/wahi/23.jpg',
+      'https://icdvsrhauwfomggyswbt.supabase.co/storage/v1/object/public/wahi/25.jpg'
     ],
     variants: [
       { id: 'v-004-1', size: 'XS', color: 'Warm Sand', colorHex: '#C9A87C', stock: 2, sku: 'WF-OFW-004-XS-SND' },
@@ -145,9 +145,9 @@ export const officeProducts: Product[] = [
     description:
       'A sleeveless knee-length pencil dress that transitions from board meeting to after-work drinks without a second thought. The subtle back slit offers ease of movement without compromising the clean silhouette.',
     images: [
-      'https://images.unsplash.com/photo-1539109136881-3be0616acf4b?w=800&q=80',
-      'https://images.unsplash.com/photo-1495385794356-15371f348ead?w=800&q=80',
-      'https://images.unsplash.com/photo-1496747611176-843222e1e57c?w=800&q=80',
+      'https://icdvsrhauwfomggyswbt.supabase.co/storage/v1/object/public/wahi/27.jpg',
+      'https://icdvsrhauwfomggyswbt.supabase.co/storage/v1/object/public/wahi/28.png',
+      'https://icdvsrhauwfomggyswbt.supabase.co/storage/v1/object/public/wahi/29.jpg'
     ],
     variants: [
       { id: 'v-005-1', size: 'XS', color: 'Warm Ivory', colorHex: '#FAF6F0', stock: 3, sku: 'WF-OFW-005-XS-IVY' },
@@ -178,9 +178,9 @@ export const officeProducts: Product[] = [
     description:
       'A relaxed-fit button-down in our signature bark tone. Slightly oversized for that effortless tuck-in or leave-out styling. The curved hem and subtle texture make it the most versatile piece in your work wardrobe.',
     images: [
-      'https://images.unsplash.com/photo-1512353087810-25dfcd100962?w=800&q=80',
-      'https://images.unsplash.com/photo-1434389677669-e08b4cac3105?w=800&q=80',
-      'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=800&q=80',
+      'https://icdvsrhauwfomggyswbt.supabase.co/storage/v1/object/public/wahi/3.jpg',
+      'https://icdvsrhauwfomggyswbt.supabase.co/storage/v1/object/public/wahi/30.jpg',
+      'https://icdvsrhauwfomggyswbt.supabase.co/storage/v1/object/public/wahi/31.jpg'
     ],
     variants: [
       { id: 'v-006-1', size: 'S', color: 'Bark Brown', colorHex: '#7A4522', stock: 6, sku: 'WF-OFW-006-S-BRK' },
@@ -210,9 +210,9 @@ export const officeProducts: Product[] = [
     description:
       'A matching blazer and straight-leg trouser set in a fine ivory pinstripe. Wear together for a complete power look or style separately to double your wardrobe options. This is investment dressing at its finest.',
     images: [
-      'https://images.unsplash.com/photo-1552902865-b72c031ac5ea?w=800&q=80',
-      'https://images.unsplash.com/photo-1583496661160-fb5218ees7e0?w=800&q=80',
-      'https://images.unsplash.com/photo-1580657018950-c7f7d99a1f1d?w=800&q=80',
+      'https://icdvsrhauwfomggyswbt.supabase.co/storage/v1/object/public/wahi/32.jpg',
+      'https://icdvsrhauwfomggyswbt.supabase.co/storage/v1/object/public/wahi/34.jpg',
+      'https://icdvsrhauwfomggyswbt.supabase.co/storage/v1/object/public/wahi/35.jpg'
     ],
     variants: [
       { id: 'v-007-1', size: 'XS', color: 'Ivory Pinstripe', colorHex: '#F2EAD8', stock: 1, sku: 'WF-OFW-007-XS-IPS' },
@@ -249,9 +249,9 @@ export const casualProducts: Product[] = [
     description:
       'A breezy midi linen dress in sun-kissed terracotta that belongs on every rooftop, brunch, and Saturday morning. The relaxed A-line silhouette and adjustable tie waist make it as comfortable as it is effortlessly stylish.',
     images: [
-      'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=800&q=80',
-      'https://images.unsplash.com/photo-1496747611176-843222e1e57c?w=800&q=80',
-      'https://images.unsplash.com/photo-1485968579580-b6d095142e6e?w=800&q=80',
+      'https://icdvsrhauwfomggyswbt.supabase.co/storage/v1/object/public/wahi/36.jpg',
+      'https://icdvsrhauwfomggyswbt.supabase.co/storage/v1/object/public/wahi/4.png',
+      'https://icdvsrhauwfomggyswbt.supabase.co/storage/v1/object/public/wahi/40.jpg'
     ],
     variants: [
       { id: 'v-008-1', size: 'XS', color: 'Terracotta', colorHex: '#C1440E', stock: 4, sku: 'WF-CSW-008-XS-TRR' },
@@ -282,9 +282,9 @@ export const casualProducts: Product[] = [
     description:
       'A coordinated denim set that elevates the everyday. The cropped off-shoulder top and wide-leg trouser work as a matching set or styled separately. Premium stretch denim with just the right amount of structure.',
     images: [
-      'https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=800&q=80',
-      'https://images.unsplash.com/photo-1487222477894-8943e31ef7b2?w=800&q=80',
-      'https://images.unsplash.com/photo-1485968579580-b6d095142e6e?w=800&q=80',
+      'https://icdvsrhauwfomggyswbt.supabase.co/storage/v1/object/public/wahi/42.jpg',
+      'https://icdvsrhauwfomggyswbt.supabase.co/storage/v1/object/public/wahi/1.jpg',
+      'https://icdvsrhauwfomggyswbt.supabase.co/storage/v1/object/public/wahi/12.jpg'
     ],
     variants: [
       { id: 'v-009-1', size: 'XS', color: 'Classic Blue', colorHex: '#3B5998', stock: 3, sku: 'WF-CSW-009-XS-BLU' },
@@ -315,9 +315,9 @@ export const casualProducts: Product[] = [
     description:
       'The foundation of every great casual wardrobe. A premium heavyweight oversized tee in warm cream with a clean, unfussy silhouette. Tuck it, knot it, or let it fall — it works every way.',
     images: [
-      'https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?w=800&q=80',
-      'https://images.unsplash.com/photo-1434389677669-e08b4cac3105?w=800&q=80',
-      'https://images.unsplash.com/photo-1512353087810-25dfcd100962?w=800&q=80',
+      'https://icdvsrhauwfomggyswbt.supabase.co/storage/v1/object/public/wahi/14.jpg',
+      'https://icdvsrhauwfomggyswbt.supabase.co/storage/v1/object/public/wahi/15.png',
+      'https://icdvsrhauwfomggyswbt.supabase.co/storage/v1/object/public/wahi/16.jpg'
     ],
     variants: [
       { id: 'v-010-1', size: 'XS', color: 'Warm Cream', colorHex: '#F2EAD8', stock: 8, sku: 'WF-CSW-010-XS-CRM' },
@@ -348,9 +348,9 @@ export const casualProducts: Product[] = [
     description:
       'Utility meets luxury in these tapered cargo pants. The warm rust tone and clean pocket placement give you that designer-street edge without looking like you tried too hard. High waist, tapered leg, effortless confidence.',
     images: [
-      'https://images.unsplash.com/photo-1506629082955-511b1aa562c8?w=800&q=80',
-      'https://images.unsplash.com/photo-1591369822096-ffd140ec948f?w=800&q=80',
-      'https://images.unsplash.com/photo-1509631179647-0177331693ae?w=800&q=80',
+      'https://icdvsrhauwfomggyswbt.supabase.co/storage/v1/object/public/wahi/17.jpg',
+      'https://icdvsrhauwfomggyswbt.supabase.co/storage/v1/object/public/wahi/18.jpg',
+      'https://icdvsrhauwfomggyswbt.supabase.co/storage/v1/object/public/wahi/19.jpg'
     ],
     variants: [
       { id: 'v-011-1', size: 'XS', color: 'Burnt Rust', colorHex: '#8B3A1C', stock: 2, sku: 'WF-CSW-011-XS-RST' },
@@ -381,9 +381,9 @@ export const casualProducts: Product[] = [
     description:
       'A contemporary kaftan that bridges heritage and modernity. Lightweight printed fabric, an easy drop silhouette, and vibrant African-inspired print make this the most effortless piece you will reach for on any given weekend.',
     images: [
-      'https://images.unsplash.com/photo-1485968579580-b6d095142e6e?w=800&q=80',
-      'https://images.unsplash.com/photo-1496747611176-843222e1e57c?w=800&q=80',
-      'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=800&q=80',
+      'https://icdvsrhauwfomggyswbt.supabase.co/storage/v1/object/public/wahi/2.jpg',
+      'https://icdvsrhauwfomggyswbt.supabase.co/storage/v1/object/public/wahi/20.jpg',
+      'https://icdvsrhauwfomggyswbt.supabase.co/storage/v1/object/public/wahi/23.jpg'
     ],
     variants: [
       { id: 'v-012-1', size: 'S', color: 'Sunset Print', colorHex: '#D4691E', stock: 5, sku: 'WF-CSW-012-S-SUN' },
@@ -414,9 +414,9 @@ export const casualProducts: Product[] = [
     description:
       'A bias-cut midi satin slip skirt that takes you from casual coffee to candlelit dinner. The fluid drape and soft sheen catch the light in the most flattering way. Style with an oversized tee for day or a tucked blouse for evening.',
     images: [
-      'https://images.unsplash.com/photo-1571513722275-4b41940f54b8?w=800&q=80',
-      'https://images.unsplash.com/photo-1539109136881-3be0616acf4b?w=800&q=80',
-      'https://images.unsplash.com/photo-1552902865-b72c031ac5ea?w=800&q=80',
+      'https://icdvsrhauwfomggyswbt.supabase.co/storage/v1/object/public/wahi/25.jpg',
+      'https://icdvsrhauwfomggyswbt.supabase.co/storage/v1/object/public/wahi/27.jpg',
+      'https://icdvsrhauwfomggyswbt.supabase.co/storage/v1/object/public/wahi/28.png'
     ],
     variants: [
       { id: 'v-013-1', size: 'XS', color: 'Champagne Gold', colorHex: '#D4A853', stock: 3, sku: 'WF-CSW-013-XS-CHG' },
@@ -454,9 +454,9 @@ export const partyProducts: Product[] = [
     description:
       'A floor-length gown in deep obsidian with a dramatic cowl neckline and open back. This is the dress that makes the rest of the room go quiet. Fluid crepe construction that moves with the grace of every step you take.',
     images: [
-      'https://images.unsplash.com/photo-1566174053879-31528523f8ae?w=800&q=80',
-      'https://images.unsplash.com/photo-1518895312237-a9e23508077d?w=800&q=80',
-      'https://images.unsplash.com/photo-1502716119720-b23a93e5fe1b?w=800&q=80',
+      'https://icdvsrhauwfomggyswbt.supabase.co/storage/v1/object/public/wahi/29.jpg',
+      'https://icdvsrhauwfomggyswbt.supabase.co/storage/v1/object/public/wahi/3.jpg',
+      'https://icdvsrhauwfomggyswbt.supabase.co/storage/v1/object/public/wahi/30.jpg'
     ],
     variants: [
       { id: 'v-014-1', size: 'XS', color: 'Obsidian Black', colorHex: '#1A1009', stock: 2, sku: 'WF-PEW-014-XS-BLK' },
@@ -485,9 +485,9 @@ export const partyProducts: Product[] = [
     description:
       'Make an entrance in this fully sequined A-line mini dress that turns every light source into a spotlight. The subtle A-line cut flatters every silhouette, while the gold sequins reference our signature brand colour throughout.',
     images: [
-      'https://images.unsplash.com/photo-1583744946564-b52ac1c389c8?w=800&q=80',
-      'https://images.unsplash.com/photo-1502716119720-b23a93e5fe1b?w=800&q=80',
-      'https://images.unsplash.com/photo-1518895312237-a9e23508077d?w=800&q=80',
+      'https://icdvsrhauwfomggyswbt.supabase.co/storage/v1/object/public/wahi/31.jpg',
+      'https://icdvsrhauwfomggyswbt.supabase.co/storage/v1/object/public/wahi/32.jpg',
+      'https://icdvsrhauwfomggyswbt.supabase.co/storage/v1/object/public/wahi/34.jpg'
     ],
     variants: [
       { id: 'v-015-1', size: 'XS', color: 'Champagne Gold', colorHex: '#D4A853', stock: 2, sku: 'WF-PEW-015-XS-GLD' },
@@ -518,9 +518,9 @@ export const partyProducts: Product[] = [
     description:
       'A midi bodycon dress with strategic ruching that sculpts the silhouette and creates the most flattering drape. The deep V-neckline and thigh-high side slit add drama without sacrifice. Every celebration deserves this dress.',
     images: [
-      'https://images.unsplash.com/photo-1617922001439-4a2e6562f328?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-      'https://images.unsplash.com/photo-1495385794356-15371f348ead?w=800&q=80',
-      'https://images.unsplash.com/photo-1566174053879-31528523f8ae?w=800&q=80',
+      'https://icdvsrhauwfomggyswbt.supabase.co/storage/v1/object/public/wahi/35.jpg',
+      'https://icdvsrhauwfomggyswbt.supabase.co/storage/v1/object/public/wahi/36.jpg',
+      'https://icdvsrhauwfomggyswbt.supabase.co/storage/v1/object/public/wahi/4.png'
     ],
     variants: [
       { id: 'v-016-1', size: 'XS', color: 'Burgundy', colorHex: '#6D1A2A', stock: 3, sku: 'WF-PEW-016-XS-BRG' },
@@ -551,9 +551,9 @@ export const partyProducts: Product[] = [
     description:
       'A wide-leg velvet jumpsuit in deep emerald that is equal parts commanding and sensual. The deep V-neckline, cinched waist, and dramatic flare make this the centerpiece of any occasion. One piece. Infinite presence.',
     images: [
-      'https://images.unsplash.com/photo-1502716119720-b23a93e5fe1b?w=800&q=80',
-      'https://images.unsplash.com/photo-1583744946564-b52ac1c389c8?w=800&q=80',
-      'https://images.unsplash.com/photo-1518895312237-a9e23508077d?w=800&q=80',
+      'https://icdvsrhauwfomggyswbt.supabase.co/storage/v1/object/public/wahi/40.jpg',
+      'https://icdvsrhauwfomggyswbt.supabase.co/storage/v1/object/public/wahi/42.jpg',
+      'https://icdvsrhauwfomggyswbt.supabase.co/storage/v1/object/public/wahi/1.jpg'
     ],
     variants: [
       { id: 'v-017-1', size: 'XS', color: 'Deep Emerald', colorHex: '#1A4731', stock: 1, sku: 'WF-PEW-017-XS-EMR' },
@@ -585,9 +585,9 @@ export const partyProducts: Product[] = [
     description:
       'A knee-length wrap dress with flutter sleeves and a deep surplice neckline that flatters every body type. The bold geometric print in terracotta and gold is a conversation starter before you even arrive.',
     images: [
-      'https://plus.unsplash.com/premium_photo-1682125657036-f86a7c5e8926?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-      'https://images.unsplash.com/photo-1566174053879-31528523f8ae?w=800&q=80',
-      'https://images.unsplash.com/photo-1539109136881-3be0616acf4b?w=800&q=80',
+      'https://icdvsrhauwfomggyswbt.supabase.co/storage/v1/object/public/wahi/12.jpg',
+      'https://icdvsrhauwfomggyswbt.supabase.co/storage/v1/object/public/wahi/14.jpg',
+      'https://icdvsrhauwfomggyswbt.supabase.co/storage/v1/object/public/wahi/15.png'
     ],
     variants: [
       { id: 'v-018-1', size: 'XS', color: 'Terracotta Gold', colorHex: '#C1700E', stock: 3, sku: 'WF-PEW-018-XS-TGD' },
@@ -615,9 +615,9 @@ export const partyProducts: Product[] = [
     description:
       'A floor-length off-shoulder gown with a fitted bodice and flowing A-line skirt in blush rose. The sweetheart neckline and boning detail create an hourglass silhouette that photographs beautifully from every angle.',
     images: [
-      'https://images.unsplash.com/photo-1583744946564-b52ac1c389c8?w=800&q=80',
-      'https://images.unsplash.com/photo-1502716119720-b23a93e5fe1b?w=800&q=80',
-      'https://images.unsplash.com/photo-1518895312237-a9e23508077d?w=800&q=80',
+      'https://icdvsrhauwfomggyswbt.supabase.co/storage/v1/object/public/wahi/16.jpg',
+      'https://icdvsrhauwfomggyswbt.supabase.co/storage/v1/object/public/wahi/17.jpg',
+      'https://icdvsrhauwfomggyswbt.supabase.co/storage/v1/object/public/wahi/18.jpg'
     ],
     variants: [
       { id: 'v-019-1', size: 'XS', color: 'Blush Rose', colorHex: '#E8C4B8', stock: 2, sku: 'WF-PEW-019-XS-BLR' },
@@ -654,9 +654,9 @@ export const traditionalProducts: Product[] = [
     description:
       'A sweeping ankara maxi dress in a bold geometric blue and gold print. The off-shoulder neckline and layered ruffle hem are pure statement dressing rooted in African heritage. Wear your culture, wear your confidence.',
     images: [
-      'https://images.unsplash.com/photo-1611580045568-7201033c7a3b?q=80&w=686&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-      'https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=800&q=80',
-      'https://images.unsplash.com/photo-1544441452-d1cbe79fe5a7?w=800&q=80',
+      'https://icdvsrhauwfomggyswbt.supabase.co/storage/v1/object/public/wahi/19.jpg',
+      'https://icdvsrhauwfomggyswbt.supabase.co/storage/v1/object/public/wahi/2.jpg',
+      'https://icdvsrhauwfomggyswbt.supabase.co/storage/v1/object/public/wahi/20.jpg'
     ],
     variants: [
       { id: 'v-020-1', size: 'S', color: 'Blue Gold Print', colorHex: '#1B4B8A', stock: 4, sku: 'WF-TAW-020-S-BGP' },
@@ -687,9 +687,9 @@ export const traditionalProducts: Product[] = [
     description:
       'A vibrant kitenge wrap skirt in an exclusive Wahi-commissioned print. The adjustable tie waist, sweep-length hem, and bold colours celebrate East African textile tradition with a modern, wearable silhouette.',
     images: [
-      'https://images.unsplash.com/photo-1602185922202-6d9c650b957b?q=80&w=685&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-      'https://images.unsplash.com/photo-1590735213920-68192a487bc2?w=800&q=80',
-      'https://images.unsplash.com/photo-1544441452-d1cbe79fe5a7?w=800&q=80',
+      'https://icdvsrhauwfomggyswbt.supabase.co/storage/v1/object/public/wahi/23.jpg',
+      'https://icdvsrhauwfomggyswbt.supabase.co/storage/v1/object/public/wahi/25.jpg',
+      'https://icdvsrhauwfomggyswbt.supabase.co/storage/v1/object/public/wahi/27.jpg'
     ],
     variants: [
       { id: 'v-021-1', size: 'One Size', color: 'Nairobi Sunrise', colorHex: '#D4691E', stock: 6, sku: 'WF-TAW-021-OS-NSR' },
@@ -717,9 +717,9 @@ export const traditionalProducts: Product[] = [
     description:
       'A structured blazer featuring kente-inspired woven panels on the sleeves and lapels against a deep mahogany base. This is what cultural fusion looks like at its finest — where the boardroom meets heritage.',
     images: [
-      'https://images.unsplash.com/photo-1594168087746-d94175b42394?q=80&w=765&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-      'https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=800&q=80',
-      'https://images.unsplash.com/photo-1544441452-d1cbe79fe5a7?w=800&q=80',
+      'https://icdvsrhauwfomggyswbt.supabase.co/storage/v1/object/public/wahi/28.png',
+      'https://icdvsrhauwfomggyswbt.supabase.co/storage/v1/object/public/wahi/29.jpg',
+      'https://icdvsrhauwfomggyswbt.supabase.co/storage/v1/object/public/wahi/3.jpg'
     ],
     variants: [
       { id: 'v-022-1', size: 'S', color: 'Mahogany Kente', colorHex: '#3D1F0D', stock: 2, sku: 'WF-TAW-022-S-MKT' },
@@ -749,9 +749,9 @@ export const traditionalProducts: Product[] = [
     description:
       'A cropped ankara top with voluminous puff sleeves and a square neckline. The structured sleeves and vibrant geometric print make this an instant statement piece. Pairs effortlessly with high-waisted jeans or a tailored skirt.',
     images: [
-      'https://plus.unsplash.com/premium_photo-1769339044563-7e77ab4c90a5?q=80&w=765&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-      'https://images.unsplash.com/photo-1544441452-d1cbe79fe5a7?w=800&q=80',
-      'https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=800&q=80',
+      'https://icdvsrhauwfomggyswbt.supabase.co/storage/v1/object/public/wahi/30.jpg',
+      'https://icdvsrhauwfomggyswbt.supabase.co/storage/v1/object/public/wahi/31.jpg',
+      'https://icdvsrhauwfomggyswbt.supabase.co/storage/v1/object/public/wahi/32.jpg'
     ],
     variants: [
       { id: 'v-023-1', size: 'XS', color: 'Ankara Mix 1', colorHex: '#D4691E', stock: 4, sku: 'WF-TAW-023-XS-AM1' },
@@ -782,9 +782,9 @@ export const traditionalProducts: Product[] = [
     description:
       'A contemporary kaftan gown that bridges tradition and modern luxury. Floor-length, wide sleeves, and a rich hand-embroidered neckline detail. This is cultural pride elevated to its highest form.',
     images: [
-      'https://plus.unsplash.com/premium_photo-1770306559346-94964f6d0d16?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-      'https://images.unsplash.com/photo-1590735213920-68192a487bc2?w=800&q=80',
-      'https://images.unsplash.com/photo-1544441452-d1cbe79fe5a7?w=800&q=80',
+      'https://icdvsrhauwfomggyswbt.supabase.co/storage/v1/object/public/wahi/34.jpg',
+      'https://icdvsrhauwfomggyswbt.supabase.co/storage/v1/object/public/wahi/35.jpg',
+      'https://icdvsrhauwfomggyswbt.supabase.co/storage/v1/object/public/wahi/36.jpg'
     ],
     variants: [
       { id: 'v-024-1', size: 'S', color: 'Ivory Gold', colorHex: '#E8D5A3', stock: 3, sku: 'WF-TAW-024-S-IVG' },
@@ -821,9 +821,9 @@ export const accessoryProducts: Product[] = [
     description:
       'A structured leather tote in deep mahogany with gold hardware and a suede interior. Large enough for everything your day demands, refined enough to carry into any room. The gold WF monogram embossing is a quiet signature.',
     images: [
-      'https://images.unsplash.com/photo-1492707892479-7bc8d5a4ee93?w=800&q=80',
-      'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=800&q=80',
-      'https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=800&q=80',
+      'https://icdvsrhauwfomggyswbt.supabase.co/storage/v1/object/public/wahi/4.png',
+      'https://icdvsrhauwfomggyswbt.supabase.co/storage/v1/object/public/wahi/40.jpg',
+      'https://icdvsrhauwfomggyswbt.supabase.co/storage/v1/object/public/wahi/42.jpg'
     ],
     variants: [
       { id: 'v-025-1', size: 'One Size', color: 'Deep Mahogany', colorHex: '#3D1F0D', stock: 5, sku: 'WF-ACC-025-OS-MAH' },
@@ -851,9 +851,9 @@ export const accessoryProducts: Product[] = [
     description:
       'A bold layered statement necklace in 18k gold-plated brass with geometric African-inspired pendants. Three adjustable chains that wear together or separately. The centerpiece of any look you build.',
     images: [
-      'https://images.unsplash.com/photo-1685970731194-e27b477e87ba?q=80&w=688&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-      'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=800&q=80',
-      'https://images.unsplash.com/photo-1599643477877-530eb83abc8e?w=800&q=80',
+      'https://icdvsrhauwfomggyswbt.supabase.co/storage/v1/object/public/wahi/1.jpg',
+      'https://icdvsrhauwfomggyswbt.supabase.co/storage/v1/object/public/wahi/12.jpg',
+      'https://icdvsrhauwfomggyswbt.supabase.co/storage/v1/object/public/wahi/14.jpg'
     ],
     variants: [
       { id: 'v-026-1', size: 'One Size', color: 'Gold', colorHex: '#D4A853', stock: 8, sku: 'WF-ACC-026-OS-GLD' },
@@ -880,9 +880,9 @@ export const accessoryProducts: Product[] = [
     description:
       'A generous 100% silk headwrap in an exclusive Wahi print. Versatile enough to style as a turban, wrap, or sash around a bag handle. The kind of accessory that transforms every look it touches.',
     images: [
-      'https://images.unsplash.com/photo-1574201635302-388dd92a4c3f?w=800&q=80',
-      'https://images.unsplash.com/photo-1492707892479-7bc8d5a4ee93?w=800&q=80',
-      'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=800&q=80',
+      'https://icdvsrhauwfomggyswbt.supabase.co/storage/v1/object/public/wahi/15.png',
+      'https://icdvsrhauwfomggyswbt.supabase.co/storage/v1/object/public/wahi/16.jpg',
+      'https://icdvsrhauwfomggyswbt.supabase.co/storage/v1/object/public/wahi/17.jpg'
     ],
     variants: [
       { id: 'v-027-1', size: 'One Size', color: 'Nairobi Gold', colorHex: '#D4A853', stock: 6, sku: 'WF-ACC-027-OS-NGD' },
@@ -911,9 +911,9 @@ export const accessoryProducts: Product[] = [
     description:
       'A hand-woven crossbody bag in natural raffia with leather trim and a gold chain strap. The artisan weave references East African basket-making tradition in a thoroughly modern silhouette. Limited quantities, handcrafted individually.',
     images: [
-      'https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=800&q=80',
-      'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=800&q=80',
-      'https://images.unsplash.com/photo-1492707892479-7bc8d5a4ee93?w=800&q=80',
+      'https://icdvsrhauwfomggyswbt.supabase.co/storage/v1/object/public/wahi/18.jpg',
+      'https://icdvsrhauwfomggyswbt.supabase.co/storage/v1/object/public/wahi/19.jpg',
+      'https://icdvsrhauwfomggyswbt.supabase.co/storage/v1/object/public/wahi/2.jpg'
     ],
     variants: [
       { id: 'v-028-1', size: 'One Size', color: 'Natural Raffia', colorHex: '#C9A87C', stock: 4, sku: 'WF-ACC-028-OS-NFR' },
@@ -932,3 +932,4 @@ export const accessoryProducts: Product[] = [
     createdAt: '2026-01-05T08:00:00Z',
   },
 ]
+

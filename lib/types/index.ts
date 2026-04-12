@@ -196,6 +196,15 @@ export interface FilterState {
   inStockOnly: boolean;
 }
 
+export interface SearchFiltersState extends FilterState {
+  category: CategorySlug | "all";
+}
+
+export interface SearchResultGroup {
+  title: string;
+  items: string[];
+}
+
 export interface UIStore {
   selectedCategory: CategorySlug | "all";
   sortBy: "newest" | "price-asc" | "price-desc" | "rating" | "bestseller";
@@ -206,4 +215,14 @@ export interface UIStore {
   setViewMode: (mode: "grid" | "list") => void;
   setFilters: (filters: Partial<FilterState>) => void;
   resetFilters: () => void;
+}
+
+export interface WishlistStore {
+  productIds: string[];
+  count: number;
+  addItem: (productId: string) => void;
+  removeItem: (productId: string) => void;
+  toggleItem: (productId: string) => void;
+  hasItem: (productId: string) => boolean;
+  clearWishlist: () => void;
 }

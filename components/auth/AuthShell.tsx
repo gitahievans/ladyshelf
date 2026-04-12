@@ -1,7 +1,10 @@
 "use client";
 
 import type { ReactElement, ReactNode } from "react";
+import Image from "next/image";
 import { motion, useReducedMotion } from "framer-motion";
+
+import { brandMedia } from "@/lib/mock/media";
 
 interface AuthShellProps {
   heading: string;
@@ -28,9 +31,16 @@ export default function AuthShell({
       >
         <div className="space-y-8">
           <div className="space-y-4 text-center">
-            <p className="font-cormorant text-h4 font-light tracking-widest text-obsidian sm:text-h3">
-              WAHI FASHION
-            </p>
+            <div className="flex justify-center">
+              <Image
+                alt="Wahi Fashion logo"
+                className="h-14 w-auto object-contain"
+                height={80}
+                priority
+                src={brandMedia.logo}
+                width={220}
+              />
+            </div>
             <div className="space-y-2">
               <h1 className="font-cormorant text-h2 text-obsidian sm:text-h1">
                 {heading}

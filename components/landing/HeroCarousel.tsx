@@ -6,6 +6,7 @@ import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
 import { ChevronDown } from "lucide-react";
 
+import { brandMedia } from "@/lib/mock/media";
 import { fadeUpVariant, staggerContainer } from "@/lib/utils/animations";
 import { cn } from "@/lib/utils/cn";
 
@@ -18,22 +19,34 @@ interface HeroSlide {
 
 const slides: HeroSlide[] = [
   {
-    image: "https://images.unsplash.com/photo-1529139574466-a303027c1d8b?w=1600&q=80",
+    image: brandMedia.heroSlides[0] ?? brandMedia.hero,
     label: "New Season 2026",
     headline: "The Future of Fashion Is Here",
     subtitle: "Premium women's fashion, curated for every chapter of your story.",
   },
   {
-    image: "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=1600&q=80",
+    image: brandMedia.heroSlides[1] ?? brandMedia.hero,
     label: "Luxury African Wear",
     headline: "Your Heritage, Elevated",
     subtitle: "Kitenge, ankara, and fusion pieces designed for the modern African woman.",
   },
   {
-    image: "https://images.unsplash.com/photo-1539109136881-3be0616acf4b?w=1600&q=80",
+    image: brandMedia.heroSlides[2] ?? brandMedia.hero,
     label: "Office to Evening",
     headline: "Dressing Like A Main Character",
     subtitle: "She doesn't dress for the job she has. She dresses for the story she's writing.",
+  },
+  {
+    image: brandMedia.heroSlides[3] ?? brandMedia.hero,
+    label: "Refined Occasionwear",
+    headline: "Presence, Tailored",
+    subtitle: "Statement silhouettes and quiet luxury for moments that deserve a stronger entrance.",
+  },
+  {
+    image: brandMedia.heroSlides[4] ?? brandMedia.hero,
+    label: "Wahi Signatures",
+    headline: "Crafted for the Modern Muse",
+    subtitle: "Editorial texture, elevated cuts, and African fashion with a more intentional point of view.",
   },
 ];
 
@@ -71,7 +84,7 @@ export default function HeroCarousel(): ReactElement {
           >
             <Image
               alt={slide.headline}
-              className="object-cover"
+              className="object-cover object-contain"
               fill
               priority={index === 0}
               sizes="100vw"

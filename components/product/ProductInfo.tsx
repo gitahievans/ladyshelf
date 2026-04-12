@@ -4,7 +4,7 @@ import type { ReactElement } from "react";
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
-import { Check, ShoppingBag } from "lucide-react";
+import { Check, Heart, ShoppingBag } from "lucide-react";
 
 import VariantSelector from "@/components/product/VariantSelector";
 import Badge from "@/components/shared/Badge";
@@ -21,6 +21,7 @@ import { fadeUpVariant } from "@/lib/utils/animations";
 import { cn } from "@/lib/utils/cn";
 import type { CartItem, Product, ProductVariant } from "@/lib/types";
 import { useCartStore } from "@/stores/cartStore";
+import { useWishlistStore } from "@/stores/wishlistStore";
 
 interface ProductInfoProps {
   product: Product;
@@ -49,6 +50,10 @@ export default function ProductInfo({
   const addItem = useCartStore((state) => state.addItem);
   const toggleCart = useCartStore((state) => state.toggleCart);
   const isCartOpen = useCartStore((state) => state.isOpen);
+  const toggleWishlist = useWishlistStore((state) => state.toggleItem);
+  const isWishlisted = useWishlistStore((state) =>
+    state.productIds.includes(product.id),
+  );
   const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(null);
   const [isAdded, setIsAdded] = useState<boolean>(false);
 
@@ -187,6 +192,20 @@ export default function ProductInfo({
         {isAdded ? <Check className="size-4" /> : <ShoppingBag className="size-4" />}
         {isAdded ? "Added To Bag" : "Add to Bag"}
       </motion.button>
+
+      <button
+        className={cn(
+          "flex min-h-11 w-full items-center justify-center gap-2 rounded-sm border px-6 py-4 font-dm-sans text-label uppercase tracking-[0.18em] transition-colors",
+          isWishlisted
+            ? "border-gold bg-gold text-obsidian"
+            : "border-border-warm bg-ivory text-text-secondary hover:border-gold hover:text-obsidian",
+        )}
+        onClick={(): void => toggleWishlist(product.id)}
+        type="button"
+      >
+        <Heart className={cn("size-4", isWishlisted ? "fill-current" : "")} />
+        {isWishlisted ? "Saved to Wishlist" : "Save to Wishlist"}
+      </button>
 
       <Accordion className="w-full" collapsible type="single">
         <AccordionItem value="material">

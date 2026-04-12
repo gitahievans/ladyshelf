@@ -4,7 +4,7 @@ import { type ReactElement, useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { Check, Plus, ShoppingBag } from "lucide-react";
+import { Check, Heart, Plus, ShoppingBag } from "lucide-react";
 
 import Badge from "@/components/shared/Badge";
 import PriceDisplay from "@/components/shared/PriceDisplay";
@@ -17,6 +17,7 @@ import { cn } from "@/lib/utils/cn";
 import { getAvailableSizes, isInStock } from "@/lib/utils/format";
 import type { CartItem, Product } from "@/lib/types";
 import { useCartStore } from "@/stores/cartStore";
+import { useWishlistStore } from "@/stores/wishlistStore";
 
 interface ProductCardProps {
   product: Product;
@@ -30,6 +31,10 @@ export default function ProductCard({
   className,
 }: ProductCardProps): ReactElement {
   const addItem = useCartStore((state) => state.addItem);
+  const toggleWishlist = useWishlistStore((state) => state.toggleItem);
+  const isWishlisted = useWishlistStore((state) =>
+    state.productIds.includes(product.id),
+  );
   const reducedMotion = useReducedMotion();
   const router = useRouter();
   const [isQuickAddOpen, setIsQuickAddOpen] = useState<boolean>(false);
@@ -90,6 +95,13 @@ export default function ProductCard({
 
   function handleCardClick(): void {
     router.push(`/shop/${product.slug}`);
+  }
+
+  function handleWishlistToggle(
+    event: React.MouseEvent<HTMLButtonElement>,
+  ): void {
+    event.stopPropagation();
+    toggleWishlist(product.id);
   }
 
   function handleQuickAddToggle(event: React.MouseEvent<HTMLButtonElement>): void {
@@ -187,6 +199,19 @@ export default function ProductCard({
           {product.badge ? (
             <Badge className="absolute top-4 left-4 z-10" type={product.badge} />
           ) : null}
+          <button
+            aria-label={isWishlisted ? "Remove from wishlist" : "Save to wishlist"}
+            className={cn(
+              "absolute top-4 right-4 z-10 inline-flex size-11 items-center justify-center rounded-full border backdrop-blur-sm transition-colors",
+              isWishlisted
+                ? "border-gold bg-gold text-obsidian"
+                : "border-ivory/40 bg-obsidian/40 text-ivory hover:border-gold hover:text-gold",
+            )}
+            onClick={handleWishlistToggle}
+            type="button"
+          >
+            <Heart className={cn("size-5", isWishlisted ? "fill-current" : "")} />
+          </button>
         </div>
 
         {inStock ? (

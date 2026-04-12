@@ -97,16 +97,19 @@ const initialValues: DeliveryDetails = {
 function validateDeliveryDetails(values: DeliveryDetails): DeliveryErrors {
   const errors: DeliveryErrors = {};
 
-  if (!values.fullName.trim()) errors.fullName = "Please add the name for this delivery.";
+  if (!values.fullName.trim())
+    errors.fullName = "Please add the name for this delivery.";
   if (!values.email.trim()) {
     errors.email = "Please add your email address.";
   } else if (!/^\S+@\S+\.\S+$/.test(values.email)) {
     errors.email = "Add an email address in a valid format.";
   }
-  if (!values.phone.trim()) errors.phone = "Please add the phone number we should use.";
+  if (!values.phone.trim())
+    errors.phone = "Please add the phone number we should use.";
   if (!values.county.trim()) errors.county = "Please choose a county.";
   if (!values.town.trim()) errors.town = "Please add your town.";
-  if (!values.streetAddress.trim()) errors.streetAddress = "Please add the street address.";
+  if (!values.streetAddress.trim())
+    errors.streetAddress = "Please add the street address.";
 
   return errors;
 }
@@ -178,21 +181,29 @@ export default function DeliveryForm({
 
       <div className="grid gap-5 md:grid-cols-2">
         <div className="space-y-2 md:col-span-2">
-          <Label className="font-dm-sans text-body-sm text-obsidian" htmlFor="fullName">
+          <Label
+            className="font-dm-sans text-body-sm text-obsidian"
+            htmlFor="fullName"
+          >
             Full Name
           </Label>
           <Input
             className={fieldClassName}
             id="fullName"
-            onChange={(event): void => updateField("fullName", event.target.value)}
-            placeholder="Amina Wanjiru"
+            onChange={(event): void =>
+              updateField("fullName", event.target.value)
+            }
+            placeholder="Jon Doe"
             value={formValues.fullName}
           />
           <FieldError message={errors.fullName} />
         </div>
 
         <div className="space-y-2">
-          <Label className="font-dm-sans text-body-sm text-obsidian" htmlFor="email">
+          <Label
+            className="font-dm-sans text-body-sm text-obsidian"
+            htmlFor="email"
+          >
             Email
           </Label>
           <Input
@@ -207,7 +218,10 @@ export default function DeliveryForm({
         </div>
 
         <div className="space-y-2">
-          <Label className="font-dm-sans text-body-sm text-obsidian" htmlFor="phone">
+          <Label
+            className="font-dm-sans text-body-sm text-obsidian"
+            htmlFor="phone"
+          >
             Phone
           </Label>
           <Input
@@ -221,7 +235,9 @@ export default function DeliveryForm({
         </div>
 
         <div className="space-y-2">
-          <Label className="font-dm-sans text-body-sm text-obsidian">County</Label>
+          <Label className="font-dm-sans text-body-sm text-obsidian">
+            County
+          </Label>
           <Select
             onValueChange={(value): void => updateField("county", value)}
             value={formValues.county}
@@ -245,7 +261,10 @@ export default function DeliveryForm({
         </div>
 
         <div className="space-y-2">
-          <Label className="font-dm-sans text-body-sm text-obsidian" htmlFor="town">
+          <Label
+            className="font-dm-sans text-body-sm text-obsidian"
+            htmlFor="town"
+          >
             Town
           </Label>
           <Input
@@ -259,13 +278,18 @@ export default function DeliveryForm({
         </div>
 
         <div className="space-y-2 md:col-span-2">
-          <Label className="font-dm-sans text-body-sm text-obsidian" htmlFor="streetAddress">
+          <Label
+            className="font-dm-sans text-body-sm text-obsidian"
+            htmlFor="streetAddress"
+          >
             Street Address
           </Label>
           <Input
             className={fieldClassName}
             id="streetAddress"
-            onChange={(event): void => updateField("streetAddress", event.target.value)}
+            onChange={(event): void =>
+              updateField("streetAddress", event.target.value)
+            }
             placeholder="House number, road, estate"
             value={formValues.streetAddress}
           />
@@ -273,13 +297,18 @@ export default function DeliveryForm({
         </div>
 
         <div className="space-y-2 md:col-span-2">
-          <Label className="font-dm-sans text-body-sm text-obsidian" htmlFor="additionalInfo">
+          <Label
+            className="font-dm-sans text-body-sm text-obsidian"
+            htmlFor="additionalInfo"
+          >
             Additional Info
           </Label>
           <textarea
             className={textAreaClassName}
             id="additionalInfo"
-            onChange={(event): void => updateField("additionalInfo", event.target.value)}
+            onChange={(event): void =>
+              updateField("additionalInfo", event.target.value)
+            }
             placeholder="Landmark, gate instructions, or anything else we should know."
             value={formValues.additionalInfo ?? ""}
           />
@@ -287,10 +316,16 @@ export default function DeliveryForm({
       </div>
 
       <div className="space-y-3">
-        <p className="font-dm-sans text-body-sm text-obsidian">Delivery Method</p>
+        <p className="font-dm-sans text-body-sm text-obsidian">
+          Delivery Method
+        </p>
         <div className="grid gap-3">
           <button
-            className={formValues.deliveryMethod === "delivery" ? "rounded-2xl border border-gold bg-ivory p-4 text-left transition-colors" : "rounded-2xl border border-border-warm bg-ivory p-4 text-left transition-colors hover:border-gold/60"}
+            className={
+              formValues.deliveryMethod === "delivery"
+                ? "rounded-2xl border border-gold bg-ivory p-4 text-left transition-colors"
+                : "rounded-2xl border border-border-warm bg-ivory p-4 text-left transition-colors hover:border-gold/60"
+            }
             onClick={(): void => updateField("deliveryMethod", "delivery")}
             type="button"
           >
@@ -303,7 +338,11 @@ export default function DeliveryForm({
           </button>
 
           <button
-            className={formValues.deliveryMethod === "pickup" ? "rounded-2xl border border-gold bg-ivory p-4 text-left transition-colors" : "rounded-2xl border border-border-warm bg-ivory p-4 text-left transition-colors hover:border-gold/60"}
+            className={
+              formValues.deliveryMethod === "pickup"
+                ? "rounded-2xl border border-gold bg-ivory p-4 text-left transition-colors"
+                : "rounded-2xl border border-border-warm bg-ivory p-4 text-left transition-colors hover:border-gold/60"
+            }
             onClick={(): void => updateField("deliveryMethod", "pickup")}
             type="button"
           >
@@ -321,7 +360,10 @@ export default function DeliveryForm({
         <div className="rounded-2xl border border-bark/20 bg-ivory p-4">
           <p className="font-dm-sans text-body-sm text-text-secondary">
             Save time next time.{" "}
-            <Link className="font-medium text-gold transition-colors hover:text-bark" href="/auth/register">
+            <Link
+              className="font-medium text-gold transition-colors hover:text-bark"
+              href="/auth/register"
+            >
               Join Wahi
             </Link>
             .

@@ -3,11 +3,23 @@
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
+import { allProducts } from "@/lib/mock";
 import type { CartItem, CartStore } from "@/lib/types";
 
 interface CartStateSlice {
   items: CartItem[];
   isOpen: boolean;
+}
+
+const productImageById = new Map(
+  allProducts.map((product) => [product.id, product.images[0] ?? ""]),
+);
+
+function sanitizeCartItems(items: CartItem[]): CartItem[] {
+  return items.map((item) => ({
+    ...item,
+    productImage: productImageById.get(item.productId) ?? item.productImage,
+  }));
 }
 
 function calculateCartTotals(items: CartItem[]): Pick<CartStore, "subtotal" | "totalItems"> {
@@ -24,10 +36,12 @@ function calculateCartTotals(items: CartItem[]): Pick<CartStore, "subtotal" | "t
 }
 
 function buildCartState(items: CartItem[], isOpen: boolean): CartStateSlice & Pick<CartStore, "subtotal" | "totalItems"> {
+  const sanitizedItems = sanitizeCartItems(items);
+
   return {
-    items,
+    items: sanitizedItems,
     isOpen,
-    ...calculateCartTotals(items),
+    ...calculateCartTotals(sanitizedItems),
   };
 }
 
@@ -81,6 +95,18 @@ export const useCartStore = create<CartStore>()(
     {
       name: "wahi-cart-store",
       storage: createJSONStorage(() => localStorage),
+      merge: (persistedState, currentState) => {
+        const typedState = persistedState as Partial<CartStore> | undefined;
+
+        return {
+          ...currentState,
+          ...typedState,
+          ...buildCartState(
+            typedState?.items ?? currentState.items,
+            typedState?.isOpen ?? currentState.isOpen,
+          ),
+        };
+      },
       partialize: (state) => ({
         items: state.items,
         isOpen: state.isOpen,

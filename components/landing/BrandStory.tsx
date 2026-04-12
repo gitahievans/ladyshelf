@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 
+import { landingImageUrls } from "@/lib/mock/media";
 import SectionHeader from "@/components/shared/SectionHeader";
 import { fadeUpVariant } from "@/lib/utils/animations";
 
@@ -32,7 +33,7 @@ export default function BrandStory(): ReactElement {
               className="object-cover"
               fill
               sizes="(max-width: 1024px) 100vw, 50vw"
-              src="https://images.unsplash.com/photo-1581044777550-4cfa60707c03?w=800&q=80"
+              src={landingImageUrls.brandStory}
             />
             <div className="absolute inset-0 bg-gradient-to-tr from-mahogany/45 via-transparent to-gold/15" />
           </div>

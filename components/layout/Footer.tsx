@@ -1,6 +1,9 @@
 import type { ReactElement } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { Camera, MessageCircle, Music2 } from "lucide-react";
+
+import { brandMedia } from "@/lib/mock/media";
 
 interface FooterLink {
   href: string;
@@ -32,10 +35,16 @@ export default function Footer(): ReactElement {
         <div className="space-y-5">
           <div className="space-y-3">
             <Link
-              className="inline-block font-cormorant text-h2 tracking-[0.22em] text-ivory"
+              className="inline-flex items-center"
               href="/"
             >
-              WAHI FASHION
+              <Image
+                alt="Wahi Fashion logo"
+                className="h-12 w-auto object-contain"
+                height={72}
+                src={brandMedia.logo}
+                width={200}
+              />
             </Link>
             <p className="max-w-xs font-dm-sans text-body text-text-muted">
               More than fashion. A lifestyle.

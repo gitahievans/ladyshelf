@@ -4,37 +4,38 @@ import type { ReactElement } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 
+import { landingImageUrls } from "@/lib/mock/media";
 import { fadeUpVariant } from "@/lib/utils/animations";
 import { cn } from "@/lib/utils/cn";
 
 const lookbookImages = [
   {
-    src: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=600&q=80",
+    src: landingImageUrls.lookbook[0] ?? landingImageUrls.brandStory,
     alt: "Editorial fashion portrait one",
     widthClass: "w-[220px] md:w-[280px]",
   },
   {
-    src: "https://images.unsplash.com/photo-1496747611176-843222e1e57c?w=600&q=80",
+    src: landingImageUrls.lookbook[1] ?? landingImageUrls.brandStory,
     alt: "Editorial fashion portrait two",
     widthClass: "w-[200px] md:w-[250px]",
   },
   {
-    src: "https://images.unsplash.com/photo-1566174053879-31528523f8ae?w=600&q=80",
+    src: landingImageUrls.lookbook[2] ?? landingImageUrls.brandStory,
     alt: "Editorial fashion portrait three",
     widthClass: "w-[240px] md:w-[320px]",
   },
   {
-    src: "https://images.unsplash.com/photo-1590735213920-68192a487bc2?w=600&q=80",
+    src: landingImageUrls.lookbook[3] ?? landingImageUrls.brandStory,
     alt: "Editorial fashion portrait four",
     widthClass: "w-[210px] md:w-[270px]",
   },
   {
-    src: "https://images.unsplash.com/photo-1502716119720-b23a93e5fe1b?w=600&q=80",
+    src: landingImageUrls.lookbook[4] ?? landingImageUrls.brandStory,
     alt: "Editorial fashion portrait five",
     widthClass: "w-[230px] md:w-[300px]",
   },
   {
-    src: "https://images.unsplash.com/photo-1544441452-d1cbe79fe5a7?w=600&q=80",
+    src: landingImageUrls.lookbook[5] ?? landingImageUrls.brandStory,
     alt: "Editorial fashion portrait six",
     widthClass: "w-[200px] md:w-[260px]",
   },
