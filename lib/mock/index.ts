@@ -20,22 +20,72 @@ import {
   mockUsers as baseMockUsers,
 } from "./users-orders";
 
-const officeProducts = assignProductImages(baseOfficeProducts, 0);
-const casualProducts = assignProductImages(baseCasualProducts, officeProducts.length);
-const partyProducts = assignProductImages(
-  basePartyProducts,
-  officeProducts.length + casualProducts.length,
+const productImageOverrides = new Map<string, string[]>([
+  [
+    "wide-leg-denim-set",
+    [
+      "https://icdvsrhauwfomggyswbt.supabase.co/storage/v1/object/public/wahi/40.jpg",
+      "https://icdvsrhauwfomggyswbt.supabase.co/storage/v1/object/public/wahi/1.jpg",
+      "https://icdvsrhauwfomggyswbt.supabase.co/storage/v1/object/public/wahi/12.jpg",
+    ],
+  ],
+  [
+    "kaftan-day-dress",
+    [
+      "https://icdvsrhauwfomggyswbt.supabase.co/storage/v1/object/public/wahi/23.jpg",
+      "https://icdvsrhauwfomggyswbt.supabase.co/storage/v1/object/public/wahi/25.jpg",
+      "https://icdvsrhauwfomggyswbt.supabase.co/storage/v1/object/public/wahi/27.jpg",
+    ],
+  ],
+  [
+    "off-shoulder-gown",
+    [
+      "https://icdvsrhauwfomggyswbt.supabase.co/storage/v1/object/public/wahi/17.jpg",
+      "https://icdvsrhauwfomggyswbt.supabase.co/storage/v1/object/public/wahi/18.jpg",
+      "https://icdvsrhauwfomggyswbt.supabase.co/storage/v1/object/public/wahi/20.jpg",
+    ],
+  ],
+  [
+    "ankara-maxi-dress",
+    [
+      "https://icdvsrhauwfomggyswbt.supabase.co/storage/v1/object/public/wahi/20.jpg",
+      "https://icdvsrhauwfomggyswbt.supabase.co/storage/v1/object/public/wahi/23.jpg",
+      "https://icdvsrhauwfomggyswbt.supabase.co/storage/v1/object/public/wahi/25.jpg",
+    ],
+  ],
+]);
+
+function applyProductImageOverrides(products: Product[]): Product[] {
+  return products.map((product) => ({
+    ...product,
+    images: productImageOverrides.get(product.slug) ?? product.images,
+  }));
+}
+
+const officeProducts = applyProductImageOverrides(assignProductImages(baseOfficeProducts, 0));
+const casualProducts = applyProductImageOverrides(
+  assignProductImages(baseCasualProducts, officeProducts.length),
 );
-const traditionalProducts = assignProductImages(
-  baseTraditionalProducts,
-  officeProducts.length + casualProducts.length + partyProducts.length,
+const partyProducts = applyProductImageOverrides(
+  assignProductImages(
+    basePartyProducts,
+    officeProducts.length + casualProducts.length,
+  ),
 );
-const accessoryProducts = assignProductImages(
-  baseAccessoryProducts,
-  officeProducts.length +
-    casualProducts.length +
-    partyProducts.length +
-    traditionalProducts.length,
+const traditionalProducts = applyProductImageOverrides(
+  assignProductImages(
+    baseTraditionalProducts,
+    officeProducts.length + casualProducts.length + partyProducts.length,
+  ),
+);
+const accessoryProducts = applyProductImageOverrides(
+  assignProductImages(
+    baseAccessoryProducts,
+    officeProducts.length +
+      casualProducts.length +
+      partyProducts.length +
+      traditionalProducts.length,
+  ),
 );
 
 const allProducts = [
