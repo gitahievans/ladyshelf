@@ -54,7 +54,14 @@ export const categoryImageUrls = productImageUrls.slice(0, 5);
 
 export const landingImageUrls = {
   brandStory: productImageUrls[5] ?? brandMedia.hero,
-  lookbook: productImageUrls.slice(6, 12),
+  lookbook: [
+    productImageUrls[6] ?? brandMedia.hero,
+    productImageUrls[9] ?? brandMedia.hero,
+    productImageUrls[10] ?? brandMedia.hero,
+    productImageUrls[9] ?? brandMedia.hero,
+    productImageUrls[10] ?? brandMedia.hero,
+    productImageUrls[11] ?? brandMedia.hero,
+  ],
 } as const;
 
 export function getRotatedProductImages(productIndex: number): string[] {
