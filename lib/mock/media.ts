@@ -50,7 +50,13 @@ export const brandMedia = {
 
 export const productImageUrls = productImageFileNames.map(buildStorageUrl);
 
-export const categoryImageUrls = productImageUrls.slice(0, 5);
+export const categoryImageUrls = [
+  productImageUrls[0] ?? brandMedia.hero,
+  productImageUrls[1] ?? brandMedia.hero,
+  productImageUrls[2] ?? brandMedia.hero,
+  productImageUrls[3] ?? brandMedia.hero,
+  productImageUrls[10] ?? brandMedia.hero,
+] as const;
 
 export const landingImageUrls = {
   brandStory: productImageUrls[5] ?? brandMedia.hero,
