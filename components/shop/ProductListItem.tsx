@@ -6,7 +6,6 @@ import { useRouter } from "next/navigation";
 import { ShoppingBag } from "lucide-react";
 
 import PriceDisplay from "@/components/shared/PriceDisplay";
-import RatingStars from "@/components/shared/RatingStars";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils/cn";
 import { getAvailableSizes } from "@/lib/utils/format";
@@ -81,16 +80,9 @@ export default function ProductListItem({
         <p className="font-dm-sans text-caption uppercase tracking-[0.16em] text-text-muted">
           {product.categorySlug.replaceAll("-", " ")}
         </p>
-        <div className="space-y-2">
-          <h3 className="font-dm-sans text-body font-medium text-text-primary">
-            {product.name}
-          </h3>
-          <RatingStars
-            rating={product.rating}
-            reviewCount={product.reviewCount}
-            showCount
-          />
-        </div>
+        <h3 className="font-dm-sans text-body font-medium text-text-primary">
+          {product.name}
+        </h3>
         <p className="line-clamp-2 font-dm-sans text-body-sm text-text-secondary">
           {product.description}
         </p>

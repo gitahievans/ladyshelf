@@ -14,7 +14,7 @@ import { useUIStore } from "@/stores/uiStore";
 
 interface SortOption {
   label: string;
-  value: "newest" | "price-asc" | "price-desc" | "rating" | "bestseller";
+  value: "newest" | "price-asc" | "price-desc" | "bestseller";
 }
 
 interface SortDropdownProps {
@@ -25,7 +25,6 @@ const sortOptions: SortOption[] = [
   { label: "Newest First", value: "newest" },
   { label: "Price: Low to High", value: "price-asc" },
   { label: "Price: High to Low", value: "price-desc" },
-  { label: "Top Rated", value: "rating" },
   { label: "Bestsellers", value: "bestseller" },
 ];
 

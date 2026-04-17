@@ -51,7 +51,6 @@ function getSortFromSearchParams(searchParams: URLSearchParams): UIStore["sortBy
     sort === "newest" ||
     sort === "price-asc" ||
     sort === "price-desc" ||
-    sort === "rating" ||
     sort === "bestseller"
   ) {
     return sort;

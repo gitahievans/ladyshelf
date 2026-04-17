@@ -18,7 +18,6 @@ const sortOptions: Array<{ label: string; value: UIStore["sortBy"] }> = [
   { label: "Newest First", value: "newest" },
   { label: "Price: Low to High", value: "price-asc" },
   { label: "Price: High to Low", value: "price-desc" },
-  { label: "Top Rated", value: "rating" },
   { label: "Bestsellers", value: "bestseller" },
 ];
 const colors = getAllColors();

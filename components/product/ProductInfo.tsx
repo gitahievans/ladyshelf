@@ -9,7 +9,6 @@ import { Check, Heart, ShoppingBag } from "lucide-react";
 import VariantSelector from "@/components/product/VariantSelector";
 import Badge from "@/components/shared/Badge";
 import PriceDisplay from "@/components/shared/PriceDisplay";
-import RatingStars from "@/components/shared/RatingStars";
 import {
   Accordion,
   AccordionContent,
@@ -136,11 +135,6 @@ export default function ProductInfo({
           <h1 className="font-cormorant text-h1 text-obsidian lg:text-display-lg">
             {product.name}
           </h1>
-          <RatingStars
-            rating={product.rating}
-            reviewCount={product.reviewCount}
-            showCount
-          />
           <PriceDisplay
             originalPrice={product.originalPrice}
             price={product.price}

@@ -1,6 +1,8 @@
 "use client";
 
 import type { ReactElement } from "react";
+import { useState } from "react";
+import { ChevronDown } from "lucide-react";
 
 import { Checkbox } from "@/components/ui/checkbox";
 import { Slider } from "@/components/ui/slider";
@@ -24,6 +26,7 @@ export default function FilterSidebar({
   colors,
   className,
 }: FilterSidebarProps): ReactElement {
+  const [isColorsExpanded, setIsColorsExpanded] = useState<boolean>(false);
   const selectedCategory = useUIStore((state) => state.selectedCategory);
   const filters = useUIStore((state) => state.filters);
   const setCategory = useUIStore((state) => state.setCategory);
@@ -168,33 +171,51 @@ export default function FilterSidebar({
       </section>
 
       <section className="space-y-4">
-        <h3 className="font-dm-sans text-label uppercase tracking-[0.16em] text-obsidian">
-          Colors
-        </h3>
-        <div className="grid grid-cols-2 gap-3">
-          {colors.map((color) => (
-            <button
+        <button
+          aria-expanded={isColorsExpanded}
+          className="flex w-full items-center justify-between gap-3 text-left"
+          onClick={(): void => setIsColorsExpanded((current) => !current)}
+          type="button"
+        >
+          <span className="font-dm-sans text-label uppercase tracking-[0.16em] text-obsidian">
+            Colors
+          </span>
+          <span className="flex items-center gap-2 font-dm-sans text-caption uppercase tracking-[0.14em] text-text-secondary">
+            {filters.colors.length > 0 ? `${filters.colors.length} selected` : "Expand"}
+            <ChevronDown
               className={cn(
-                "flex min-h-11 items-center gap-3 rounded-full border px-3 py-2 text-left",
-                filters.colors.includes(color.name)
-                  ? "border-gold bg-ivory"
-                  : "border-border-warm bg-ivory hover:border-gold",
+                "size-4 transition-transform duration-200",
+                isColorsExpanded ? "rotate-180" : "",
               )}
-              key={color.name}
-              onClick={(): void => toggleColor(color.name)}
-              type="button"
-            >
-              <span
-                aria-hidden="true"
-                className="size-4 rounded-full border border-border-warm"
-                style={{ backgroundColor: color.hex }}
-              />
-              <span className="font-dm-sans text-body-sm text-text-secondary">
-                {color.name}
-              </span>
-            </button>
-          ))}
-        </div>
+            />
+          </span>
+        </button>
+        {isColorsExpanded ? (
+          <div className="grid grid-cols-2 gap-3">
+            {colors.map((color) => (
+              <button
+                className={cn(
+                  "flex min-h-11 items-center gap-3 rounded-full border px-3 py-2 text-left",
+                  filters.colors.includes(color.name)
+                    ? "border-gold bg-ivory"
+                    : "border-border-warm bg-ivory hover:border-gold",
+                )}
+                key={color.name}
+                onClick={(): void => toggleColor(color.name)}
+                type="button"
+              >
+                <span
+                  aria-hidden="true"
+                  className="size-4 rounded-full border border-border-warm"
+                  style={{ backgroundColor: color.hex }}
+                />
+                <span className="font-dm-sans text-body-sm text-text-secondary">
+                  {color.name}
+                </span>
+              </button>
+            ))}
+          </div>
+        ) : null}
       </section>
 
       <section className="space-y-4">

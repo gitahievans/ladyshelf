@@ -8,7 +8,6 @@ import { Check, Heart, Plus, ShoppingBag } from "lucide-react";
 
 import Badge from "@/components/shared/Badge";
 import PriceDisplay from "@/components/shared/PriceDisplay";
-import RatingStars from "@/components/shared/RatingStars";
 import {
   fadeUpVariant,
   scaleInVariant,
@@ -241,11 +240,6 @@ export default function ProductCard({
           >
             {product.name}
           </h3>
-          <RatingStars
-            rating={product.rating}
-            reviewCount={product.reviewCount}
-            showCount={viewMode === "list"}
-          />
           {viewMode === "list" ? (
             <>
               <p className="line-clamp-2 font-dm-sans text-body-sm text-text-secondary">
