@@ -12,9 +12,10 @@ import {
   DialogContent,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { allProducts } from "@/lib/mock";
+import { fetchCatalogSnapshot } from "@/lib/api/catalog";
+import { allProducts, categories as mockCategories } from "@/lib/mock";
 import { getSearchResultGroups, searchProducts } from "@/lib/utils/search";
-import type { SearchFiltersState } from "@/lib/types";
+import type { Category, Product, SearchFiltersState } from "@/lib/types";
 
 interface SearchOverlayProps {
   open: boolean;
@@ -37,6 +38,8 @@ export default function SearchOverlay({
   onOpenChange,
 }: SearchOverlayProps): ReactElement {
   const router = useRouter();
+  const [categories, setCategories] = useState<Category[]>(mockCategories);
+  const [products, setProducts] = useState<Product[]>(allProducts);
   const [query, setQuery] = useState<string>("");
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
 
@@ -59,13 +62,37 @@ export default function SearchOverlay({
     }
   }, []);
 
+  useEffect(() => {
+    let isMounted = true;
+
+    void fetchCatalogSnapshot().then((snapshot) => {
+      if (!isMounted) {
+        return;
+      }
+
+      setCategories(snapshot.categories);
+      setProducts(snapshot.products);
+    });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
   const results = useMemo(
-    () => searchProducts(allProducts, query, defaultSearchFilters, "newest").slice(0, 4),
-    [query],
+    () =>
+      searchProducts(
+        products,
+        categories,
+        query,
+        defaultSearchFilters,
+        "newest",
+      ).slice(0, 4),
+    [categories, products, query],
   );
   const groups = useMemo(
-    () => getSearchResultGroups(allProducts, query),
-    [query],
+    () => getSearchResultGroups(products, categories, query),
+    [categories, products, query],
   );
 
   function persistRecentSearch(nextQuery: string): void {

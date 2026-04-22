@@ -33,6 +33,10 @@ wahi-dev.log
 
 # env files (can opt-in for committing if needed)
 .env*
+!.env.example
+.venv/
+__pycache__/
+*.py[cod]
 
 # vercel
 .vercel

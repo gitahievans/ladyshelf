@@ -54,6 +54,7 @@ function FieldError({ message }: { message?: string }): ReactElement | null {
 export default function LoginForm(): ReactElement {
   const router = useRouter();
   const login = useAuthStore((state) => state.login);
+  const loginWithGoogle = useAuthStore((state) => state.loginWithGoogle);
   const isLoading = useAuthStore((state) => state.isLoading);
 
   const [values, setValues] = useState<LoginValues>({ email: "", password: "" });
@@ -83,9 +84,24 @@ export default function LoginForm(): ReactElement {
       setSubmitError("");
       await login(values.email, values.password);
       router.push("/");
-    } catch {
+    } catch (error) {
       setSubmitError(
-        "We couldn't find that account. Please check your details.",
+        error instanceof Error
+          ? error.message
+          : "We couldn't find that account. Please check your details.",
+      );
+    }
+  }
+
+  async function handleGoogleSignIn(): Promise<void> {
+    try {
+      setSubmitError("");
+      await loginWithGoogle();
+    } catch (error) {
+      setSubmitError(
+        error instanceof Error
+          ? error.message
+          : "Google sign-in is unavailable right now.",
       );
     }
   }
@@ -130,12 +146,12 @@ export default function LoginForm(): ReactElement {
             >
               Password
             </Label>
-            <button
+            <Link
               className="font-dm-sans text-caption font-medium text-gold transition-colors hover:text-sand"
-              type="button"
+              href="/auth/forgot-password"
             >
               Forgot password?
-            </button>
+            </Link>
           </div>
           <div className="relative">
             <Input
@@ -183,6 +199,21 @@ export default function LoginForm(): ReactElement {
             </span>
             <div className="h-px flex-1 bg-border-warm" />
           </div>
+
+          <Button
+            className={ghostButtonClassName}
+            disabled={isLoading}
+            onClick={(): void => {
+              void handleGoogleSignIn();
+            }}
+            type="button"
+            variant="ghost"
+          >
+            <span className="flex items-center justify-center gap-3">
+              <span className="text-base font-semibold">G</span>
+              Continue with Google
+            </span>
+          </Button>
 
           <Button asChild className={ghostButtonClassName} variant="ghost">
             <Link href="/checkout">Continue as Guest</Link>

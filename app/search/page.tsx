@@ -1,21 +1,13 @@
-import type { ReactElement } from "react";
-import { Suspense } from "react";
-
 import SearchPageContent from "@/components/search/SearchPageContent";
-import LoadingSpinner from "@/components/shared/LoadingSpinner";
+import { fetchCatalogSnapshot } from "@/lib/api/catalog";
 
-function SearchPageFallback(): ReactElement {
-  return (
-    <div className="flex min-h-screen items-center justify-center bg-ivory px-6">
-      <LoadingSpinner size="lg" />
-    </div>
-  );
-}
+export default async function SearchPage() {
+  const { categories, products } = await fetchCatalogSnapshot();
 
-export default function SearchPage(): ReactElement {
   return (
-    <Suspense fallback={<SearchPageFallback />}>
-      <SearchPageContent />
-    </Suspense>
+    <SearchPageContent
+      initialCategories={categories}
+      initialProducts={products}
+    />
   );
 }

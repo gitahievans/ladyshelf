@@ -1,4 +1,4 @@
-import { User, Order, CartItem } from "../types";
+import type { CartItem, Order, User } from "../types";
 
 // ─────────────────────────────────────────────
 // MOCK USERS
@@ -138,7 +138,10 @@ export const mockOrders: Order[] = [
     currency: "KES",
     paymentMethod: "mpesa",
     paymentStatus: "paid",
-    orderStatus: "shipped",
+    paymentTiming: "prepay",
+    deliveryMode: "rider",
+    manualDeliveryFeeConfirmationRequired: false,
+    orderStatus: "out_for_delivery",
     createdAt: "2026-04-01T14:32:00Z",
     updatedAt: "2026-04-03T09:15:00Z",
   },
@@ -178,7 +181,10 @@ export const mockOrders: Order[] = [
     currency: "KES",
     paymentMethod: "card",
     paymentStatus: "paid",
-    orderStatus: "confirmed",
+    paymentTiming: "prepay",
+    deliveryMode: "parcel",
+    manualDeliveryFeeConfirmationRequired: false,
+    orderStatus: "ready_for_dispatch",
     createdAt: "2026-04-08T10:20:00Z",
     updatedAt: "2026-04-08T10:25:00Z",
   },

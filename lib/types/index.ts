@@ -114,16 +114,36 @@ export interface User {
 // ─────────────────────────────────────────────
 
 export type OrderStatus =
-  | "pending"
-  | "confirmed"
-  | "processing"
-  | "shipped"
-  | "delivered"
+  | "new"
+  | "awaiting_payment"
+  | "paid"
+  | "awaiting_delivery_fee_confirmation"
+  | "ready_for_dispatch"
+  | "out_for_delivery"
+  | "ready_for_pickup"
+  | "completed"
   | "cancelled";
 
-export type PaymentMethod = "mpesa" | "card" | "cash-on-delivery";
+export type PaymentMethod = "mpesa" | "card";
 
-export type PaymentStatus = "pending" | "paid" | "failed" | "refunded";
+export type PaymentStatus =
+  | "pending"
+  | "paid"
+  | "failed"
+  | "manual_on_delivery"
+  | "refunded";
+
+export type PaymentTransactionStatus =
+  | "initiated"
+  | "pending"
+  | "paid"
+  | "failed";
+
+export type CheckoutPaymentMethod = "mpesa" | "card";
+
+export type CheckoutPaymentTiming = "prepay" | "pay_on_delivery";
+
+export type CheckoutDeliveryMode = "rider" | "parcel" | "pickup";
 
 export interface DeliveryDetails {
   fullName: string;
@@ -134,6 +154,51 @@ export interface DeliveryDetails {
   streetAddress: string;
   additionalInfo?: string;
   deliveryMethod: "pickup" | "delivery";
+}
+
+export interface CheckoutPaymentSelection {
+  method: CheckoutPaymentMethod;
+  timing: CheckoutPaymentTiming;
+}
+
+export interface CheckoutPaymentOption extends CheckoutPaymentSelection {
+  key: string;
+  label: string;
+  description: string;
+}
+
+export interface CheckoutQuoteItem extends CartItem {
+  availableStock: number;
+  lineTotal: number;
+}
+
+export interface PickupInfo {
+  name: string;
+  county: string;
+  town: string;
+  streetAddress: string;
+  contactName: string;
+  contactPhone: string;
+  mapsUrl: string;
+  openingHours: string;
+  collectionWindowHours: number;
+  notes: string;
+}
+
+export interface CheckoutQuote {
+  currency: "KES";
+  items: CheckoutQuoteItem[];
+  subtotal: number;
+  deliveryFee: number;
+  total: number;
+  fulfillmentMethod: DeliveryDetails["deliveryMethod"];
+  deliveryMode: CheckoutDeliveryMode;
+  estimatedWindow: string;
+  manualDeliveryFeeConfirmationRequired: boolean;
+  availablePaymentOptions: CheckoutPaymentOption[];
+  paymentSelection?: CheckoutPaymentSelection | null;
+  messages: string[];
+  pickupInstructions?: PickupInfo | null;
 }
 
 export interface Order {
@@ -149,10 +214,41 @@ export interface Order {
   total: number;
   currency: "KES";
   paymentMethod: PaymentMethod;
+  paymentTiming: CheckoutPaymentTiming;
   paymentStatus: PaymentStatus;
   orderStatus: OrderStatus;
+  deliveryMode: CheckoutDeliveryMode;
+  manualDeliveryFeeConfirmationRequired: boolean;
+  pickupInstructions?: PickupInfo | null;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface PaymentTransaction {
+  provider: "sasapay";
+  status: PaymentTransactionStatus;
+  paymentMethod: PaymentMethod;
+  amount: number;
+  currency: "KES";
+  merchantReference: string;
+  merchantRequestId: string;
+  checkoutRequestId: string;
+  transactionCode: string;
+  checkoutUrl: string;
+  providerResponse: Record<string, unknown>;
+  callbackPayload: Record<string, unknown>;
+  lastStatusPayload: Record<string, unknown>;
+  verificationPayload: Record<string, unknown>;
+  paidAt?: string | null;
+  failedAt?: string | null;
+  lastSyncedAt?: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface PaymentSessionResponse {
+  order: Order;
+  transaction: PaymentTransaction;
 }
 
 // ─────────────────────────────────────────────
@@ -183,9 +279,16 @@ export interface AuthStore {
   user: User | null;
   isAuthenticated: boolean;
   isLoading: boolean;
+  isInitialized: boolean;
+  initialize: () => Promise<void>;
   login: (email: string, password: string) => Promise<void>;
-  logout: () => void;
-  register: (data: RegisterPayload) => Promise<void>;
+  logout: () => Promise<void>;
+  loginWithGoogle: () => Promise<void>;
+  register: (
+    data: RegisterPayload,
+  ) => Promise<{ emailConfirmationRequired: boolean }>;
+  requestPasswordReset: (email: string) => Promise<void>;
+  updatePassword: (password: string) => Promise<void>;
 }
 
 export interface FilterState {
@@ -220,9 +323,12 @@ export interface UIStore {
 export interface WishlistStore {
   productIds: string[];
   count: number;
-  addItem: (productId: string) => void;
-  removeItem: (productId: string) => void;
-  toggleItem: (productId: string) => void;
+  isLoaded: boolean;
+  addItem: (productId: string) => Promise<void>;
+  removeItem: (productId: string) => Promise<void>;
+  toggleItem: (productId: string) => Promise<void>;
   hasItem: (productId: string) => boolean;
-  clearWishlist: () => void;
+  clearWishlist: () => Promise<void>;
+  syncWishlist: (options?: { mergeLocal?: boolean }) => Promise<void>;
+  setProductIds: (productIds: string[]) => void;
 }

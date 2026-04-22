@@ -10,9 +10,16 @@ import SearchBar from "@/components/search/SearchBar";
 import SearchFilters from "@/components/search/SearchFilters";
 import SearchResultsPanel from "@/components/search/SearchResultsPanel";
 import SearchSuggestionList from "@/components/search/SearchSuggestionList";
-import { allProducts } from "@/lib/mock";
 import { getSearchResultGroups, searchProducts } from "@/lib/utils/search";
-import type { BadgeType, SearchFiltersState, Size, UIStore } from "@/lib/types";
+import type {
+  BadgeType,
+  Category,
+  Product,
+  SearchFiltersState,
+  Size,
+  UIStore,
+} from "@/lib/types";
+import { getCatalogColors } from "@/lib/utils/catalog";
 import { useUIStore } from "@/stores/uiStore";
 
 const defaultSearchFilters: SearchFiltersState = {
@@ -59,7 +66,15 @@ function getSortFromSearchParams(searchParams: URLSearchParams): UIStore["sortBy
   return "newest";
 }
 
-export default function SearchPageContent(): ReactElement {
+interface SearchPageContentProps {
+  initialCategories: Category[];
+  initialProducts: Product[];
+}
+
+export default function SearchPageContent({
+  initialCategories,
+  initialProducts,
+}: SearchPageContentProps): ReactElement {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -76,10 +91,18 @@ export default function SearchPageContent(): ReactElement {
     () => getSortFromSearchParams(new URLSearchParams(searchParams.toString())),
     [searchParams],
   );
-  const groups = useMemo(() => getSearchResultGroups(allProducts, query), [query]);
+  const colors = useMemo(
+    () => getCatalogColors(initialProducts),
+    [initialProducts],
+  );
+  const groups = useMemo(
+    () => getSearchResultGroups(initialProducts, initialCategories, query),
+    [initialCategories, initialProducts, query],
+  );
   const results = useMemo(
-    () => searchProducts(allProducts, query, filters, sortBy),
-    [filters, query, sortBy],
+    () =>
+      searchProducts(initialProducts, initialCategories, query, filters, sortBy),
+    [filters, initialCategories, initialProducts, query, sortBy],
   );
 
   function updateSearchParams(
@@ -218,6 +241,8 @@ export default function SearchPageContent(): ReactElement {
 
           <div className="grid items-start gap-8 lg:grid-cols-[320px_minmax(0,1fr)]">
             <SearchFilters
+              categories={initialCategories}
+              colors={colors}
               filters={filters}
               onFiltersChange={(nextFilters): void =>
                 updateSearchParams(query, nextFilters, sortBy)

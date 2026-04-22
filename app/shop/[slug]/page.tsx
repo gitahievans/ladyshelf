@@ -5,7 +5,11 @@ import Footer from "@/components/layout/Footer";
 import ProductImageGallery from "@/components/product/ProductImageGallery";
 import ProductInfo from "@/components/product/ProductInfo";
 import RelatedProducts from "@/components/product/RelatedProducts";
-import { allProducts, getProductBySlug } from "@/lib/mock";
+import {
+  fetchCatalogCategories,
+  fetchCatalogProductBySlug,
+  fetchCatalogProducts,
+} from "@/lib/api/catalog";
 
 interface ProductDetailPageProps {
   params: Promise<{
@@ -14,18 +18,30 @@ interface ProductDetailPageProps {
 }
 
 export async function generateStaticParams(): Promise<Array<{ slug: string }>> {
-  return allProducts.map((product) => ({ slug: product.slug }));
+  return [];
 }
 
 export default async function ProductDetailPage({
   params,
 }: ProductDetailPageProps): Promise<ReactElement> {
   const { slug } = await params;
-  const product = getProductBySlug(slug);
+  const [product, categories] = await Promise.all([
+    fetchCatalogProductBySlug(slug),
+    fetchCatalogCategories(),
+  ]);
 
   if (!product) {
     notFound();
   }
+
+  const relatedProducts = (await fetchCatalogProducts({
+    category: product.categorySlug,
+  }))
+    .filter((relatedProduct) => relatedProduct.id !== product.id)
+    .slice(0, 4);
+  const categoryName =
+    categories.find((category) => category.slug === product.categorySlug)?.name ??
+    "Collection";
 
   return (
     <>
@@ -39,12 +55,12 @@ export default async function ProductDetailPage({
           </div>
 
           <div className="lg:col-span-2">
-            <ProductInfo product={product} />
+            <ProductInfo categoryName={categoryName} product={product} />
           </div>
         </div>
       </section>
 
-      <RelatedProducts currentProduct={product} />
+      <RelatedProducts products={relatedProducts} />
       <Footer />
     </>
   );

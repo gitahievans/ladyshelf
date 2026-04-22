@@ -1,7 +1,7 @@
 "use client";
 
 import type { ReactElement } from "react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
 import { Check, Heart, ShoppingBag } from "lucide-react";
@@ -15,7 +15,6 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { categories } from "@/lib/mock";
 import { fadeUpVariant } from "@/lib/utils/animations";
 import { cn } from "@/lib/utils/cn";
 import type { CartItem, Product, ProductVariant } from "@/lib/types";
@@ -23,6 +22,7 @@ import { useCartStore } from "@/stores/cartStore";
 import { useWishlistStore } from "@/stores/wishlistStore";
 
 interface ProductInfoProps {
+  categoryName: string;
   product: Product;
 }
 
@@ -43,6 +43,7 @@ function getStockMessage(selectedVariant: ProductVariant | null): string {
 }
 
 export default function ProductInfo({
+  categoryName,
   product,
 }: ProductInfoProps): ReactElement {
   const reducedMotion = useReducedMotion();
@@ -70,12 +71,6 @@ export default function ProductInfo({
     };
   }, [isAdded]);
 
-  const categoryName = useMemo(
-    () =>
-      categories.find((category) => category.slug === product.categorySlug)?.name ??
-      "Collection",
-    [product.categorySlug],
-  );
   const stockMessage = getStockMessage(selectedVariant);
   const isUnavailable = !selectedVariant || selectedVariant.stock === 0;
 
@@ -194,7 +189,9 @@ export default function ProductInfo({
             ? "border-gold bg-gold text-obsidian"
             : "border-border-warm bg-ivory text-text-secondary hover:border-gold hover:text-obsidian",
         )}
-        onClick={(): void => toggleWishlist(product.id)}
+        onClick={(): void => {
+          void toggleWishlist(product.id);
+        }}
         type="button"
       >
         <Heart className={cn("size-4", isWishlisted ? "fill-current" : "")} />

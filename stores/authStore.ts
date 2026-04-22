@@ -1,93 +1,173 @@
 "use client";
 
 import { create } from "zustand";
-import { createJSONStorage, persist } from "zustand/middleware";
 
-import { mockUsers } from "@/lib/mock/users-orders";
 import type { AuthStore, RegisterPayload, User } from "@/lib/types";
+import { fetchCurrentUser, fetchCurrentUserFromSession } from "@/lib/api/account";
+import { createClient } from "@/lib/supabase/client";
 
-const MOCK_ERROR_EMAIL = "error@test.com";
+const DEFAULT_REDIRECT_PATH = "/auth/callback";
+const supabase = createClient();
 
-function delay(duration: number): Promise<void> {
-  return new Promise((resolve) => {
-    setTimeout(resolve, duration);
-  });
+function getRedirectUrl(path: string = DEFAULT_REDIRECT_PATH): string {
+  if (typeof window === "undefined") {
+    return path;
+  }
+
+  return new URL(path, window.location.origin).toString();
 }
 
-function createTemporaryUser(data: RegisterPayload): User {
-  return {
-    id: `temp-user-${Date.now()}`,
-    email: data.email,
-    firstName: data.firstName,
-    lastName: data.lastName,
-    phone: data.phone,
-    addresses: [],
-    createdAt: new Date().toISOString(),
-  };
+async function resolveUser(): Promise<User | null> {
+  return fetchCurrentUserFromSession();
 }
 
-export const useAuthStore = create<AuthStore>()(
-  persist(
-    (set) => ({
+function normalizeAuthError(error: unknown): Error {
+  if (!(error instanceof Error)) {
+    return new Error("Something went wrong. Please try again.");
+  }
+
+  if (error.message === "Invalid login credentials") {
+    return new Error(
+      "We couldn't sign you in with that email and password. If you don't have an account yet, please create one first.",
+    );
+  }
+
+  return error;
+}
+
+export const useAuthStore = create<AuthStore>()((set) => ({
+  user: null,
+  isAuthenticated: false,
+  isInitialized: false,
+  isLoading: false,
+  initialize: async (): Promise<void> => {
+    try {
+      const user = await resolveUser();
+
+      set({
+        user,
+        isAuthenticated: Boolean(user),
+        isInitialized: true,
+        isLoading: false,
+      });
+    } catch {
+      set({
+        user: null,
+        isAuthenticated: false,
+        isInitialized: true,
+        isLoading: false,
+      });
+    }
+  },
+  login: async (email, password): Promise<void> => {
+    set({ isLoading: true });
+
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (error) {
+      set({ isLoading: false });
+      throw normalizeAuthError(error);
+    }
+
+    const user = await resolveUser();
+    set({
+      user,
+      isAuthenticated: Boolean(user),
+      isInitialized: true,
+      isLoading: false,
+    });
+  },
+  loginWithGoogle: async (): Promise<void> => {
+    set({ isLoading: true });
+
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: getRedirectUrl(),
+      },
+    });
+
+    if (error) {
+      set({ isLoading: false });
+      throw normalizeAuthError(error);
+    }
+  },
+  logout: async (): Promise<void> => {
+    set({ isLoading: true });
+    await supabase.auth.signOut();
+    set({
       user: null,
       isAuthenticated: false,
+      isInitialized: true,
       isLoading: false,
-      login: async (email, password): Promise<void> => {
-        void email;
-        void password;
-        set({ isLoading: true });
-        await delay(800);
+    });
+  },
+  register: async (data): Promise<{ emailConfirmationRequired: boolean }> => {
+    set({ isLoading: true });
 
-        if (email.toLowerCase() === MOCK_ERROR_EMAIL) {
-          set({
-            user: null,
-            isAuthenticated: false,
-            isLoading: false,
-          });
-          throw new Error("Mock authentication failed.");
-        }
+    const { data: response, error } = await supabase.auth.signUp({
+      email: data.email,
+      password: data.password,
+      options: {
+        data: {
+          first_name: data.firstName,
+          last_name: data.lastName,
+          phone: data.phone,
+        },
+        emailRedirectTo: getRedirectUrl(),
+      },
+    });
 
-        set({
-          user: mockUsers[0] ?? null,
-          isAuthenticated: true,
-          isLoading: false,
-        });
-      },
-      logout: (): void => {
-        set({
-          user: null,
-          isAuthenticated: false,
-          isLoading: false,
-        });
-      },
-      register: async (data): Promise<void> => {
-        set({ isLoading: true });
-        await delay(800);
-        set({
-          user: createTemporaryUser(data),
-          isAuthenticated: true,
-          isLoading: false,
-        });
-      },
-    }),
-    {
-      name: "wahi-auth-store",
-      storage: createJSONStorage(() => localStorage),
-      partialize: (state) => {
-        const isTemporaryUser = state.user?.id.startsWith("temp-user-") ?? false;
+    if (error) {
+      set({ isLoading: false });
+      throw normalizeAuthError(error);
+    }
 
-        if (isTemporaryUser) {
-          return {
-            user: null,
-            isAuthenticated: false,
-          };
-        }
+    const emailConfirmationRequired = !response.session;
+    const user = response.session?.access_token
+      ? await fetchCurrentUser(response.session.access_token)
+      : null;
 
-        return {
-          user: state.user,
-          isAuthenticated: state.isAuthenticated,
-        };
-      },
-    },
-  ),
-);
+    set({
+      user,
+      isAuthenticated: Boolean(user),
+      isInitialized: true,
+      isLoading: false,
+    });
+
+    return { emailConfirmationRequired };
+  },
+  requestPasswordReset: async (email: string): Promise<void> => {
+    set({ isLoading: true });
+
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: getRedirectUrl("/auth/callback?next=/auth/update-password&type=recovery"),
+    });
+
+    set({ isLoading: false });
+
+    if (error) {
+      throw normalizeAuthError(error);
+    }
+  },
+  updatePassword: async (password: string): Promise<void> => {
+    set({ isLoading: true });
+    const { error } = await supabase.auth.updateUser({ password });
+
+    if (error) {
+      set({ isLoading: false });
+      throw normalizeAuthError(error);
+    }
+
+    const user = await resolveUser();
+    set({
+      user,
+      isAuthenticated: Boolean(user),
+      isInitialized: true,
+      isLoading: false,
+    });
+  },
+}));

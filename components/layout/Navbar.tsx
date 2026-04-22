@@ -3,7 +3,7 @@
 import { type ReactElement, useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import {
   Heart,
@@ -35,9 +35,11 @@ const navigationLinks: NavigationLink[] = [
 ];
 
 export default function Navbar(): ReactElement {
+  const router = useRouter();
   const totalItems = useCartStore((state) => state.totalItems);
   const toggleCart = useCartStore((state) => state.toggleCart);
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const logout = useAuthStore((state) => state.logout);
   const wishlistCount = useWishlistStore((state) => state.count);
   const pathname = usePathname();
   const reducedMotion = useReducedMotion();
@@ -76,6 +78,11 @@ export default function Navbar(): ReactElement {
   const accountHref = isAuthenticated ? "/account" : "/auth/login";
   const accountLabel = isAuthenticated ? "Account" : "Welcome Back";
   const showOpaqueNavbar = isScrolled || !allowTransparent;
+
+  async function handleLogout(): Promise<void> {
+    await logout();
+    router.push("/");
+  }
 
   return (
     <>
@@ -186,6 +193,17 @@ export default function Navbar(): ReactElement {
                   <LogIn className="size-5" />
                 )}
               </Link>
+              {isAuthenticated ? (
+                <button
+                  className="rounded-full border border-ivory/20 px-4 py-2 font-dm-sans text-caption uppercase tracking-[0.14em] text-ivory transition-colors hover:border-gold hover:text-gold"
+                  onClick={(): void => {
+                    void handleLogout();
+                  }}
+                  type="button"
+                >
+                  Sign Out
+                </button>
+              ) : null}
             </div>
           </div>
         </div>
@@ -237,13 +255,25 @@ export default function Navbar(): ReactElement {
 
               <div className="flex flex-col gap-3">
                 {isAuthenticated ? (
-                  <Link
-                    className="flex h-12 items-center justify-center rounded-full bg-gold px-6 font-dm-sans text-body-sm font-medium text-obsidian"
-                    href="/account"
-                    onClick={(): void => setIsMobileMenuOpen(false)}
-                  >
-                    My Account
-                  </Link>
+                  <>
+                    <Link
+                      className="flex h-12 items-center justify-center rounded-full bg-gold px-6 font-dm-sans text-body-sm font-medium text-obsidian"
+                      href="/account"
+                      onClick={(): void => setIsMobileMenuOpen(false)}
+                    >
+                      My Account
+                    </Link>
+                    <button
+                      className="flex h-12 items-center justify-center rounded-full border border-ivory/20 px-6 font-dm-sans text-body-sm font-medium text-ivory"
+                      onClick={(): void => {
+                        setIsMobileMenuOpen(false);
+                        void handleLogout();
+                      }}
+                      type="button"
+                    >
+                      Sign Out
+                    </button>
+                  </>
                 ) : (
                   <>
                     <Link

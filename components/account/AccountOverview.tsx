@@ -1,6 +1,7 @@
 "use client";
 
 import type { ReactElement } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
 
@@ -10,8 +11,10 @@ import ProfileSummary from "@/components/account/ProfileSummary";
 import RecentOrders from "@/components/account/RecentOrders";
 import Footer from "@/components/layout/Footer";
 import EmptyState from "@/components/shared/EmptyState";
-import { mockOrders } from "@/lib/mock";
+import LoadingSpinner from "@/components/shared/LoadingSpinner";
+import { fetchAccountOrders } from "@/lib/api/orders";
 import { fadeUpVariant, staggerContainer } from "@/lib/utils/animations";
+import type { Order } from "@/lib/types";
 import { useAuthStore } from "@/stores/authStore";
 import { useCartStore } from "@/stores/cartStore";
 import { useWishlistStore } from "@/stores/wishlistStore";
@@ -20,8 +23,19 @@ export default function AccountOverview(): ReactElement {
   const prefersReducedMotion = useReducedMotion();
   const user = useAuthStore((state) => state.user);
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const isInitialized = useAuthStore((state) => state.isInitialized);
   const totalItems = useCartStore((state) => state.totalItems);
   const wishlistCount = useWishlistStore((state) => state.count);
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [isLoadingOrders, setIsLoadingOrders] = useState<boolean>(false);
+
+  if (!isInitialized) {
+    return (
+      <section className="flex min-h-screen items-center justify-center bg-ivory px-6">
+        <LoadingSpinner size="lg" />
+      </section>
+    );
+  }
 
   if (!isAuthenticated || !user) {
     return (
@@ -41,12 +55,38 @@ export default function AccountOverview(): ReactElement {
     );
   }
 
-  const orders = mockOrders
-    .filter((order) => order.userId === user.id)
-    .sort(
-      (first, second) =>
-        new Date(second.createdAt).getTime() - new Date(first.createdAt).getTime(),
-    );
+  useEffect(() => {
+    let isMounted = true;
+
+    setIsLoadingOrders(true);
+
+    void fetchAccountOrders()
+      .then((nextOrders) => {
+        if (!isMounted) {
+          return;
+        }
+
+        setOrders(nextOrders);
+      })
+      .catch(() => {
+        if (!isMounted) {
+          return;
+        }
+
+        setOrders([]);
+      })
+      .finally(() => {
+        if (!isMounted) {
+          return;
+        }
+
+        setIsLoadingOrders(false);
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [user.id]);
 
   return (
     <>
@@ -92,7 +132,7 @@ export default function AccountOverview(): ReactElement {
           </motion.div>
 
           <motion.div variants={fadeUpVariant}>
-            <RecentOrders orders={orders} />
+            {isLoadingOrders ? <LoadingSpinner size="md" /> : <RecentOrders orders={orders} />}
           </motion.div>
         </motion.div>
       </section>

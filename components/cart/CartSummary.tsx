@@ -1,6 +1,6 @@
 import type { ReactElement } from "react";
 import Link from "next/link";
-import { CreditCard, Landmark, Smartphone } from "lucide-react";
+import { Banknote, CreditCard, Smartphone } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { formatPrice } from "@/lib/utils/format";
@@ -10,16 +10,10 @@ interface CartSummaryProps {
   itemCount: number;
 }
 
-const DELIVERY_THRESHOLD = 5000;
-const DELIVERY_FEE = 300;
-
 export default function CartSummary({
   subtotal,
   itemCount,
 }: CartSummaryProps): ReactElement {
-  const deliveryFee = subtotal >= DELIVERY_THRESHOLD ? 0 : DELIVERY_FEE;
-  const total = subtotal + deliveryFee;
-
   return (
     <aside className="rounded-2xl border border-border-warm bg-cream p-6 shadow-card lg:sticky lg:top-24">
       <div className="space-y-6">
@@ -45,13 +39,7 @@ export default function CartSummary({
           </div>
           <div className="flex items-center justify-between gap-4">
             <span>Delivery</span>
-            {deliveryFee === 0 ? (
-              <span className="font-medium text-success">Free</span>
-            ) : (
-              <span className="font-medium text-obsidian">
-                {formatPrice(deliveryFee)}
-              </span>
-            )}
+            <span className="font-medium text-obsidian">Calculated at checkout</span>
           </div>
         </div>
 
@@ -63,11 +51,11 @@ export default function CartSummary({
               Total
             </p>
             <p className="font-dm-sans text-body-sm text-text-secondary">
-              Including delivery
+              Delivery confirmed by location
             </p>
           </div>
           <p className="font-dm-sans text-h4 font-semibold text-obsidian">
-            {formatPrice(total)}
+            {formatPrice(subtotal)}
           </p>
         </div>
 
@@ -99,11 +87,11 @@ export default function CartSummary({
             </div>
             <div className="inline-flex min-h-11 items-center gap-2 rounded-full border border-border-warm bg-ivory px-4 py-2 font-dm-sans text-body-sm text-obsidian">
               <CreditCard className="size-4 text-gold" />
-              <span>Visa</span>
+              <span>Visa & Mastercard</span>
             </div>
             <div className="inline-flex min-h-11 items-center gap-2 rounded-full border border-border-warm bg-ivory px-4 py-2 font-dm-sans text-body-sm text-obsidian">
-              <Landmark className="size-4 text-gold" />
-              <span>Mastercard</span>
+              <Banknote className="size-4 text-gold" />
+              <span>M-Pesa on Delivery (Rider Areas)</span>
             </div>
           </div>
         </div>

@@ -3,7 +3,6 @@
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
-import { allProducts } from "@/lib/mock";
 import type { CartItem, CartStore } from "@/lib/types";
 
 interface CartStateSlice {
@@ -11,15 +10,8 @@ interface CartStateSlice {
   isOpen: boolean;
 }
 
-const productImageById = new Map(
-  allProducts.map((product) => [product.id, product.images[0] ?? ""]),
-);
-
 function sanitizeCartItems(items: CartItem[]): CartItem[] {
-  return items.map((item) => ({
-    ...item,
-    productImage: productImageById.get(item.productId) ?? item.productImage,
-  }));
+  return items;
 }
 
 function calculateCartTotals(items: CartItem[]): Pick<CartStore, "subtotal" | "totalItems"> {

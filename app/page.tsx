@@ -7,9 +7,17 @@ import HeroCarousel from "@/components/landing/HeroCarousel";
 import LookbookStrip from "@/components/landing/LookbookStrip";
 import NewArrivals from "@/components/landing/NewArrivals";
 import Footer from "@/components/layout/Footer";
-import { categories, featuredProducts, newArrivals } from "@/lib/mock";
+import { fetchCatalogSnapshot } from "@/lib/api/catalog";
 
-export default function Home(): ReactElement {
+export default async function Home(): Promise<ReactElement> {
+  const { categories, products } = await fetchCatalogSnapshot();
+  const featuredProducts = products
+    .filter((product) => product.isFeatured)
+    .slice(0, 8);
+  const newArrivals = products
+    .filter((product) => product.isNewArrival)
+    .slice(0, 8);
+
   return (
     <>
       <HeroCarousel />

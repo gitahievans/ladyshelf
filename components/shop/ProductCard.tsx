@@ -100,7 +100,7 @@ export default function ProductCard({
     event: React.MouseEvent<HTMLButtonElement>,
   ): void {
     event.stopPropagation();
-    toggleWishlist(product.id);
+    void toggleWishlist(product.id);
   }
 
   function handleQuickAddToggle(event: React.MouseEvent<HTMLButtonElement>): void {

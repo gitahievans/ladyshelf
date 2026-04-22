@@ -3,6 +3,7 @@
 import type { FormEvent, ReactElement } from "react";
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { ExternalLink, MapPin, Phone } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,12 +15,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type { DeliveryDetails } from "@/lib/types";
+import type { DeliveryDetails, PickupInfo } from "@/lib/types";
 
 interface DeliveryFormProps {
   onSubmit: (data: DeliveryDetails) => void;
   defaultValues?: Partial<DeliveryDetails>;
   isGuest?: boolean;
+  isSubmitting?: boolean;
+  submitError?: string | null;
+  pickupInfo?: PickupInfo | null;
 }
 
 type DeliveryErrors = Partial<Record<keyof DeliveryDetails, string>>;
@@ -106,10 +110,13 @@ function validateDeliveryDetails(values: DeliveryDetails): DeliveryErrors {
   }
   if (!values.phone.trim())
     errors.phone = "Please add the phone number we should use.";
-  if (!values.county.trim()) errors.county = "Please choose a county.";
-  if (!values.town.trim()) errors.town = "Please add your town.";
-  if (!values.streetAddress.trim())
-    errors.streetAddress = "Please add the street address.";
+
+  if (values.deliveryMethod === "delivery") {
+    if (!values.county.trim()) errors.county = "Please choose a county.";
+    if (!values.town.trim()) errors.town = "Please add your town.";
+    if (!values.streetAddress.trim())
+      errors.streetAddress = "Please add the street address.";
+  }
 
   return errors;
 }
@@ -124,6 +131,9 @@ export default function DeliveryForm({
   onSubmit,
   defaultValues,
   isGuest = false,
+  isSubmitting = false,
+  submitError = null,
+  pickupInfo = null,
 }: DeliveryFormProps): ReactElement {
   const [formValues, setFormValues] = useState<DeliveryDetails>({
     ...initialValues,
@@ -156,8 +166,15 @@ export default function DeliveryForm({
       return;
     }
 
+    const isPickup = formValues.deliveryMethod === "pickup";
+
     onSubmit({
       ...formValues,
+      county: isPickup ? pickupInfo?.county ?? "Nairobi" : formValues.county.trim(),
+      town: isPickup ? pickupInfo?.town ?? "Roysambu" : formValues.town.trim(),
+      streetAddress: isPickup
+        ? pickupInfo?.streetAddress ?? "Lumumba Drive, Roysambu"
+        : formValues.streetAddress.trim(),
       additionalInfo: formValues.additionalInfo?.trim() || undefined,
     });
   }
@@ -177,6 +194,47 @@ export default function DeliveryForm({
         <p className="font-dm-sans text-body-sm text-text-secondary">
           We only ask for what gets your order to the right door.
         </p>
+      </div>
+
+      <div className="space-y-3">
+        <p className="font-dm-sans text-body-sm text-obsidian">
+          Delivery Method
+        </p>
+        <div className="grid gap-3">
+          <button
+            className={
+              formValues.deliveryMethod === "delivery"
+                ? "rounded-2xl border border-gold bg-ivory p-4 text-left transition-colors"
+                : "rounded-2xl border border-border-warm bg-ivory p-4 text-left transition-colors hover:border-gold/60"
+            }
+            onClick={(): void => updateField("deliveryMethod", "delivery")}
+            type="button"
+          >
+            <p className="font-dm-sans text-body-sm font-medium text-obsidian">
+              Standard Delivery
+            </p>
+            <p className="mt-1 font-dm-sans text-body-sm text-text-secondary">
+              Rider delivery in Nairobi and parcel arrangements for the rest of Kenya.
+            </p>
+          </button>
+
+          <button
+            className={
+              formValues.deliveryMethod === "pickup"
+                ? "rounded-2xl border border-gold bg-ivory p-4 text-left transition-colors"
+                : "rounded-2xl border border-border-warm bg-ivory p-4 text-left transition-colors hover:border-gold/60"
+            }
+            onClick={(): void => updateField("deliveryMethod", "pickup")}
+            type="button"
+          >
+            <p className="font-dm-sans text-body-sm font-medium text-obsidian">
+              Pickup from Store
+            </p>
+            <p className="mt-1 font-dm-sans text-body-sm text-text-secondary">
+              Lumumba Drive, Roysambu. Mon-Sat 9am-7pm.
+            </p>
+          </button>
+        </div>
       </div>
 
       <div className="grid gap-5 md:grid-cols-2">
@@ -234,67 +292,112 @@ export default function DeliveryForm({
           <FieldError message={errors.phone} />
         </div>
 
-        <div className="space-y-2">
-          <Label className="font-dm-sans text-body-sm text-obsidian">
-            County
-          </Label>
-          <Select
-            onValueChange={(value): void => updateField("county", value)}
-            value={formValues.county}
-          >
-            <SelectTrigger className={fieldClassName}>
-              <SelectValue placeholder="Choose county" />
-            </SelectTrigger>
-            <SelectContent className="border border-border-warm bg-ivory text-obsidian">
-              {kenyanCounties.map((county) => (
-                <SelectItem
-                  className="font-dm-sans text-body-sm focus:bg-cream focus:text-obsidian"
-                  key={county}
-                  value={county}
-                >
-                  {county}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <FieldError message={errors.county} />
-        </div>
+        {formValues.deliveryMethod === "delivery" ? (
+          <>
+            <div className="space-y-2">
+              <Label className="font-dm-sans text-body-sm text-obsidian">
+                County
+              </Label>
+              <Select
+                onValueChange={(value): void => updateField("county", value)}
+                value={formValues.county}
+              >
+                <SelectTrigger className={fieldClassName}>
+                  <SelectValue placeholder="Choose county" />
+                </SelectTrigger>
+                <SelectContent className="border border-border-warm bg-ivory text-obsidian">
+                  {kenyanCounties.map((county) => (
+                    <SelectItem
+                      className="font-dm-sans text-body-sm focus:bg-cream focus:text-obsidian"
+                      key={county}
+                      value={county}
+                    >
+                      {county}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <FieldError message={errors.county} />
+            </div>
 
-        <div className="space-y-2">
-          <Label
-            className="font-dm-sans text-body-sm text-obsidian"
-            htmlFor="town"
-          >
-            Town
-          </Label>
-          <Input
-            className={fieldClassName}
-            id="town"
-            onChange={(event): void => updateField("town", event.target.value)}
-            placeholder="Westlands"
-            value={formValues.town}
-          />
-          <FieldError message={errors.town} />
-        </div>
+            <div className="space-y-2">
+              <Label
+                className="font-dm-sans text-body-sm text-obsidian"
+                htmlFor="town"
+              >
+                Town
+              </Label>
+              <Input
+                className={fieldClassName}
+                id="town"
+                onChange={(event): void => updateField("town", event.target.value)}
+                placeholder="Westlands"
+                value={formValues.town}
+              />
+              <FieldError message={errors.town} />
+            </div>
 
-        <div className="space-y-2 md:col-span-2">
-          <Label
-            className="font-dm-sans text-body-sm text-obsidian"
-            htmlFor="streetAddress"
-          >
-            Street Address
-          </Label>
-          <Input
-            className={fieldClassName}
-            id="streetAddress"
-            onChange={(event): void =>
-              updateField("streetAddress", event.target.value)
-            }
-            placeholder="House number, road, estate"
-            value={formValues.streetAddress}
-          />
-          <FieldError message={errors.streetAddress} />
-        </div>
+            <div className="space-y-2 md:col-span-2">
+              <Label
+                className="font-dm-sans text-body-sm text-obsidian"
+                htmlFor="streetAddress"
+              >
+                Street Address
+              </Label>
+              <Input
+                className={fieldClassName}
+                id="streetAddress"
+                onChange={(event): void =>
+                  updateField("streetAddress", event.target.value)
+                }
+                placeholder="House number, road, estate"
+                value={formValues.streetAddress}
+              />
+              <FieldError message={errors.streetAddress} />
+            </div>
+          </>
+        ) : (
+          <div className="rounded-2xl border border-bark/20 bg-ivory p-5 md:col-span-2">
+            <div className="space-y-3">
+              <p className="font-dm-sans text-label uppercase tracking-[0.18em] text-gold">
+                Pickup Details
+              </p>
+              <div className="space-y-2 font-dm-sans text-body-sm text-text-secondary">
+                <p className="font-medium text-obsidian">
+                  {pickupInfo?.name ?? "Wahi Fashion Roysambu Pickup"}
+                </p>
+                <p className="flex items-start gap-2">
+                  <MapPin className="mt-0.5 size-4 shrink-0 text-gold" />
+                  <span>
+                    {pickupInfo?.streetAddress ?? "Lumumba Drive, Roysambu"},{" "}
+                    {pickupInfo?.town ?? "Roysambu"}, {pickupInfo?.county ?? "Nairobi"}
+                  </span>
+                </p>
+                <p className="flex items-start gap-2">
+                  <Phone className="mt-0.5 size-4 shrink-0 text-gold" />
+                  <span>{pickupInfo?.contactPhone ?? "+254711000000"}</span>
+                </p>
+                <p>
+                  {pickupInfo?.openingHours ?? "Mon-Sat 9am-7pm"}.
+                  Collect within {pickupInfo?.collectionWindowHours ?? 72} hours after
+                  confirmation.
+                </p>
+                {pickupInfo?.notes ? <p>{pickupInfo.notes}</p> : null}
+                {pickupInfo?.mapsUrl ? (
+                  <Link
+                    className="inline-flex items-center gap-2 font-medium text-gold transition-colors hover:text-bark"
+                    href={pickupInfo.mapsUrl}
+                    rel="noreferrer"
+                    target="_blank"
+                  >
+                    Open in Google Maps
+                    <ExternalLink className="size-4" />
+                  </Link>
+                ) : null}
+              </div>
+            </div>
+          </div>
+        )}
 
         <div className="space-y-2 md:col-span-2">
           <Label
@@ -315,46 +418,11 @@ export default function DeliveryForm({
         </div>
       </div>
 
-      <div className="space-y-3">
-        <p className="font-dm-sans text-body-sm text-obsidian">
-          Delivery Method
-        </p>
-        <div className="grid gap-3">
-          <button
-            className={
-              formValues.deliveryMethod === "delivery"
-                ? "rounded-2xl border border-gold bg-ivory p-4 text-left transition-colors"
-                : "rounded-2xl border border-border-warm bg-ivory p-4 text-left transition-colors hover:border-gold/60"
-            }
-            onClick={(): void => updateField("deliveryMethod", "delivery")}
-            type="button"
-          >
-            <p className="font-dm-sans text-body-sm font-medium text-obsidian">
-              Standard Delivery
-            </p>
-            <p className="mt-1 font-dm-sans text-body-sm text-text-secondary">
-              2-3 business days within Nairobi, 3-5 days upcountry.
-            </p>
-          </button>
-
-          <button
-            className={
-              formValues.deliveryMethod === "pickup"
-                ? "rounded-2xl border border-gold bg-ivory p-4 text-left transition-colors"
-                : "rounded-2xl border border-border-warm bg-ivory p-4 text-left transition-colors hover:border-gold/60"
-            }
-            onClick={(): void => updateField("deliveryMethod", "pickup")}
-            type="button"
-          >
-            <p className="font-dm-sans text-body-sm font-medium text-obsidian">
-              Pickup from Store
-            </p>
-            <p className="mt-1 font-dm-sans text-body-sm text-text-secondary">
-              Lumumba Drive, Roysambu. Mon-Sat 9am-7pm.
-            </p>
-          </button>
+      {submitError ? (
+        <div className="rounded-2xl border border-error/20 bg-error/10 px-4 py-3">
+          <p className="font-dm-sans text-body-sm text-error">{submitError}</p>
         </div>
-      </div>
+      ) : null}
 
       {isGuest ? (
         <div className="rounded-2xl border border-bark/20 bg-ivory p-4">
@@ -373,9 +441,10 @@ export default function DeliveryForm({
 
       <Button
         className="h-12 w-full rounded-full bg-gold font-dm-sans text-body-sm font-medium text-obsidian hover:bg-sand"
+        disabled={isSubmitting}
         type="submit"
       >
-        Continue to Payment
+        {isSubmitting ? "Checking Delivery Rules..." : "Continue to Payment"}
       </Button>
     </form>
   );

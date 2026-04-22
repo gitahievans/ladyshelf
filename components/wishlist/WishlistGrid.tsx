@@ -22,7 +22,9 @@ export default function WishlistGrid({
         {products.length > 0 ? (
           <button
             className="inline-flex min-h-11 items-center gap-2 rounded-full border border-border-warm px-4 py-2 font-dm-sans text-caption uppercase tracking-[0.16em] text-text-secondary transition-colors hover:border-gold hover:text-obsidian"
-            onClick={clearWishlist}
+            onClick={(): void => {
+              void clearWishlist();
+            }}
             type="button"
           >
             <HeartOff className="size-4" />

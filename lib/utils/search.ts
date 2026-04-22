@@ -1,6 +1,6 @@
-import { categories } from "@/lib/mock";
 import { getFilteredProducts } from "@/lib/utils/filter";
 import type {
+  Category,
   Product,
   SearchFiltersState,
   SearchResultGroup,
@@ -9,7 +9,7 @@ import type {
 
 const EMPTY_QUERY_RESULT_LIMIT = 8;
 
-function getSearchableText(product: Product): string {
+function getSearchableText(product: Product, categories: Category[]): string {
   const categoryName =
     categories.find((category) => category.slug === product.categorySlug)?.name ?? "";
   const colors = product.variants.map((variant) => variant.color).join(" ");
@@ -30,7 +30,7 @@ function getSearchableText(product: Product): string {
     .toLowerCase();
 }
 
-function getMatchScore(product: Product, query: string): number {
+function getMatchScore(product: Product, query: string, searchableText: string): number {
   if (!query) {
     return 0;
   }
@@ -38,7 +38,7 @@ function getMatchScore(product: Product, query: string): number {
   const normalizedName = normalizeSearchQuery(product.name);
   const normalizedBrand = normalizeSearchQuery(product.brand);
   const normalizedTags = product.tags.map((tag) => normalizeSearchQuery(tag));
-  const normalizedText = normalizeSearchQuery(getSearchableText(product));
+  const normalizedText = normalizeSearchQuery(searchableText);
   const tokens = query.split(" ").filter(Boolean);
   let score = 0;
 
@@ -87,13 +87,18 @@ export function normalizeSearchQuery(query: string): string {
   return query.trim().toLowerCase().replace(/\s+/g, " ");
 }
 
-export function scoreProductMatch(product: Product, normalizedQuery: string): number {
-  return getMatchScore(product, normalizedQuery);
+export function scoreProductMatch(
+  product: Product,
+  normalizedQuery: string,
+  categories: Category[],
+): number {
+  return getMatchScore(product, normalizedQuery, getSearchableText(product, categories));
 }
 
 export function getSearchSuggestions(
   products: Product[],
   query: string,
+  categories: Category[],
 ): string[] {
   const normalizedQuery = normalizeSearchQuery(query);
   const suggestionPool = new Set<string>();
@@ -103,6 +108,7 @@ export function getSearchSuggestions(
     suggestionPool.add(product.categorySlug.replaceAll("-", " "));
     product.tags.forEach((tag) => suggestionPool.add(tag));
   });
+  categories.forEach((category) => suggestionPool.add(category.name));
 
   return [...suggestionPool]
     .filter((suggestion) =>
@@ -116,6 +122,7 @@ export function getSearchSuggestions(
 
 export function searchProducts(
   products: Product[],
+  categories: Category[],
   query: string,
   filters: SearchFiltersState,
   sortBy: UIStore["sortBy"],
@@ -135,7 +142,7 @@ export function searchProducts(
   return filteredProducts
     .map((product) => ({
       product,
-      score: scoreProductMatch(product, normalizedQuery),
+      score: scoreProductMatch(product, normalizedQuery, categories),
     }))
     .filter(({ score }) => score > 0)
     .sort((first, second) => {
@@ -150,12 +157,13 @@ export function searchProducts(
 
 export function getSearchResultGroups(
   products: Product[],
+  categories: Category[],
   query: string,
 ): SearchResultGroup[] {
   return [
     {
       title: "Suggested searches",
-      items: getSearchSuggestions(products, query),
+      items: getSearchSuggestions(products, query, categories),
     },
     {
       title: "Collections",

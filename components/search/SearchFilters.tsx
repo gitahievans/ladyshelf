@@ -1,10 +1,18 @@
 import type { ReactElement } from "react";
 
-import { categories, getAllColors } from "@/lib/mock";
 import { cn } from "@/lib/utils/cn";
-import type { BadgeType, SearchFiltersState, Size, UIStore } from "@/lib/types";
+import type {
+  BadgeType,
+  Category,
+  SearchFiltersState,
+  Size,
+  UIStore,
+} from "@/lib/types";
+import type { CatalogColorOption } from "@/lib/utils/catalog";
 
 interface SearchFiltersProps {
+  categories: Category[];
+  colors: CatalogColorOption[];
   filters: SearchFiltersState;
   sortBy: UIStore["sortBy"];
   onFiltersChange: (filters: SearchFiltersState) => void;
@@ -20,7 +28,6 @@ const sortOptions: Array<{ label: string; value: UIStore["sortBy"] }> = [
   { label: "Price: High to Low", value: "price-desc" },
   { label: "Bestsellers", value: "bestseller" },
 ];
-const colors = getAllColors();
 
 function toggleStringValue(values: string[], value: string): string[] {
   return values.includes(value)
@@ -29,6 +36,8 @@ function toggleStringValue(values: string[], value: string): string[] {
 }
 
 export default function SearchFilters({
+  categories,
+  colors,
   filters,
   sortBy,
   onFiltersChange,

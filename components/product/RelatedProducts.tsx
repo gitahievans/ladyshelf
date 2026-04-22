@@ -2,25 +2,16 @@ import type { ReactElement } from "react";
 
 import ProductCard from "@/components/shop/ProductCard";
 import SectionHeader from "@/components/shared/SectionHeader";
-import { allProducts } from "@/lib/mock";
 import type { Product } from "@/lib/types";
 
 interface RelatedProductsProps {
-  currentProduct: Product;
+  products: Product[];
 }
 
 export default function RelatedProducts({
-  currentProduct,
+  products,
 }: RelatedProductsProps): ReactElement | null {
-  const relatedProducts = allProducts
-    .filter(
-      (product) =>
-        product.categorySlug === currentProduct.categorySlug &&
-        product.id !== currentProduct.id,
-    )
-    .slice(0, 4);
-
-  if (relatedProducts.length === 0) {
+  if (products.length === 0) {
     return null;
   }
 
@@ -30,7 +21,7 @@ export default function RelatedProducts({
         <SectionHeader title="You May Also Like" />
 
         <div className="flex gap-4 overflow-x-auto pb-2 snap-x snap-mandatory [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden lg:grid lg:grid-cols-4 lg:overflow-visible">
-          {relatedProducts.map((product) => (
+          {products.map((product) => (
             <div
               className="min-w-[80%] snap-start sm:min-w-[48%] lg:min-w-0"
               key={product.id}

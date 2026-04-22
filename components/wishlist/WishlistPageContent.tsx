@@ -1,21 +1,78 @@
 "use client";
 
 import type { ReactElement } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 
 import Footer from "@/components/layout/Footer";
 import EmptyState from "@/components/shared/EmptyState";
-import { allProducts } from "@/lib/mock";
+import LoadingSpinner from "@/components/shared/LoadingSpinner";
+import { fetchCatalogProducts } from "@/lib/api/catalog";
+import type { Product } from "@/lib/types";
+import { useAuthStore } from "@/stores/authStore";
 import { useWishlistStore } from "@/stores/wishlistStore";
 
 import WishlistGrid from "./WishlistGrid";
 import WishlistHeader from "./WishlistHeader";
 
 export default function WishlistPageContent(): ReactElement {
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const isInitialized = useAuthStore((state) => state.isInitialized);
+  const isLoaded = useWishlistStore((state) => state.isLoaded);
   const productIds = useWishlistStore((state) => state.productIds);
-  const products = productIds
-    .map((productId) => allProducts.find((product) => product.id === productId))
-    .filter((product) => product !== undefined);
+  const syncWishlist = useWishlistStore((state) => state.syncWishlist);
+  const [catalogProducts, setCatalogProducts] = useState<Product[]>([]);
+  const [isLoadingCatalog, setIsLoadingCatalog] = useState<boolean>(true);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    void fetchCatalogProducts().then((products) => {
+      if (!isMounted) {
+        return;
+      }
+
+      setCatalogProducts(products);
+      setIsLoadingCatalog(false);
+    }).catch(() => {
+      if (!isMounted) {
+        return;
+      }
+
+      setCatalogProducts([]);
+      setIsLoadingCatalog(false);
+    });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!isInitialized || !isAuthenticated) {
+      return;
+    }
+
+    void syncWishlist();
+  }, [isAuthenticated, isInitialized, syncWishlist]);
+
+  const products = useMemo(
+    () =>
+      productIds
+        .map((productId) =>
+          catalogProducts.find((product) => product.id === productId),
+        )
+        .filter((product): product is Product => product !== undefined),
+    [catalogProducts, productIds],
+  );
+
+  if (!isInitialized || (isAuthenticated && !isLoaded) || isLoadingCatalog) {
+    return (
+      <section className="flex min-h-screen items-center justify-center bg-ivory px-6">
+        <LoadingSpinner size="lg" />
+      </section>
+    );
+  }
 
   return (
     <>
@@ -38,7 +95,7 @@ export default function WishlistPageContent(): ReactElement {
               ctaHref="/shop"
               ctaLabel="Browse the Collection"
               description="Save your favourite looks from the collection and they will wait for you here."
-              title="No pieces saved yet"
+              title={isAuthenticated ? "No saved pieces yet" : "No pieces saved yet"}
             />
           )}
         </div>

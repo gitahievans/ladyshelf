@@ -3,7 +3,6 @@
 import type { FormEvent, ReactElement } from "react";
 import { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { motion, useReducedMotion } from "framer-motion";
 import { Eye, EyeOff } from "lucide-react";
 
@@ -137,8 +136,8 @@ function PasswordStrengthBar({ password }: { password: string }): ReactElement {
 }
 
 export default function RegisterForm(): ReactElement {
-  const router = useRouter();
   const register = useAuthStore((state) => state.register);
+  const loginWithGoogle = useAuthStore((state) => state.loginWithGoogle);
   const isLoading = useAuthStore((state) => state.isLoading);
 
   const [values, setValues] = useState<RegisterValues>({
@@ -153,6 +152,8 @@ export default function RegisterForm(): ReactElement {
   const [isPasswordVisible, setIsPasswordVisible] = useState<boolean>(false);
   const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] =
     useState<boolean>(false);
+  const [submitError, setSubmitError] = useState<string>("");
+  const [successMessage, setSuccessMessage] = useState<string>("");
 
   function updateField<K extends keyof RegisterValues>(
     key: K,
@@ -160,6 +161,7 @@ export default function RegisterForm(): ReactElement {
   ): void {
     setValues((current) => ({ ...current, [key]: value }));
     setErrors((current) => ({ ...current, [key]: undefined }));
+    setSubmitError("");
   }
 
   async function handleSubmit(
@@ -173,15 +175,42 @@ export default function RegisterForm(): ReactElement {
       return;
     }
 
-    await register({
-      firstName: values.firstName.trim(),
-      lastName: values.lastName.trim(),
-      email: values.email.trim(),
-      phone: values.phone.trim() || undefined,
-      password: values.password,
-    });
+    try {
+      const result = await register({
+        firstName: values.firstName.trim(),
+        lastName: values.lastName.trim(),
+        email: values.email.trim(),
+        phone: values.phone.trim() || undefined,
+        password: values.password,
+      });
 
-    router.push("/");
+      setSubmitError("");
+      setSuccessMessage(
+        result.emailConfirmationRequired
+          ? "Your account has been created. Please check your email to confirm your account before signing in."
+          : "Your account is ready. You can continue into Wahi now.",
+      );
+    } catch (error) {
+      setSuccessMessage("");
+      setSubmitError(
+        error instanceof Error
+          ? error.message
+          : "We couldn't create your account right now.",
+      );
+    }
+  }
+
+  async function handleGoogleSignIn(): Promise<void> {
+    try {
+      setSubmitError("");
+      await loginWithGoogle();
+    } catch (error) {
+      setSubmitError(
+        error instanceof Error
+          ? error.message
+          : "Google sign-in is unavailable right now.",
+      );
+    }
   }
 
   return (
@@ -363,6 +392,48 @@ export default function RegisterForm(): ReactElement {
             ) : (
               "Join Wahi"
             )}
+          </Button>
+        </div>
+
+        {successMessage ? (
+          <div className="rounded-lg border border-success/30 bg-success/10 px-4 py-4 text-left shadow-card">
+            <p className="font-dm-sans text-label uppercase tracking-[0.16em] text-success">
+              Check Your Email
+            </p>
+            <p className="mt-2 font-dm-sans text-body-sm text-success">
+              {successMessage}
+            </p>
+          </div>
+        ) : null}
+
+        {submitError ? (
+          <p className="rounded-lg border border-error/20 bg-error/10 px-4 py-3 font-dm-sans text-body-sm text-error">
+            {submitError}
+          </p>
+        ) : null}
+
+        <div className="space-y-4">
+          <div className="flex items-center gap-4">
+            <div className="h-px flex-1 bg-border-warm" />
+            <span className="font-dm-sans text-caption uppercase tracking-[0.16em] text-text-muted">
+              or
+            </span>
+            <div className="h-px flex-1 bg-border-warm" />
+          </div>
+
+          <Button
+            className="h-12 w-full rounded-lg border border-border-warm bg-transparent font-dm-sans text-body-sm font-medium text-obsidian hover:border-gold hover:bg-cream"
+            disabled={isLoading}
+            onClick={(): void => {
+              void handleGoogleSignIn();
+            }}
+            type="button"
+            variant="ghost"
+          >
+            <span className="flex items-center justify-center gap-3">
+              <span className="text-base font-semibold">G</span>
+              Continue with Google
+            </span>
           </Button>
         </div>
       </form>

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import type { ReactElement, ReactNode } from "react";
 import { Cormorant_Garamond, DM_Sans } from "next/font/google";
 
+import AuthSessionBridge from "@/components/auth/AuthSessionBridge";
 import AppShell from "@/components/layout/AppShell";
 
 import "./globals.css";
@@ -41,6 +42,7 @@ export default function RootLayout({
         suppressHydrationWarning
         className="min-h-full bg-ivory text-obsidian"
       >
+        <AuthSessionBridge />
         <AppShell>{children}</AppShell>
       </body>
     </html>
