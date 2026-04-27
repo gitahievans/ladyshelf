@@ -151,7 +151,7 @@ export default function Navbar(): ReactElement {
                 className="h-12 w-auto object-contain xl:h-14"
                 height={88}
                 priority
-                src={brandMedia.logo}
+                src={brandMedia.logoWhite}
                 width={244}
               />
             </Link>
@@ -163,7 +163,7 @@ export default function Navbar(): ReactElement {
               className="h-10 w-auto object-contain"
               height={72}
               priority
-              src={brandMedia.logo}
+              src={brandMedia.logoWhite}
               width={188}
             />
           </Link>

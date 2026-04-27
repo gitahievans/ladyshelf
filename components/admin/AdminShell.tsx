@@ -1,6 +1,7 @@
 "use client";
 
 import type { ReactElement, ReactNode } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -15,6 +16,7 @@ import {
   Wallet,
 } from "lucide-react";
 
+import { brandMedia } from "@/lib/mock/media";
 import { cn } from "@/lib/utils/cn";
 import type { AdminPermissionSet, AdminStaffUser } from "@/lib/types";
 
@@ -57,12 +59,17 @@ export default function AdminShell({
     <div className="min-h-screen bg-cream">
       <div className="min-h-screen flex-col lg:grid lg:grid-cols-[280px_minmax(0,1fr)]">
         <aside className="border-b border-border-warm bg-obsidian px-6 py-6 text-ivory lg:col-span-1 lg:border-r lg:border-b-0 lg:px-8">
-          <Link href="/admin" className="inline-flex items-center gap-3">
-            <span className="font-cormorant text-h3 tracking-widest text-ivory">
-              WAHI
-            </span>
-            <span className="font-dm-sans text-caption uppercase tracking-[0.18em] text-gold">
-              Admin
+          <Link href="/admin" className="inline-flex flex-col items-start gap-3">
+            <Image
+              alt="Wahi Fashion logo"
+              className="h-12 w-auto object-contain"
+              height={72}
+              priority
+              src={brandMedia.logoWhite}
+              width={200}
+            />
+            <span className="font-dm-sans text-caption uppercase tracking-[0.22em] text-gold">
+              Admin Dashboard
             </span>
           </Link>
           <nav className="mt-8 flex flex-col gap-2">

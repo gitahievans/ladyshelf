@@ -42,7 +42,7 @@ export default function Footer(): ReactElement {
                 alt="Wahi Fashion logo"
                 className="h-12 w-auto object-contain"
                 height={72}
-                src={brandMedia.logo}
+                src={brandMedia.logoWhite}
                 width={200}
               />
             </Link>
