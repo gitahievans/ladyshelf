@@ -69,8 +69,12 @@ function buildDeliveryDefaults(
 
 function StepIndicator({
   currentStep,
+  onStepClick,
+  isStepAvailable,
 }: {
   currentStep: CheckoutStep;
+  onStepClick?: (step: CheckoutStep) => void;
+  isStepAvailable?: (step: CheckoutStep) => boolean;
 }): ReactElement {
   return (
     <div className="rounded-[28px] border border-border-warm bg-cream p-5 shadow-card">
@@ -78,30 +82,41 @@ function StepIndicator({
         {steps.map((step, index) => {
           const isCompleted = currentStep > step.id;
           const isActive = currentStep === step.id;
+          const isAvailable = isStepAvailable ? isStepAvailable(step.id) : true;
+          const isClickable = Boolean(onStepClick) && isAvailable;
 
           return (
             <div className="flex flex-1 items-center gap-2 sm:gap-4" key={step.id}>
               <div className="flex items-center gap-3">
-                <div
+                <button
                   className={cn(
                     "flex h-10 w-10 items-center justify-center rounded-full border font-dm-sans text-body-sm font-medium transition-colors",
+                    isClickable ? "cursor-pointer" : "cursor-default",
                     isCompleted
                       ? "border-gold bg-gold text-obsidian"
                       : isActive
                         ? "border-gold bg-gold text-obsidian ring-4 ring-gold/20"
                         : "border-border-warm bg-ivory text-text-muted",
+                    isClickable ? "hover:border-gold hover:text-obsidian" : "",
                   )}
+                  disabled={!isClickable}
+                  onClick={(): void => onStepClick?.(step.id)}
+                  type="button"
                 >
                   {step.id}
-                </div>
-                <span
+                </button>
+                <button
                   className={cn(
-                    "hidden font-dm-sans text-body-sm sm:inline",
+                    "hidden font-dm-sans text-body-sm transition-colors sm:inline",
+                    isClickable ? "cursor-pointer hover:text-obsidian" : "cursor-default",
                     isCompleted || isActive ? "text-obsidian" : "text-text-muted",
                   )}
+                  disabled={!isClickable}
+                  onClick={(): void => onStepClick?.(step.id)}
+                  type="button"
                 >
                   {step.label}
-                </span>
+                </button>
               </div>
               {index < steps.length - 1 ? (
                 <div
@@ -131,6 +146,8 @@ export default function CheckoutPage(): ReactElement | null {
 
   const [currentStep, setCurrentStep] = useState<CheckoutStep>(1);
   const [deliveryDetails, setDeliveryDetails] = useState<DeliveryDetails | null>(null);
+  const [deliveryPreviewDetails, setDeliveryPreviewDetails] =
+    useState<DeliveryDetails | null>(null);
   const [checkoutQuote, setCheckoutQuote] = useState<CheckoutQuote | null>(null);
   const [selectedPayment, setSelectedPayment] =
     useState<CheckoutPaymentSelection | null>(null);
@@ -175,6 +192,77 @@ export default function CheckoutPage(): ReactElement | null {
   const displayedTotal = checkoutQuote?.total ?? subtotal;
   const showParcelDeliveryConfirmation = checkoutQuote?.deliveryMode === "parcel";
 
+  function isStepAvailable(step: CheckoutStep): boolean {
+    if (step === 1) {
+      return true;
+    }
+
+    if (step === 2) {
+      return checkoutQuote !== null;
+    }
+
+    if (step === 3) {
+      return (
+        deliveryDetails !== null &&
+        checkoutQuote !== null &&
+        selectedPayment !== null
+      );
+    }
+
+    return confirmedOrder !== null;
+  }
+
+  function handleStepClick(step: CheckoutStep): void {
+    if (!isStepAvailable(step)) {
+      return;
+    }
+
+    setCurrentStep(step);
+  }
+
+  useEffect(() => {
+    if (currentStep !== 1 || !deliveryPreviewDetails || items.length === 0) {
+      return;
+    }
+
+    const isPickup = deliveryPreviewDetails.deliveryMethod === "pickup";
+    const hasEnoughDetails = isPickup
+      ? Boolean(deliveryPreviewDetails.fullName && deliveryPreviewDetails.email && deliveryPreviewDetails.phone)
+      : Boolean(
+          deliveryPreviewDetails.fullName &&
+            deliveryPreviewDetails.email &&
+            deliveryPreviewDetails.phone &&
+            deliveryPreviewDetails.streetAddress &&
+            deliveryPreviewDetails.county &&
+            deliveryPreviewDetails.town &&
+            deliveryPreviewDetails.latitude != null &&
+            deliveryPreviewDetails.longitude != null,
+        );
+
+    if (!hasEnoughDetails) {
+      setCheckoutQuote(null);
+      return;
+    }
+
+    const timeoutId = window.setTimeout((): void => {
+      void (async (): Promise<void> => {
+        try {
+          const nextQuote = await fetchCheckoutQuote({
+            cartItems: items,
+            deliveryDetails: deliveryPreviewDetails,
+          });
+          setCheckoutQuote(nextQuote);
+        } catch {
+          setCheckoutQuote(null);
+        }
+      })();
+    }, 350);
+
+    return () => {
+      window.clearTimeout(timeoutId);
+    };
+  }, [currentStep, deliveryPreviewDetails, items]);
+
   useEffect((): void => {
     if (items.length > 0) {
       return;
@@ -187,7 +275,11 @@ export default function CheckoutPage(): ReactElement | null {
 
     try {
       const parsedOrder = JSON.parse(storedOrder) as Order;
-      if (!confirmedOrder && currentStep !== 4) {
+      const shouldDeferConfirmation =
+        parsedOrder.paymentTiming === "prepay" &&
+        parsedOrder.paymentStatus !== "paid";
+
+      if (!confirmedOrder && currentStep !== 4 && !shouldDeferConfirmation) {
         setConfirmedOrder(parsedOrder);
         setCurrentStep(4);
       }
@@ -249,7 +341,6 @@ export default function CheckoutPage(): ReactElement | null {
     return (
       order.paymentTiming === "prepay" &&
       order.paymentMethod === "mpesa" &&
-      !order.manualDeliveryFeeConfirmationRequired &&
       order.orderStatus === "awaiting_payment"
     );
   }
@@ -266,7 +357,6 @@ export default function CheckoutPage(): ReactElement | null {
         failureUrl: buildPaymentReturnUrl(order.orderNumber, "failed"),
       });
 
-      setConfirmedOrder(paymentSession.order);
       window.sessionStorage.setItem(
         PENDING_ORDER_STORAGE_KEY,
         JSON.stringify(paymentSession.order),
@@ -361,14 +451,17 @@ export default function CheckoutPage(): ReactElement | null {
         paymentSelection: selectedPayment,
       });
 
+      if (isOrderEligibleForSasaPay(order)) {
+        window.sessionStorage.setItem(PENDING_ORDER_STORAGE_KEY, JSON.stringify(order));
+        clearCart();
+        await beginSasaPayCheckout(order);
+        return;
+      }
+
       setConfirmedOrder(order);
       setCurrentStep(4);
       window.sessionStorage.setItem(PENDING_ORDER_STORAGE_KEY, JSON.stringify(order));
       clearCart();
-
-      if (isOrderEligibleForSasaPay(order)) {
-        await beginSasaPayCheckout(order);
-      }
     } catch (error) {
       setPlaceOrderError(
         error instanceof Error
@@ -403,12 +496,13 @@ export default function CheckoutPage(): ReactElement | null {
             <h1 className="font-cormorant text-h1 text-obsidian lg:text-display-lg">
               Checkout
             </h1>
-            <p className="max-w-2xl font-dm-sans text-body text-text-secondary">
-              A few clear steps, now guided by live delivery rules.
-            </p>
           </div>
 
-          <StepIndicator currentStep={currentStep} />
+          <StepIndicator
+            currentStep={currentStep}
+            isStepAvailable={isStepAvailable}
+            onStepClick={handleStepClick}
+          />
 
           <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,1.55fr)_320px]">
             <div className="space-y-6">
@@ -417,6 +511,9 @@ export default function CheckoutPage(): ReactElement | null {
                   defaultValues={deliveryDefaults}
                   isGuest={!isAuthenticated}
                   isSubmitting={isResolvingDelivery}
+                  onChange={(data): void => {
+                    setDeliveryPreviewDetails(data);
+                  }}
                   onSubmit={(data): void => {
                     void handleDeliverySubmit(data);
                   }}
@@ -430,6 +527,7 @@ export default function CheckoutPage(): ReactElement | null {
                   availableOptions={checkoutQuote.availablePaymentOptions}
                   defaultSelection={selectedPayment}
                   isSubmitting={isResolvingPayment}
+                  onBack={(): void => setCurrentStep(1)}
                   onSubmit={(selection): void => {
                     void handlePaymentSubmit(selection);
                   }}
@@ -441,6 +539,7 @@ export default function CheckoutPage(): ReactElement | null {
               {currentStep === 3 && deliveryDetails && checkoutQuote && selectedPayment ? (
                 <OrderSummary
                   deliveryDetails={deliveryDetails}
+                  onBack={(): void => setCurrentStep(2)}
                   onEditDelivery={(): void => setCurrentStep(1)}
                   onEditPayment={(): void => setCurrentStep(2)}
                   onPlaceOrder={(): void => {
@@ -499,7 +598,7 @@ export default function CheckoutPage(): ReactElement | null {
                             : displayedDeliveryFee === 0
                               ? "Free"
                               : formatPrice(displayedDeliveryFee)
-                          : "Calculated next"}
+                          : "Fill delivery details"}
                       </span>
                     </div>
                     <div className="h-px w-full bg-border-warm" />

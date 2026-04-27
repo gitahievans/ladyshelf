@@ -10,12 +10,14 @@ import {
   LogIn,
   Menu,
   Search,
+  ShieldCheck,
   ShoppingBag,
   UserRound,
   X,
 } from "lucide-react";
 
 import SearchOverlay from "@/components/search/SearchOverlay";
+import { fetchAdminMeFromSession } from "@/lib/api/admin";
 import { brandMedia } from "@/lib/mock/media";
 import { fadeInVariant } from "@/lib/utils/animations";
 import { cn } from "@/lib/utils/cn";
@@ -45,6 +47,7 @@ export default function Navbar(): ReactElement {
   const reducedMotion = useReducedMotion();
   const [isScrolled, setIsScrolled] = useState<boolean>(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
+  const [hasAdminAccess, setHasAdminAccess] = useState<boolean>(false);
   const [isSearchOpen, setIsSearchOpen] = useState<boolean>(false);
   const allowTransparent = pathname === "/";
 
@@ -60,6 +63,35 @@ export default function Navbar(): ReactElement {
       window.removeEventListener("scroll", handleScroll);
     };
   }, []);
+
+  useEffect((): (() => void) => {
+    let isMounted = true;
+
+    async function resolveAdminAccess(): Promise<void> {
+      if (!isAuthenticated) {
+        setHasAdminAccess(false);
+        return;
+      }
+
+      try {
+        const adminUser = await fetchAdminMeFromSession();
+
+        if (isMounted) {
+          setHasAdminAccess(Boolean(adminUser?.isActive));
+        }
+      } catch {
+        if (isMounted) {
+          setHasAdminAccess(false);
+        }
+      }
+    }
+
+    void resolveAdminAccess();
+
+    return (): void => {
+      isMounted = false;
+    };
+  }, [isAuthenticated]);
 
   useEffect((): (() => void) => {
     function handleResize(): void {
@@ -193,6 +225,15 @@ export default function Navbar(): ReactElement {
                   <LogIn className="size-5" />
                 )}
               </Link>
+              {hasAdminAccess ? (
+                <Link
+                  className="inline-flex h-11 items-center gap-2 rounded-full border border-gold bg-gold px-4 font-dm-sans text-caption font-semibold uppercase tracking-widest text-obsidian transition-colors hover:bg-sand"
+                  href="/admin"
+                >
+                  <ShieldCheck className="size-4" />
+                  Admin
+                </Link>
+              ) : null}
               {isAuthenticated ? (
                 <button
                   className="rounded-full border border-ivory/20 px-4 py-2 font-dm-sans text-caption uppercase tracking-[0.14em] text-ivory transition-colors hover:border-gold hover:text-gold"
@@ -256,6 +297,15 @@ export default function Navbar(): ReactElement {
               <div className="flex flex-col gap-3">
                 {isAuthenticated ? (
                   <>
+                    {hasAdminAccess ? (
+                      <Link
+                        className="flex h-12 items-center justify-center rounded-full border border-gold bg-gold px-6 font-dm-sans text-body-sm font-medium text-obsidian"
+                        href="/admin"
+                        onClick={(): void => setIsMobileMenuOpen(false)}
+                      >
+                        Admin Dashboard
+                      </Link>
+                    ) : null}
                     <Link
                       className="flex h-12 items-center justify-center rounded-full bg-gold px-6 font-dm-sans text-body-sm font-medium text-obsidian"
                       href="/account"

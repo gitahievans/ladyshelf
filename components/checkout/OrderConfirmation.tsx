@@ -74,7 +74,7 @@ export default function OrderConfirmation({
   const shouldOfferPaymentRetry =
     order.paymentTiming === "prepay" &&
     !order.manualDeliveryFeeConfirmationRequired &&
-    (order.paymentStatus === "pending" || order.paymentStatus === "failed") &&
+    order.paymentStatus === "failed" &&
     typeof onRetryPayment === "function";
 
   return (
@@ -176,13 +176,7 @@ export default function OrderConfirmation({
             disabled={isRetryingPayment}
             onClick={onRetryPayment}
           >
-            {order.paymentStatus === "failed"
-              ? isRetryingPayment
-                ? "Restarting Payment..."
-                : "Try Payment Again"
-              : isRetryingPayment
-                ? "Opening Payment..."
-                : "Continue to Payment"}
+            {isRetryingPayment ? "Restarting Payment..." : "Try Payment Again"}
           </Button>
         ) : null}
         {order.userId ? (

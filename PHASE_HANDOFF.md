@@ -139,13 +139,11 @@ Status: `completed`
 
 Implemented backend:
 - new `checkout` app for server-side checkout rules
-- `DeliveryZone` model and admin registration for rider and parcel coverage rules
+- `DeliverySettings` model and admin registration for distance-based rider/parcel rules
 - `PickupLocation` model and admin registration for store pickup details
 - seeded defaults for:
   - Roysambu pickup location
-  - Nairobi rider zone
-  - nearby towns rider zone
-  - rest-of-Kenya parcel zone
+  - primary distance-based delivery settings
 - public checkout endpoints:
   - `/api/v1/checkout/quote`
   - `/api/v1/checkout/pickup-info`
@@ -153,14 +151,14 @@ Implemented backend:
   - cart lines
   - live variant stock
   - live product pricing
-  - address-based delivery resolution
+  - distance-based delivery resolution from selected coordinates
   - payment-option validity by fulfillment choice
 - checkout API tests for pickup, rider delivery, parcel delivery, and invalid payment combinations
 
 Implemented frontend:
 - checkout flow now requests backend quotes instead of relying on fixed local delivery rules
 - delivery step now adapts for:
-  - delivery addresses
+  - Mapbox-powered delivery location search
   - store pickup with server-backed pickup info
 - payment step now renders only backend-approved options for the selected quote
 - review step now uses backend quote totals, delivery mode, and parcel fee-confirmation state
@@ -180,6 +178,7 @@ Working:
 
 Important decision:
 - Phase 5 stops at quote/rules authority. The final confirmation screen remains frontend-local for now because real order creation still belongs to Phase 6.
+- delivery pricing is no longer manual-town/zone based; rider pricing is calculated from straight-line distance bands and parcel delivery takes over beyond the configured radius
 
 ### Phase 6 - Orders and Manual Fulfillment Workflow
 Status: `completed`
@@ -295,11 +294,17 @@ These have already been discussed and should be treated as current product decis
   - collection within 72 hours
 
 ### Delivery Model
-- Nairobi and nearby towns: rider delivery
-- rest of Kenya: parcel delivery
+- rider delivery uses straight-line distance from the shop location
+- parcel delivery begins beyond the configured rider/parcel switch radius
 - parcel delivery is prepay only
 - parcel dispatch is arranged manually by the store after payment confirmation
 - pay-on-delivery only applies to rider-served areas
+- current seeded delivery settings:
+  - rider max radius: `50 km`
+  - parcel switch radius: `50 km`
+  - rider base fee for `0-10 km`: `KES 200`
+  - each additional `10 km` band: `+KES 200`
+  - these values are editable from the admin dashboard
 
 ### Notifications
 - customer notifications:

@@ -14,16 +14,17 @@ import { useUIStore } from "@/stores/uiStore";
 interface FilterSidebarProps {
   categories: Category[];
   colors: { hex: string; name: string }[];
+  priceBounds: [number, number];
   className?: string;
 }
 
 const sizeOptions: Size[] = ["XS", "S", "M", "L", "XL", "XXL", "One Size"];
 const badgeOptions: BadgeType[] = ["new", "sale", "bestseller", "limited"];
-const defaultPriceRange: [number, number] = [1800, 12500];
 
 export default function FilterSidebar({
   categories,
   colors,
+  priceBounds,
   className,
 }: FilterSidebarProps): ReactElement {
   const [isColorsExpanded, setIsColorsExpanded] = useState<boolean>(false);
@@ -39,8 +40,8 @@ export default function FilterSidebar({
     filters.colors.length > 0 ||
     filters.badges.length > 0 ||
     filters.inStockOnly ||
-    filters.priceRange[0] !== defaultPriceRange[0] ||
-    filters.priceRange[1] !== defaultPriceRange[1];
+    filters.priceRange[0] !== priceBounds[0] ||
+    filters.priceRange[1] !== priceBounds[1];
 
   function toggleSize(size: Size): void {
     const nextSizes = filters.sizes.includes(size)
@@ -137,10 +138,10 @@ export default function FilterSidebar({
         </div>
         <Slider
           className="py-2"
-          max={defaultPriceRange[1]}
-          min={defaultPriceRange[0]}
+          max={priceBounds[1]}
+          min={priceBounds[0]}
           onValueChange={(value): void =>
-            setFilters({ priceRange: [value[0] ?? defaultPriceRange[0], value[1] ?? defaultPriceRange[1]] })
+            setFilters({ priceRange: [value[0] ?? priceBounds[0], value[1] ?? priceBounds[1]] })
           }
           step={100}
           value={filters.priceRange}

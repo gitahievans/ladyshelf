@@ -28,6 +28,50 @@ export default function AccountOverview(): ReactElement {
   const wishlistCount = useWishlistStore((state) => state.count);
   const [orders, setOrders] = useState<Order[]>([]);
   const [isLoadingOrders, setIsLoadingOrders] = useState<boolean>(false);
+  const userId = user?.id;
+
+  useEffect((): (() => void) | void => {
+    if (!isInitialized || !isAuthenticated || !userId) {
+      return;
+    }
+
+    let isMounted = true;
+
+    void Promise.resolve()
+      .then(() => {
+        if (!isMounted) {
+          return [];
+        }
+
+        setIsLoadingOrders(true);
+        return fetchAccountOrders();
+      })
+      .then((nextOrders) => {
+        if (!isMounted) {
+          return;
+        }
+
+        setOrders(nextOrders);
+      })
+      .catch(() => {
+        if (!isMounted) {
+          return;
+        }
+
+        setOrders([]);
+      })
+      .finally(() => {
+        if (!isMounted) {
+          return;
+        }
+
+        setIsLoadingOrders(false);
+      });
+
+    return (): void => {
+      isMounted = false;
+    };
+  }, [isAuthenticated, isInitialized, userId]);
 
   if (!isInitialized) {
     return (
@@ -54,39 +98,6 @@ export default function AccountOverview(): ReactElement {
       </>
     );
   }
-
-  useEffect(() => {
-    let isMounted = true;
-
-    setIsLoadingOrders(true);
-
-    void fetchAccountOrders()
-      .then((nextOrders) => {
-        if (!isMounted) {
-          return;
-        }
-
-        setOrders(nextOrders);
-      })
-      .catch(() => {
-        if (!isMounted) {
-          return;
-        }
-
-        setOrders([]);
-      })
-      .finally(() => {
-        if (!isMounted) {
-          return;
-        }
-
-        setIsLoadingOrders(false);
-      });
-
-    return () => {
-      isMounted = false;
-    };
-  }, [user.id]);
 
   return (
     <>

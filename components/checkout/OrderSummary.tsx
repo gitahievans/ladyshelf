@@ -17,6 +17,7 @@ interface OrderSummaryProps {
   deliveryDetails: DeliveryDetails;
   paymentSelection: CheckoutPaymentSelection;
   quote: CheckoutQuote;
+  onBack?: () => void;
   onEditDelivery: () => void;
   onEditPayment: () => void;
   onPlaceOrder: () => void;
@@ -40,6 +41,7 @@ export default function OrderSummary({
   deliveryDetails,
   paymentSelection,
   quote,
+  onBack,
   onEditDelivery,
   onEditPayment,
   onPlaceOrder,
@@ -150,6 +152,10 @@ export default function OrderSummary({
                     ? "Rider delivery"
                     : "Parcel delivery"}
                 </p>
+                {typeof quote.distanceKm === "number" ? (
+                  <p>Approx. straight-line distance: {quote.distanceKm.toFixed(1)} km</p>
+                ) : null}
+                {quote.deliveryRuleLabel ? <p>{quote.deliveryRuleLabel}</p> : null}
               </>
             )}
             {quote.estimatedWindow ? <p>Estimated timeline: {quote.estimatedWindow}</p> : null}
@@ -220,14 +226,27 @@ export default function OrderSummary({
         </div>
       ) : null}
 
-      <Button
-        className="h-12 w-full rounded-full bg-gold font-dm-sans text-body-sm font-medium text-obsidian hover:bg-sand"
-        disabled={isSubmitting}
-        onClick={onPlaceOrder}
-        type="button"
-      >
-        {isSubmitting ? "Placing Order..." : "Place Order"}
-      </Button>
+      <div className="flex flex-col gap-3 sm:flex-row">
+        {onBack ? (
+          <Button
+            className="h-12 rounded-full border border-bark/20 bg-transparent px-6 font-dm-sans text-body-sm font-medium text-obsidian hover:border-gold hover:bg-ivory"
+            disabled={isSubmitting}
+            onClick={onBack}
+            type="button"
+            variant="ghost"
+          >
+            Back to Payment
+          </Button>
+        ) : null}
+        <Button
+          className="h-12 flex-1 rounded-full bg-gold font-dm-sans text-body-sm font-medium text-obsidian hover:bg-sand"
+          disabled={isSubmitting}
+          onClick={onPlaceOrder}
+          type="button"
+        >
+          {isSubmitting ? "Placing Order..." : "Place Order"}
+        </Button>
+      </div>
     </div>
   );
 }

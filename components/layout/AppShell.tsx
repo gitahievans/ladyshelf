@@ -13,8 +13,9 @@ interface AppShellProps {
 export default function AppShell({ children }: AppShellProps): ReactElement {
   const pathname = usePathname();
   const isAuthRoute = pathname.startsWith("/auth");
+  const isAdminRoute = pathname.startsWith("/admin");
 
-  if (isAuthRoute) {
+  if (isAuthRoute || isAdminRoute) {
     return <main className="min-h-screen">{children}</main>;
   }
 

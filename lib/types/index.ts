@@ -28,6 +28,7 @@ export type ColorName = string;
 
 export interface ProductVariant {
   id: string;
+  adminId?: string;
   size: Size;
   color: ColorName;
   colorHex: string;
@@ -43,6 +44,7 @@ export type BadgeType = "new" | "sale" | "bestseller" | "limited";
 
 export interface Product {
   id: string;
+  adminId?: string;
   slug: string;
   name: string;
   brand: string;
@@ -109,6 +111,269 @@ export interface User {
   createdAt: string;
 }
 
+export type AdminRole = "owner" | "attendant";
+
+export interface AdminPermissionAccess {
+  view: boolean;
+  manage: boolean;
+}
+
+export interface AdminPermissionSet {
+  dashboard: boolean;
+  orders: AdminPermissionAccess;
+  payments: AdminPermissionAccess;
+  customers: AdminPermissionAccess;
+  catalog: AdminPermissionAccess;
+  inventory: AdminPermissionAccess;
+  settings: AdminPermissionAccess;
+  staff: AdminPermissionAccess;
+}
+
+export interface AdminStaffUser {
+  id: string;
+  supabaseUserId: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  role: AdminRole;
+  isActive: boolean;
+}
+
+export interface AdminStaffRecord extends AdminStaffUser {
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface AdminStaffInput {
+  supabaseUserId?: string;
+  email?: string;
+  role: AdminRole;
+  isActive: boolean;
+}
+
+export interface AdminDashboardOrder {
+  orderNumber: string;
+  customerLabel: string;
+  total: number;
+  currency: "KES";
+  paymentStatus: PaymentStatus;
+  orderStatus: OrderStatus;
+  deliveryMode: CheckoutDeliveryMode;
+  createdAt: string;
+}
+
+export interface AdminDashboardPayment {
+  id: string;
+  orderNumber: string;
+  status: PaymentTransactionStatus;
+  amount: number;
+  currency: "KES";
+  provider: "sasapay";
+  createdAt: string;
+}
+
+export interface AdminLowStockVariant {
+  id: string;
+  productName: string;
+  sku: string;
+  size: string;
+  color: string;
+  stock: number;
+}
+
+export interface AdminDashboardSummary {
+  awaitingPaymentOrders: number;
+  fulfillmentActionOrders: number;
+  lowStockVariants: number;
+  recentPaidOrders: AdminDashboardOrder[];
+  paymentIssueCount: number;
+  paymentIssues: AdminDashboardPayment[];
+  lowStockItems: AdminLowStockVariant[];
+}
+
+export interface AdminOrderListItem {
+  id: string;
+  orderNumber: string;
+  customerLabel: string;
+  total: number;
+  currency: "KES";
+  deliveryMode: CheckoutDeliveryMode;
+  paymentMethod: PaymentMethod;
+  paymentTiming: CheckoutPaymentTiming;
+  paymentStatus: PaymentStatus;
+  orderStatus: OrderStatus;
+  manualDeliveryFeeConfirmationRequired: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface AdminOrderDetail extends Order {
+  internalNotes: string;
+  paymentTransactions: PaymentTransaction[];
+}
+
+export interface AdminOrderUpdateInput {
+  orderStatus?: OrderStatus;
+  paymentStatus?: PaymentStatus;
+  internalNotes?: string;
+}
+
+export interface AdminPaymentListItem {
+  id: string;
+  orderNumber: string;
+  provider: "sasapay";
+  status: PaymentTransactionStatus;
+  paymentMethod: PaymentMethod;
+  amount: number;
+  currency: "KES";
+  merchantReference: string;
+  transactionCode: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface AdminPaymentDetail extends PaymentTransaction {
+  id: string;
+  orderNumber: string;
+}
+
+export interface AdminCustomerListItem {
+  id: string;
+  supabaseUserId: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  phone: string;
+  orderCount: number;
+  createdAt: string;
+}
+
+export interface AdminWishlistProduct {
+  id: string;
+  name: string;
+  slug: string;
+}
+
+export interface AdminCustomerDetail extends User {
+  supabaseUserId: string;
+  emailConfirmedAt: string | null;
+  updatedAt: string;
+  recentOrders: AdminOrderListItem[];
+  wishlist: AdminWishlistProduct[];
+}
+
+export interface AdminCatalogProductInput {
+  external_id?: string;
+  slug: string;
+  name: string;
+  brand: string;
+  categorySlug: CategorySlug;
+  description: string;
+  images: string[];
+  price: number;
+  originalPrice?: number | null;
+  currency: "KES";
+  badge?: BadgeType | "";
+  tags: string[];
+  rating: number;
+  review_count: number;
+  isFeatured: boolean;
+  isNewArrival: boolean;
+  material?: string;
+  careInstructions?: string;
+  created_at: string;
+}
+
+export interface AdminCategoryInput {
+  external_id: string;
+  slug: string;
+  name: string;
+  description: string;
+  image: string;
+}
+
+export interface AdminVariantInput {
+  external_id?: string;
+  size: string;
+  color: string;
+  colorHex: string;
+  stock: number;
+  sku?: string;
+}
+
+export interface AdminUploadedProductImage {
+  name: string;
+  path: string;
+  url: string;
+}
+
+export interface AdminInventoryRow {
+  id: string;
+  externalId: string;
+  productName: string;
+  productSlug: string;
+  size: string;
+  color: string;
+  colorHex: string;
+  stock: number;
+  sku: string;
+}
+
+export interface AdminDeliverySettings {
+  id: string;
+  name: string;
+  shopName: string;
+  shopCounty: string;
+  shopTown: string;
+  shopStreetAddress: string;
+  shopLatitude: number;
+  shopLongitude: number;
+  riderMaxRadiusKm: number;
+  parcelSwitchRadiusKm: number;
+  riderBaseFee: number;
+  riderIncrementPer10Km: number;
+  riderEstimatedWindow: string;
+  parcelEstimatedWindow: string;
+  allowPayOnDelivery: boolean;
+  parcelManualFeeConfirmationRequired: boolean;
+  isActive: boolean;
+}
+
+export type AdminDeliverySettingsInput = Omit<AdminDeliverySettings, "id">;
+
+export interface AdminDeliveryZone {
+  id: string;
+  name: string;
+  deliveryMode: "rider" | "parcel";
+  counties: string[];
+  towns: string[];
+  deliveryFee: number;
+  manualFeeConfirmationRequired: boolean;
+  allowPayOnDelivery: boolean;
+  estimatedWindow: string;
+  priority: number;
+  isActive: boolean;
+}
+
+export type AdminDeliveryZoneInput = Omit<AdminDeliveryZone, "id">;
+
+export interface AdminPickupLocation {
+  id: string;
+  name: string;
+  county: string;
+  town: string;
+  streetAddress: string;
+  contactName: string;
+  contactPhone: string;
+  mapsUrl: string;
+  openingHours: string;
+  collectionWindowHours: number;
+  notes: string;
+  isActive: boolean;
+}
+
+export type AdminPickupLocationInput = Omit<AdminPickupLocation, "id">;
+
 // ─────────────────────────────────────────────
 // ORDER & CHECKOUT
 // ─────────────────────────────────────────────
@@ -151,9 +416,21 @@ export interface DeliveryDetails {
   phone: string;
   county: string;
   town: string;
+  locationLabel?: string;
+  latitude?: number | null;
+  longitude?: number | null;
   streetAddress: string;
   additionalInfo?: string;
   deliveryMethod: "pickup" | "delivery";
+}
+
+export interface MapboxLocationSuggestion {
+  id: string;
+  label: string;
+  county: string;
+  town: string;
+  latitude: number;
+  longitude: number;
 }
 
 export interface CheckoutPaymentSelection {
@@ -194,6 +471,8 @@ export interface CheckoutQuote {
   fulfillmentMethod: DeliveryDetails["deliveryMethod"];
   deliveryMode: CheckoutDeliveryMode;
   estimatedWindow: string;
+  distanceKm?: number | null;
+  deliveryRuleLabel?: string;
   manualDeliveryFeeConfirmationRequired: boolean;
   availablePaymentOptions: CheckoutPaymentOption[];
   paymentSelection?: CheckoutPaymentSelection | null;

@@ -16,6 +16,7 @@ interface PaymentMethodProps {
   availableOptions: CheckoutPaymentOption[];
   defaultSelection?: CheckoutPaymentSelection | null;
   onSubmit: (selection: CheckoutPaymentSelection) => void;
+  onBack?: () => void;
   quote: CheckoutQuote;
   isSubmitting?: boolean;
   submitError?: string | null;
@@ -49,6 +50,7 @@ export default function PaymentMethod({
   availableOptions,
   defaultSelection = null,
   onSubmit,
+  onBack,
   quote,
   isSubmitting = false,
   submitError = null,
@@ -189,13 +191,26 @@ export default function PaymentMethod({
         </div>
       ) : null}
 
-      <Button
-        className="h-12 w-full rounded-full bg-gold font-dm-sans text-body-sm font-medium text-obsidian hover:bg-sand"
-        disabled={isSubmitting || availableOptions.length === 0}
-        type="submit"
-      >
-        {isSubmitting ? "Validating Payment..." : "Continue to Review"}
-      </Button>
+      <div className="flex flex-col gap-3 sm:flex-row">
+        {onBack ? (
+          <Button
+            className="h-12 rounded-full border border-bark/20 bg-transparent px-6 font-dm-sans text-body-sm font-medium text-obsidian hover:border-gold hover:bg-ivory"
+            disabled={isSubmitting}
+            onClick={onBack}
+            type="button"
+            variant="ghost"
+          >
+            Back to Delivery
+          </Button>
+        ) : null}
+        <Button
+          className="h-12 flex-1 rounded-full bg-gold font-dm-sans text-body-sm font-medium text-obsidian hover:bg-sand"
+          disabled={isSubmitting || availableOptions.length === 0}
+          type="submit"
+        >
+          {isSubmitting ? "Validating Payment..." : "Continue to Review"}
+        </Button>
+      </div>
     </form>
   );
 }

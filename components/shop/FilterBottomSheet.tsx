@@ -19,6 +19,7 @@ interface FilterBottomSheetProps {
   activeFilterCount: number;
   categories: Category[];
   colors: { hex: string; name: string }[];
+  priceBounds: [number, number];
   className?: string;
 }
 
@@ -26,6 +27,7 @@ export default function FilterBottomSheet({
   activeFilterCount,
   categories,
   colors,
+  priceBounds,
   className,
 }: FilterBottomSheetProps): ReactElement {
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -58,6 +60,7 @@ export default function FilterBottomSheet({
               categories={categories}
               className="block border-0 bg-transparent p-0 shadow-none"
               colors={colors}
+              priceBounds={priceBounds}
             />
           </div>
         </SheetContent>

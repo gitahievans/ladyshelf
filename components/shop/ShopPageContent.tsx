@@ -16,8 +16,6 @@ import { getCatalogColors } from "@/lib/utils/catalog";
 import type { Category, Product } from "@/lib/types";
 import { useUIStore } from "@/stores/uiStore";
 
-const defaultPriceRange: [number, number] = [1800, 12500];
-
 interface ShopPageContentProps {
   initialCategories: Category[];
   initialProducts: Product[];
@@ -34,6 +32,17 @@ export default function ShopPageContent({
   const viewMode = useUIStore((state) => state.viewMode);
   const filters = useUIStore((state) => state.filters);
   const setCategory = useUIStore((state) => state.setCategory);
+  const setFilters = useUIStore((state) => state.setFilters);
+
+  const priceBounds = useMemo<[number, number]>(() => {
+    if (initialProducts.length === 0) {
+      return [0, 0];
+    }
+
+    const prices = initialProducts.map((product) => product.price);
+
+    return [Math.min(...prices), Math.max(...prices)];
+  }, [initialProducts]);
 
   useEffect((): void => {
     const matchingCategory = initialCategories.find(
@@ -42,6 +51,19 @@ export default function ShopPageContent({
 
     setCategory(matchingCategory?.slug ?? "all");
   }, [categoryParam, initialCategories, setCategory]);
+
+  useEffect((): void => {
+    const [minPrice, maxPrice] = priceBounds;
+    const needsResetToLiveBounds =
+      filters.priceRange[0] > filters.priceRange[1] ||
+      filters.priceRange[0] < minPrice ||
+      filters.priceRange[1] > maxPrice ||
+      (filters.priceRange[0] === 1800 && filters.priceRange[1] === 12500);
+
+    if (needsResetToLiveBounds) {
+      setFilters({ priceRange: priceBounds });
+    }
+  }, [filters.priceRange, priceBounds, setFilters]);
 
   const colorOptions = useMemo(
     () => getCatalogColors(initialProducts),
@@ -70,14 +92,14 @@ export default function ShopPageContent({
     }
 
     if (
-      filters.priceRange[0] !== defaultPriceRange[0] ||
-      filters.priceRange[1] !== defaultPriceRange[1]
+      filters.priceRange[0] !== priceBounds[0] ||
+      filters.priceRange[1] !== priceBounds[1]
     ) {
       count += 1;
     }
 
     return count;
-  }, [filters, selectedCategory]);
+  }, [filters, priceBounds, selectedCategory]);
 
   return (
     <>
@@ -109,13 +131,14 @@ export default function ShopPageContent({
               activeFilterCount={activeFilterCount}
               categories={initialCategories}
               colors={colorOptions}
+              priceBounds={priceBounds}
             />
             <SortDropdown className="flex-1" />
             <ViewToggle />
           </div>
 
           <div className="grid items-start gap-8 lg:grid-cols-4">
-            <FilterSidebar categories={initialCategories} colors={colorOptions} />
+            <FilterSidebar categories={initialCategories} colors={colorOptions} priceBounds={priceBounds} />
 
             <div className="space-y-6 lg:col-span-3">
               <div className="hidden items-center justify-between gap-4 lg:flex">
