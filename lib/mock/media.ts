@@ -44,7 +44,7 @@ export const brandMedia = {
     buildStorageUrl("hero4.jpg"),
     buildStorageUrl("12.jpg"),
   ],
-  logo: buildStorageUrl("logo.png"),
+  logo: "https://nehcexpdaoypguejwnvg.supabase.co/storage/v1/object/public/product-images/Logo.png",
   logoTransparent: buildStorageUrl("logo transparent.png"),
 } as const;
 

@@ -121,12 +121,14 @@ export default function Navbar(): ReactElement {
       <SearchOverlay onOpenChange={setIsSearchOpen} open={isSearchOpen} />
       <header
         className={cn(
-          "fixed top-0 right-0 left-0 z-50 border-b border-transparent transition-all duration-300",
-          showOpaqueNavbar ? "bg-obsidian shadow-card" : "bg-transparent",
+          "fixed top-0 right-0 left-0 z-50 border-b transition-all duration-300",
+          showOpaqueNavbar
+            ? "border-ivory/8 bg-obsidian/98 shadow-card backdrop-blur-sm"
+            : "border-transparent bg-transparent",
         )}
       >
-        <div className="mx-auto grid h-[60px] max-w-container grid-cols-[auto_1fr_auto] items-center px-4 md:px-6 lg:flex lg:h-[var(--navbar-height)] lg:justify-between lg:px-8">
-          <div className="flex items-center gap-3 lg:w-1/3">
+        <div className="mx-auto grid h-[60px] max-w-[1400px] grid-cols-[auto_1fr_auto] items-center px-4 md:px-6 lg:h-[var(--navbar-height)] lg:grid-cols-[minmax(220px,1fr)_auto_minmax(480px,1fr)] lg:px-10 xl:px-12">
+          <div className="flex items-center gap-3 lg:min-w-0">
             <button
               aria-expanded={isMobileMenuOpen}
               aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
@@ -146,11 +148,11 @@ export default function Navbar(): ReactElement {
             >
               <Image
                 alt="Wahi Fashion logo"
-                className="h-10 w-auto object-contain"
-                height={64}
+                className="h-12 w-auto object-contain xl:h-14"
+                height={88}
                 priority
                 src={brandMedia.logo}
-                width={180}
+                width={244}
               />
             </Link>
           </div>
@@ -158,15 +160,15 @@ export default function Navbar(): ReactElement {
           <Link className="justify-self-center lg:hidden" href="/">
             <Image
               alt="Wahi Fashion logo"
-              className="h-9 w-auto object-contain"
-              height={64}
+              className="h-10 w-auto object-contain"
+              height={72}
               priority
               src={brandMedia.logo}
-              width={160}
+              width={188}
             />
           </Link>
 
-          <nav className="hidden items-center justify-center gap-8 lg:flex lg:w-1/3">
+          <nav className="hidden items-center justify-center gap-10 lg:flex xl:gap-14">
             {navigationLinks.map((link) => (
               <Link
                 key={link.label}
@@ -178,7 +180,7 @@ export default function Navbar(): ReactElement {
             ))}
           </nav>
 
-          <div className="flex items-center justify-end gap-2 lg:w-1/3">
+          <div className="flex items-center justify-end gap-2 lg:min-w-0 lg:gap-3">
             <button
               aria-label="Open cart"
               className="relative inline-flex h-11 w-11 items-center justify-center rounded-full border border-ivory/20 text-ivory transition-colors hover:border-gold hover:text-gold"
@@ -193,7 +195,7 @@ export default function Navbar(): ReactElement {
               ) : null}
             </button>
 
-            <div className="hidden items-center gap-2 lg:flex">
+            <div className="hidden items-center gap-3 lg:flex lg:flex-nowrap lg:justify-end">
               <button
                 aria-label="Search"
                 className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-ivory/20 text-ivory transition-colors hover:border-gold hover:text-gold"
@@ -227,7 +229,7 @@ export default function Navbar(): ReactElement {
               </Link>
               {hasAdminAccess ? (
                 <Link
-                  className="inline-flex h-11 items-center gap-2 rounded-full border border-gold bg-gold px-4 font-dm-sans text-caption font-semibold uppercase tracking-widest text-obsidian transition-colors hover:bg-sand"
+                  className="inline-flex h-12 shrink-0 items-center gap-2 rounded-full border border-gold bg-gold px-5 font-dm-sans text-caption font-semibold uppercase tracking-widest text-obsidian transition-colors hover:bg-sand"
                   href="/admin"
                 >
                   <ShieldCheck className="size-4" />
@@ -236,7 +238,7 @@ export default function Navbar(): ReactElement {
               ) : null}
               {isAuthenticated ? (
                 <button
-                  className="rounded-full border border-ivory/20 px-4 py-2 font-dm-sans text-caption uppercase tracking-[0.14em] text-ivory transition-colors hover:border-gold hover:text-gold"
+                  className="inline-flex h-12 shrink-0 items-center justify-center rounded-full border border-ivory/20 px-6 font-dm-sans text-caption uppercase tracking-[0.18em] whitespace-nowrap text-ivory transition-colors hover:border-gold hover:text-gold"
                   onClick={(): void => {
                     void handleLogout();
                   }}

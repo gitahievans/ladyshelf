@@ -111,7 +111,7 @@
   --section-padding-x-desktop: 80px;
   --section-padding-x-mobile: 24px;
   --container-max: 1280px;
-  --navbar-height: 72px;
+  --navbar-height: 80px;
   --background: var(--color-ivory);
   --foreground: var(--color-obsidian);
   --card: var(--color-cream);
