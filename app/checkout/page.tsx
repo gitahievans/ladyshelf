@@ -1,7 +1,7 @@
 "use client";
 
 import type { ReactElement } from "react";
-import { useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 
@@ -134,7 +134,7 @@ function StepIndicator({
   );
 }
 
-export default function CheckoutPage(): ReactElement | null {
+function CheckoutPageContent(): ReactElement | null {
   const router = useRouter();
   const searchParams = useSearchParams();
   const user = useAuthStore((state) => state.user);
@@ -621,5 +621,13 @@ export default function CheckoutPage(): ReactElement | null {
 
       <Footer />
     </>
+  );
+}
+
+export default function CheckoutPage(): ReactElement {
+  return (
+    <Suspense fallback={null}>
+      <CheckoutPageContent />
+    </Suspense>
   );
 }
