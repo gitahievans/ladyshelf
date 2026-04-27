@@ -17,6 +17,8 @@ interface ProductDetailPageProps {
   }>;
 }
 
+export const dynamic = "force-dynamic";
+
 export async function generateStaticParams(): Promise<Array<{ slug: string }>> {
   return [];
 }
