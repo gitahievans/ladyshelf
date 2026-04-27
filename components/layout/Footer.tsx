@@ -40,10 +40,10 @@ export default function Footer(): ReactElement {
             >
               <Image
                 alt="Wahi Fashion logo"
-                className="h-16 w-auto object-contain lg:h-18"
-                height={104}
+                className="h-28 w-auto object-contain lg:h-32"
+                height={192}
                 src={brandMedia.logoWhite}
-                width={280}
+                width={520}
               />
             </Link>
             <p className="max-w-xs font-dm-sans text-body text-text-muted">
