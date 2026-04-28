@@ -26,9 +26,11 @@ interface DeliveryFormProps {
   onChange?: (data: DeliveryDetails) => void;
   defaultValues?: Partial<DeliveryDetails>;
   isGuest?: boolean;
+  saveAddressByDefault?: boolean;
   isSubmitting?: boolean;
   submitError?: string | null;
   pickupInfo?: PickupInfo | null;
+  onSaveAddressChange?: (shouldSave: boolean) => void;
 }
 
 type DeliveryErrors = Partial<Record<keyof DeliveryDetails, string>>;
@@ -130,9 +132,11 @@ export default function DeliveryForm({
   onChange,
   defaultValues,
   isGuest = false,
+  saveAddressByDefault = false,
   isSubmitting = false,
   submitError = null,
   pickupInfo = null,
+  onSaveAddressChange,
 }: DeliveryFormProps): ReactElement {
   const [formValues, setFormValues] = useState<DeliveryDetails>({
     ...initialValues,
@@ -142,6 +146,7 @@ export default function DeliveryForm({
   const [phoneCountry, setPhoneCountry] = useState<PhoneSelection | undefined>(
     undefined,
   );
+  const [shouldSaveAddress, setShouldSaveAddress] = useState<boolean>(saveAddressByDefault);
   const initialLocationQuery = useMemo(
     () => buildInitialLocationQuery(defaultValues),
     [defaultValues],
@@ -158,8 +163,16 @@ export default function DeliveryForm({
   }, [defaultValues]);
 
   useEffect((): void => {
+    setShouldSaveAddress(saveAddressByDefault);
+  }, [saveAddressByDefault]);
+
+  useEffect((): void => {
     onChange?.(formValues);
   }, [formValues, onChange]);
+
+  useEffect((): void => {
+    onSaveAddressChange?.(shouldSaveAddress);
+  }, [onSaveAddressChange, shouldSaveAddress]);
 
   function updateField<K extends keyof DeliveryDetails>(
     key: K,
@@ -497,6 +510,16 @@ export default function DeliveryForm({
             .
           </p>
         </div>
+      ) : formValues.deliveryMethod === "delivery" ? (
+        <label className="flex items-center gap-3 rounded-2xl border border-bark/20 bg-ivory p-4 font-dm-sans text-body-sm text-obsidian">
+          <input
+            checked={shouldSaveAddress}
+            className="size-4 rounded border-border-warm text-gold focus:ring-gold"
+            onChange={(event): void => setShouldSaveAddress(event.target.checked)}
+            type="checkbox"
+          />
+          Save this delivery address to my account for next time.
+        </label>
       ) : null}
 
       <Button

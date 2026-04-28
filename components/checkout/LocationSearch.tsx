@@ -1,6 +1,7 @@
 "use client";
 
 import type { ReactElement } from "react";
+import { useRef } from "react";
 import { useEffect, useState } from "react";
 import { Loader2, MapPin } from "lucide-react";
 
@@ -29,14 +30,32 @@ export default function LocationSearch({
   const [query, setQuery] = useState(initialQuery);
   const [results, setResults] = useState<MapboxLocationSuggestion[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [hasUserEdited, setHasUserEdited] = useState(false);
+  const skipNextSearchRef = useRef(false);
 
   useEffect(() => {
     setQuery(initialQuery);
+    setHasUserEdited(false);
+    setResults([]);
+    setIsLoading(false);
   }, [initialQuery]);
 
   useEffect(() => {
+    if (skipNextSearchRef.current) {
+      skipNextSearchRef.current = false;
+      setResults([]);
+      setIsLoading(false);
+      return;
+    }
+
     if (disabled) {
       setResults([]);
+      return;
+    }
+
+    if (!hasUserEdited) {
+      setResults([]);
+      setIsLoading(false);
       return;
     }
 
@@ -59,9 +78,11 @@ export default function LocationSearch({
     return () => {
       window.clearTimeout(timeoutId);
     };
-  }, [disabled, query]);
+  }, [disabled, hasUserEdited, query]);
 
   function handleSelect(suggestion: MapboxLocationSuggestion): void {
+    skipNextSearchRef.current = true;
+    setHasUserEdited(false);
     setQuery(suggestion.label);
     setResults([]);
     onSelect(suggestion);
@@ -74,6 +95,7 @@ export default function LocationSearch({
           className={inputClassName}
           disabled={disabled}
           onChange={(event): void => {
+            setHasUserEdited(true);
             setQuery(event.target.value);
             onQueryChange?.(event.target.value);
           }}

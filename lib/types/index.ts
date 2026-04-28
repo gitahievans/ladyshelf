@@ -100,6 +100,17 @@ export interface Address {
   isDefault: boolean;
 }
 
+export interface AddressInput {
+  label: Address["label"];
+  fullName: string;
+  phone: string;
+  county: string;
+  town: string;
+  streetAddress: string;
+  additionalInfo?: string;
+  isDefault: boolean;
+}
+
 export interface User {
   id: string;
   email: string;

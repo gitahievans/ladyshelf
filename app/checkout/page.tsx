@@ -11,6 +11,7 @@ import OrderConfirmation from "@/components/checkout/OrderConfirmation";
 import OrderSummary from "@/components/checkout/OrderSummary";
 import PaymentMethod from "@/components/checkout/PaymentMethod";
 import Footer from "@/components/layout/Footer";
+import { createAccountAddress } from "@/lib/api/addresses";
 import {
   createCheckoutOrder,
   createSasaPayCheckoutSession,
@@ -22,6 +23,7 @@ import { cn } from "@/lib/utils/cn";
 import { formatPrice } from "@/lib/utils/format";
 import type {
   Address,
+  AddressInput,
   CheckoutPaymentSelection,
   CheckoutQuote,
   DeliveryDetails,
@@ -46,6 +48,19 @@ const steps: StepDefinition[] = [
 ];
 
 const PENDING_ORDER_STORAGE_KEY = "wahi-pending-order";
+
+function buildSavedAddressInput(details: DeliveryDetails): AddressInput {
+  return {
+    label: "home",
+    fullName: details.fullName,
+    phone: details.phone,
+    county: details.county,
+    town: details.town,
+    streetAddress: details.streetAddress,
+    additionalInfo: details.additionalInfo,
+    isDefault: false,
+  };
+}
 
 function buildDeliveryDefaults(
   isAuthenticated: boolean,
@@ -154,6 +169,7 @@ function CheckoutPageContent(): ReactElement | null {
     useState<CheckoutPaymentSelection | null>(null);
   const [pickupInfo, setPickupInfo] = useState<PickupInfo | null>(null);
   const [confirmedOrder, setConfirmedOrder] = useState<Order | null>(null);
+  const [shouldSaveDeliveryAddress, setShouldSaveDeliveryAddress] = useState<boolean>(false);
   const [deliveryError, setDeliveryError] = useState<string | null>(null);
   const [paymentError, setPaymentError] = useState<string | null>(null);
   const [placeOrderError, setPlaceOrderError] = useState<string | null>(null);
@@ -455,6 +471,15 @@ function CheckoutPageContent(): ReactElement | null {
         paymentSelection: selectedPayment,
       });
 
+      if (isAuthenticated && shouldSaveDeliveryAddress && deliveryDetails.deliveryMethod === "delivery") {
+        try {
+          await createAccountAddress(buildSavedAddressInput(deliveryDetails));
+          await useAuthStore.getState().refreshUser();
+        } catch {
+          // Address saving is supportive, not checkout-blocking.
+        }
+      }
+
       if (isOrderEligibleForSasaPay(order)) {
         window.sessionStorage.setItem(PENDING_ORDER_STORAGE_KEY, JSON.stringify(order));
         setIsOpeningSasaPay(true);
@@ -516,6 +541,7 @@ function CheckoutPageContent(): ReactElement | null {
                   defaultValues={deliveryDefaults}
                   isGuest={!isAuthenticated}
                   isSubmitting={isResolvingDelivery}
+                  onSaveAddressChange={setShouldSaveDeliveryAddress}
                   onChange={(data): void => {
                     setDeliveryPreviewDetails(data);
                   }}
@@ -523,6 +549,7 @@ function CheckoutPageContent(): ReactElement | null {
                     void handleDeliverySubmit(data);
                   }}
                   pickupInfo={pickupInfo}
+                  saveAddressByDefault={shouldSaveDeliveryAddress}
                   submitError={deliveryError}
                 />
               ) : null}
