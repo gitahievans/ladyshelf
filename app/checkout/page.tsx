@@ -4,6 +4,7 @@ import type { ReactElement } from "react";
 import { Suspense, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
+import { Loader2 } from "lucide-react";
 
 import DeliveryForm from "@/components/checkout/DeliveryForm";
 import OrderConfirmation from "@/components/checkout/OrderConfirmation";
@@ -161,16 +162,17 @@ function CheckoutPageContent(): ReactElement | null {
   const [isResolvingPayment, setIsResolvingPayment] = useState<boolean>(false);
   const [isPlacingOrder, setIsPlacingOrder] = useState<boolean>(false);
   const [isRetryingPayment, setIsRetryingPayment] = useState<boolean>(false);
+  const [isOpeningSasaPay, setIsOpeningSasaPay] = useState<boolean>(false);
 
   const returnedOrderNumber = searchParams.get("order");
   const paymentReturnState = searchParams.get("payment");
   const isPaymentReturn = Boolean(returnedOrderNumber && paymentReturnState);
 
   useEffect((): void => {
-    if (items.length === 0 && currentStep !== 4 && !isPaymentReturn) {
+    if (items.length === 0 && currentStep !== 4 && !isPaymentReturn && !isOpeningSasaPay) {
       router.replace("/cart");
     }
-  }, [currentStep, isPaymentReturn, items.length, router]);
+  }, [currentStep, isOpeningSasaPay, isPaymentReturn, items.length, router]);
 
   useEffect((): void => {
     void (async (): Promise<void> => {
@@ -347,6 +349,7 @@ function CheckoutPageContent(): ReactElement | null {
 
   async function beginSasaPayCheckout(order: Order): Promise<void> {
     setIsRetryingPayment(true);
+    setIsOpeningSasaPay(true);
     setPaymentActionError(null);
 
     try {
@@ -368,6 +371,7 @@ function CheckoutPageContent(): ReactElement | null {
           ? error.message
           : "We could not open the payment page right now.",
       );
+      setIsOpeningSasaPay(false);
       setConfirmedOrder(order);
       setCurrentStep(4);
     } finally {
@@ -453,6 +457,7 @@ function CheckoutPageContent(): ReactElement | null {
 
       if (isOrderEligibleForSasaPay(order)) {
         window.sessionStorage.setItem(PENDING_ORDER_STORAGE_KEY, JSON.stringify(order));
+        setIsOpeningSasaPay(true);
         clearCart();
         await beginSasaPayCheckout(order);
         return;
@@ -473,7 +478,7 @@ function CheckoutPageContent(): ReactElement | null {
     }
   }
 
-  if (items.length === 0 && currentStep !== 4) {
+  if (items.length === 0 && currentStep !== 4 && !isOpeningSasaPay) {
     return null;
   }
 
@@ -618,6 +623,20 @@ function CheckoutPageContent(): ReactElement | null {
           </div>
         </div>
       </section>
+
+      {isOpeningSasaPay ? (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-obsidian/80 px-6 text-center backdrop-blur-sm">
+          <div className="max-w-sm rounded-[28px] border border-gold/30 bg-ivory p-8 shadow-card">
+            <Loader2 className="mx-auto size-9 animate-spin text-gold" />
+            <h2 className="mt-5 font-cormorant text-h3 text-obsidian">
+              Opening SasaPay
+            </h2>
+            <p className="mt-3 font-dm-sans text-body-sm text-text-secondary">
+              Please hold on while we prepare your secure payment page.
+            </p>
+          </div>
+        </div>
+      ) : null}
 
       <Footer />
     </>

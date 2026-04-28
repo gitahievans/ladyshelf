@@ -44,7 +44,7 @@ export default function RecentOrders({
 }: RecentOrdersProps): ReactElement {
   return (
     <section className="rounded-lg border border-border-warm bg-cream p-6 shadow-card">
-      <div className="flex items-center justify-between gap-3">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <p className="font-dm-sans text-label uppercase tracking-[0.16em] text-gold">
             Order Desk
@@ -52,7 +52,7 @@ export default function RecentOrders({
           <h2 className="font-cormorant text-h3 text-obsidian">Recent Orders</h2>
         </div>
         <Link
-          className="font-dm-sans text-body-sm text-bark transition-colors hover:text-obsidian"
+          className="inline-flex min-h-12 items-center justify-center rounded-full bg-gold px-6 py-3 font-dm-sans text-body-sm font-medium leading-none text-obsidian transition-colors hover:bg-sand"
           href="/shop"
         >
           Continue Shopping

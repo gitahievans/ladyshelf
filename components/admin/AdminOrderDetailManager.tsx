@@ -18,6 +18,35 @@ interface AdminOrderDetailManagerProps {
   orderNumber: string;
 }
 
+function formatLabel(value: string): string {
+  return value
+    .replaceAll("_", " ")
+    .replace(/\b\w/g, (letter) => letter.toUpperCase());
+}
+
+function DetailRow({
+  label,
+  value,
+}: {
+  label: string;
+  value?: string | number | null;
+}): ReactElement | null {
+  if (value === null || value === undefined || value === "") {
+    return null;
+  }
+
+  return (
+    <div className="rounded-sm border border-border-warm bg-cream px-3 py-3">
+      <p className="font-dm-sans text-caption uppercase tracking-[0.16em] text-text-muted">
+        {label}
+      </p>
+      <p className="mt-1 font-dm-sans text-body-sm text-obsidian">
+        {value}
+      </p>
+    </div>
+  );
+}
+
 export default function AdminOrderDetailManager({ orderNumber }: AdminOrderDetailManagerProps): ReactElement {
   const [order, setOrder] = useState<AdminOrderDetail | null>(null);
   const [orderStatus, setOrderStatus] = useState<OrderStatus>("new");
@@ -147,7 +176,59 @@ export default function AdminOrderDetailManager({ orderNumber }: AdminOrderDetai
           </div>
           <div className="rounded-lg border border-border-warm bg-ivory p-5 shadow-card">
             <h3 className="font-cormorant text-h4 text-obsidian">Delivery details</h3>
-            <pre className="mt-3 whitespace-pre-wrap rounded-sm bg-cream p-3 font-dm-sans text-caption text-text-secondary">{JSON.stringify(order.deliveryDetails, null, 2)}</pre>
+            <div className="mt-4 space-y-3">
+              <DetailRow label="Customer" value={order.deliveryDetails.fullName} />
+              <DetailRow label="Email" value={order.deliveryDetails.email || order.guestEmail} />
+              <DetailRow label="Phone" value={order.deliveryDetails.phone} />
+              <DetailRow label="Fulfillment" value={formatLabel(order.deliveryMode)} />
+              <DetailRow label="Selected Method" value={formatLabel(order.deliveryDetails.deliveryMethod)} />
+              {order.deliveryMode === "pickup" ? (
+                <>
+                  <DetailRow
+                    label="Pickup Address"
+                    value={order.pickupInstructions?.streetAddress ?? order.deliveryDetails.streetAddress}
+                  />
+                  <DetailRow
+                    label="Pickup Area"
+                    value={`${order.pickupInstructions?.town ?? order.deliveryDetails.town}, ${order.pickupInstructions?.county ?? order.deliveryDetails.county}`}
+                  />
+                  <DetailRow
+                    label="Collection Window"
+                    value={
+                      order.pickupInstructions
+                        ? `${order.pickupInstructions.collectionWindowHours} hours after confirmation`
+                        : null
+                    }
+                  />
+                  <DetailRow label="Pickup Contact" value={order.pickupInstructions?.contactPhone} />
+                </>
+              ) : (
+                <>
+                  <DetailRow
+                    label="Delivery Address"
+                    value={`${order.deliveryDetails.streetAddress}, ${order.deliveryDetails.town}, ${order.deliveryDetails.county}`}
+                  />
+                  <DetailRow label="Location Search Result" value={order.deliveryDetails.locationLabel} />
+                  <DetailRow
+                    label="Coordinates"
+                    value={
+                      order.deliveryDetails.latitude != null && order.deliveryDetails.longitude != null
+                        ? `${order.deliveryDetails.latitude}, ${order.deliveryDetails.longitude}`
+                        : null
+                    }
+                  />
+                </>
+              )}
+              <DetailRow label="Additional Notes" value={order.deliveryDetails.additionalInfo} />
+              <DetailRow
+                label="Delivery Fee"
+                value={
+                  order.manualDeliveryFeeConfirmationRequired
+                    ? "To be confirmed by store"
+                    : formatPrice(order.deliveryFee, order.currency)
+                }
+              />
+            </div>
           </div>
         </div>
       </div>

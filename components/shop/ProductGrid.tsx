@@ -5,7 +5,6 @@ import { motion, useReducedMotion } from "framer-motion";
 
 import EmptyState from "@/components/shared/EmptyState";
 import ProductCard from "@/components/shop/ProductCard";
-import ProductListItem from "@/components/shop/ProductListItem";
 import {
   staggerChildren,
   staggerContainer,
@@ -61,11 +60,10 @@ export default function ProductGrid({
             key={product.id}
             variants={prefersReducedMotion ? undefined : staggerChildren}
           >
-            {viewMode === "grid" ? (
-              <ProductCard product={product} />
-            ) : (
-              <ProductListItem product={product} />
-            )}
+            <ProductCard
+              product={product}
+              viewMode={viewMode}
+            />
           </motion.div>
         ))}
       </motion.div>

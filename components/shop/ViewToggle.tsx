@@ -20,14 +20,14 @@ export default function ViewToggle({
   return (
     <div
       className={cn(
-        "inline-flex items-center rounded-full border border-border-warm bg-ivory p-1",
+        "inline-flex h-12 items-center rounded-full border border-border-warm bg-ivory p-1",
         className,
       )}
     >
       <Button
         aria-label="Grid view"
         className={cn(
-          "h-9 rounded-full px-3 text-obsidian",
+          "h-10 min-w-10 rounded-full px-3 text-obsidian",
           viewMode === "grid"
             ? "bg-obsidian text-ivory hover:bg-obsidian"
             : "bg-transparent hover:bg-cream",
@@ -42,7 +42,7 @@ export default function ViewToggle({
       <Button
         aria-label="List view"
         className={cn(
-          "h-9 rounded-full px-3 text-obsidian",
+          "h-10 min-w-10 rounded-full px-3 text-obsidian",
           viewMode === "list"
             ? "bg-obsidian text-ivory hover:bg-obsidian"
             : "bg-transparent hover:bg-cream",

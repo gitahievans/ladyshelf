@@ -38,7 +38,7 @@ export default function SortDropdown({
     <Select onValueChange={setSortBy} value={sortBy}>
       <SelectTrigger
         className={cn(
-          "h-11 w-full rounded-full border-border-warm bg-ivory px-4 font-dm-sans text-body-sm text-obsidian lg:min-w-[220px]",
+          "h-12 w-full rounded-full border-border-warm bg-ivory px-5 font-dm-sans text-body-sm text-obsidian lg:min-w-[220px]",
           className,
         )}
       >
