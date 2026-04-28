@@ -4,8 +4,9 @@ import type { ReactElement } from "react";
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { Check, Minus, Plus, Trash2 } from "lucide-react";
+import { Check, Trash2 } from "lucide-react";
 
+import CartQuantityControl from "@/components/cart/CartQuantityControl";
 import { formatPrice } from "@/lib/utils/format";
 import type { CartItem as CartItemType } from "@/lib/types";
 import { useCartStore } from "@/stores/cartStore";
@@ -34,22 +35,6 @@ export default function CartItem({ item }: CartItemProps): ReactElement {
       window.clearTimeout(timeoutId);
     };
   }, [isPendingRemoval]);
-
-  function handleDecrease(): void {
-    if (item.quantity <= 1 || isPendingRemoval) {
-      return;
-    }
-
-    updateQuantity(item.id, item.quantity - 1);
-  }
-
-  function handleIncrease(): void {
-    if (isPendingRemoval) {
-      return;
-    }
-
-    updateQuantity(item.id, item.quantity + 1);
-  }
 
   function handleRemove(): void {
     if (isPendingRemoval) {
@@ -116,29 +101,7 @@ export default function CartItem({ item }: CartItemProps): ReactElement {
             </div>
 
             <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-              <div className="inline-flex w-fit items-center rounded-full border border-border-warm bg-ivory">
-                <button
-                  aria-label={`Decrease quantity for ${item.productName}`}
-                  className="inline-flex h-11 w-11 items-center justify-center text-obsidian transition-colors hover:text-gold disabled:cursor-not-allowed disabled:text-text-muted"
-                  disabled={isPendingRemoval}
-                  onClick={handleDecrease}
-                  type="button"
-                >
-                  <Minus className="size-4" />
-                </button>
-                <span className="min-w-10 text-center font-dm-sans text-body-sm font-medium text-obsidian">
-                  {item.quantity}
-                </span>
-                <button
-                  aria-label={`Increase quantity for ${item.productName}`}
-                  className="inline-flex h-11 w-11 items-center justify-center text-obsidian transition-colors hover:text-gold disabled:cursor-not-allowed disabled:text-text-muted"
-                  disabled={isPendingRemoval}
-                  onClick={handleIncrease}
-                  type="button"
-                >
-                  <Plus className="size-4" />
-                </button>
-              </div>
+              <CartQuantityControl disabled={isPendingRemoval} item={item} />
 
               <div className="space-y-1 text-left sm:text-right">
                 <p className="font-dm-sans text-caption uppercase tracking-[0.14em] text-text-muted">

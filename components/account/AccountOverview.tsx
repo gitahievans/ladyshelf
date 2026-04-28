@@ -5,6 +5,8 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
 
+import AccountProfileEditor from "@/components/account/AccountProfileEditor";
+import AccountSecurityPanel from "@/components/account/AccountSecurityPanel";
 import AddressBook from "@/components/account/AddressBook";
 import AccountQuickLinks from "@/components/account/AccountQuickLinks";
 import ProfileSummary from "@/components/account/ProfileSummary";
@@ -136,6 +138,11 @@ export default function AccountOverview(): ReactElement {
 
           <motion.div variants={fadeUpVariant}>
             <ProfileSummary user={user} />
+          </motion.div>
+
+          <motion.div className="grid gap-6 xl:grid-cols-2" variants={fadeUpVariant}>
+            <AccountProfileEditor user={user} />
+            <AccountSecurityPanel />
           </motion.div>
 
           <motion.div variants={fadeUpVariant}>

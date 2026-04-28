@@ -32,7 +32,7 @@ export default function ProfileSummary({
             Phone
           </dt>
           <dd className="font-dm-sans text-body text-obsidian">
-            {user.phone ?? "Add a phone number at checkout"}
+            {user.phone ?? "Complete your account to add a phone number"}
           </dd>
         </div>
         <div className="space-y-1">

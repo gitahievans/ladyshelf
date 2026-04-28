@@ -126,15 +126,18 @@ export default function ShopPageContent({
             </div>
           </div>
 
-          <div className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 lg:hidden">
-            <FilterBottomSheet
-              activeFilterCount={activeFilterCount}
-              categories={initialCategories}
-              colors={colorOptions}
-              priceBounds={priceBounds}
-            />
-            <SortDropdown className="min-w-0" />
-            <ViewToggle className="shrink-0" />
+          <div className="space-y-3 lg:hidden">
+            <div className="flex items-center gap-3">
+              <FilterBottomSheet
+                activeFilterCount={activeFilterCount}
+                categories={initialCategories}
+                className="flex-1"
+                colors={colorOptions}
+                priceBounds={priceBounds}
+              />
+              <ViewToggle className="shrink-0" />
+            </div>
+            <SortDropdown className="w-full" />
           </div>
 
           <div className="grid items-start gap-8 lg:grid-cols-4">

@@ -2,8 +2,18 @@ import { createServerClient } from "@supabase/ssr";
 import { type NextRequest, NextResponse } from "next/server";
 
 const DEFAULT_AUTH_REDIRECT_PATH = "/account";
+const COMPLETE_PROFILE_PATH = "/auth/complete-profile";
 const LOGIN_PATH = "/auth/login";
 const PASSWORD_RECOVERY_PATH = "/auth/update-password";
+const DEFAULT_API_BASE_URL = "http://localhost:8000";
+
+interface AccountProfileResponse {
+  phone?: string | null;
+}
+
+function getApiBaseUrl(): string {
+  return process.env.NEXT_PUBLIC_API_BASE_URL ?? DEFAULT_API_BASE_URL;
+}
 
 function getSafeRedirectPath(nextPath: string | null): string {
   if (!nextPath || !nextPath.startsWith("/") || nextPath.startsWith("//")) {
@@ -32,6 +42,25 @@ function getLoginRedirect(requestUrl: URL): NextResponse {
   );
 
   return NextResponse.redirect(redirectUrl);
+}
+
+async function fetchAccountProfile(accessToken: string): Promise<AccountProfileResponse | null> {
+  try {
+    const response = await fetch(`${getApiBaseUrl()}/api/v1/account/me`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+      cache: "no-store",
+    });
+
+    if (!response.ok) {
+      return null;
+    }
+
+    return (await response.json()) as AccountProfileResponse;
+  } catch {
+    return null;
+  }
 }
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
@@ -65,6 +94,33 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 
   if (error) {
     return getLoginRedirect(requestUrl);
+  }
+
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+
+  if (!session?.access_token) {
+    return response;
+  }
+
+  const profile = await fetchAccountProfile(session.access_token);
+
+  if (!profile) {
+    return response;
+  }
+
+  const phone = profile.phone?.trim();
+
+  if (!phone) {
+    const completeProfileUrl = new URL(COMPLETE_PROFILE_PATH, requestUrl.origin);
+    completeProfileUrl.searchParams.set(
+      "next",
+      `${redirectUrl.pathname}${redirectUrl.search}`,
+    );
+    return NextResponse.redirect(completeProfileUrl, {
+      headers: response.headers,
+    });
   }
 
   return response;

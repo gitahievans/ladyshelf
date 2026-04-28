@@ -36,7 +36,7 @@ export default function FilterBottomSheet({
   return (
     <div className={cn("lg:hidden", className)}>
       <Button
-        className="h-12 whitespace-nowrap rounded-full border border-border-warm bg-ivory px-5 font-dm-sans text-label uppercase tracking-[0.16em] text-obsidian hover:bg-cream"
+        className="h-12 w-full whitespace-nowrap rounded-full border border-border-warm bg-ivory px-5 font-dm-sans text-label uppercase tracking-[0.16em] text-obsidian hover:bg-cream"
         onClick={(): void => setIsOpen(true)}
         type="button"
         variant="outline"

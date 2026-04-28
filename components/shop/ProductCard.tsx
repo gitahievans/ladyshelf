@@ -8,10 +8,7 @@ import { Check, Heart, Plus, ShoppingBag } from "lucide-react";
 
 import Badge from "@/components/shared/Badge";
 import PriceDisplay from "@/components/shared/PriceDisplay";
-import {
-  fadeUpVariant,
-  scaleInVariant,
-} from "@/lib/utils/animations";
+import { fadeUpVariant, scaleInVariant } from "@/lib/utils/animations";
 import { cn } from "@/lib/utils/cn";
 import { getAvailableSizes, isInStock } from "@/lib/utils/format";
 import type { CartItem, Product } from "@/lib/types";
@@ -40,6 +37,7 @@ export default function ProductCard({
   const [selectedColor, setSelectedColor] = useState<string>("");
   const [selectedSize, setSelectedSize] = useState<string>("");
   const [isAdded, setIsAdded] = useState<boolean>(false);
+  const isGridView = viewMode === "grid";
 
   const inStock = isInStock(product.variants);
   const colorOptions = useMemo(
@@ -103,7 +101,9 @@ export default function ProductCard({
     void toggleWishlist(product.id);
   }
 
-  function handleQuickAddToggle(event: React.MouseEvent<HTMLButtonElement>): void {
+  function handleQuickAddToggle(
+    event: React.MouseEvent<HTMLButtonElement>,
+  ): void {
     event.stopPropagation();
     setIsQuickAddOpen((current) => !current);
 
@@ -165,7 +165,9 @@ export default function ProductCard({
     <motion.article
       className={cn(
         "group relative overflow-hidden rounded-md border border-border-warm bg-cream shadow-card transition-shadow hover:shadow-card-hover",
-        viewMode === "list" ? "flex flex-col sm:flex-row" : "flex h-full flex-col",
+        viewMode === "list"
+          ? "flex flex-col sm:flex-row"
+          : "flex h-full flex-col",
         className,
       )}
       onClick={handleCardClick}
@@ -196,12 +198,21 @@ export default function ProductCard({
           />
           <div className="absolute inset-0 bg-gradient-to-t from-obsidian/30 via-transparent to-transparent" />
           {product.badge ? (
-            <Badge className="absolute top-4 left-4 z-10" type={product.badge} />
+            <Badge
+              className={cn(
+                "absolute z-10",
+                isGridView ? "top-3 left-3" : "top-4 left-4",
+              )}
+              type={product.badge}
+            />
           ) : null}
           <button
-            aria-label={isWishlisted ? "Remove from wishlist" : "Save to wishlist"}
+            aria-label={
+              isWishlisted ? "Remove from wishlist" : "Save to wishlist"
+            }
             className={cn(
-              "absolute top-4 right-4 z-10 inline-flex size-11 items-center justify-center rounded-full border backdrop-blur-sm transition-colors",
+              "absolute z-10 inline-flex items-center justify-center rounded-full border backdrop-blur-sm transition-colors",
+              isGridView ? "top-3 right-3 size-7" : "top-4 right-4 size-8",
               isWishlisted
                 ? "border-gold bg-gold text-obsidian"
                 : "border-ivory/40 bg-obsidian/40 text-ivory hover:border-gold hover:text-gold",
@@ -209,18 +220,33 @@ export default function ProductCard({
             onClick={handleWishlistToggle}
             type="button"
           >
-            <Heart className={cn("size-5", isWishlisted ? "fill-current" : "")} />
+            <Heart
+              className={cn(
+                isGridView ? "size-3.5" : "size-4",
+                isWishlisted ? "fill-current" : "",
+              )}
+            />
           </button>
         </div>
 
         {inStock ? (
-          <div className="pointer-events-none absolute inset-x-0 bottom-0 p-4">
+          <div
+            className={cn(
+              "pointer-events-none absolute inset-x-0 bottom-0",
+              isGridView ? "px-3 pb-3" : "p-4",
+            )}
+          >
             <button
-              className="pointer-events-auto flex h-11 w-full items-center justify-center gap-2 rounded-sm bg-ivory/92 font-dm-sans text-label uppercase tracking-[0.18em] text-obsidian transition hover:bg-gold hover:text-obsidian"
+              className={cn(
+                "pointer-events-auto flex items-center justify-center gap-2 bg-ivory/92 font-dm-sans uppercase text-obsidian transition hover:bg-gold hover:text-obsidian",
+                isGridView
+                  ? "mx-auto h-10 w-full max-w-full rounded-2xl px-3 text-caption tracking-[0.14em]"
+                  : "h-11 w-full rounded-sm text-label tracking-[0.18em]",
+              )}
               onClick={handleQuickAddToggle}
               type="button"
             >
-              <ShoppingBag className="size-4" />
+              <ShoppingBag className={cn(isGridView ? "size-3.5" : "size-4")} />
               Quick Add
             </button>
           </div>
@@ -269,7 +295,10 @@ export default function ProductCard({
           {isQuickAddOpen && inStock ? (
             <motion.div
               animate="visible"
-              className="space-y-4 border-t border-border-warm pt-4"
+              className={cn(
+                "border-t border-border-warm",
+                isGridView ? "space-y-3 pt-3" : "space-y-4 pt-4",
+              )}
               exit="hidden"
               initial="hidden"
               onClick={(event): void => event.stopPropagation()}
@@ -279,16 +308,31 @@ export default function ProductCard({
                   : scaleInVariant
               }
             >
-              <div className="space-y-2">
-                <p className="font-dm-sans text-caption uppercase tracking-[0.16em] text-text-muted">
+              <div className={cn(isGridView ? "space-y-1.5" : "space-y-2")}>
+                <p
+                  className={cn(
+                    "font-dm-sans uppercase text-text-muted",
+                    isGridView
+                      ? "text-caption tracking-[0.12em]"
+                      : "text-caption tracking-[0.16em]",
+                  )}
+                >
                   Choose Color
                 </p>
-                <div className="flex flex-wrap gap-2">
+                <div
+                  className={cn(
+                    "flex flex-wrap",
+                    isGridView ? "gap-1.5" : "gap-2",
+                  )}
+                >
                   {colorOptions.map((color) => (
                     <button
                       key={color}
                       className={cn(
-                        "rounded-full border px-3 py-2 font-dm-sans text-caption uppercase tracking-[0.12em]",
+                        "rounded-full border font-dm-sans uppercase",
+                        isGridView
+                          ? "w-full px-3 py-2 text-caption leading-tight tracking-[0.08em]"
+                          : "px-3 py-2 text-caption tracking-[0.12em]",
                         selectedColor === color
                           ? "border-gold bg-gold text-obsidian"
                           : "border-border-warm text-text-secondary hover:border-gold",
@@ -302,16 +346,31 @@ export default function ProductCard({
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <p className="font-dm-sans text-caption uppercase tracking-[0.16em] text-text-muted">
+              <div className={cn(isGridView ? "space-y-1.5" : "space-y-2")}>
+                <p
+                  className={cn(
+                    "font-dm-sans uppercase text-text-muted",
+                    isGridView
+                      ? "text-caption tracking-[0.12em]"
+                      : "text-caption tracking-[0.16em]",
+                  )}
+                >
                   Choose Size
                 </p>
-                <div className="flex flex-wrap gap-2">
+                <div
+                  className={cn(
+                    "flex flex-wrap",
+                    isGridView ? "gap-1.5" : "gap-2",
+                  )}
+                >
                   {sizeOptions.map((size) => (
                     <button
                       key={size}
                       className={cn(
-                        "min-h-11 rounded-full border px-4 py-2 font-dm-sans text-caption uppercase tracking-[0.12em]",
+                        "rounded-full border font-dm-sans uppercase",
+                        isGridView
+                          ? "min-h-0 min-w-0 px-3 py-2 text-caption tracking-[0.08em]"
+                          : "min-h-11 px-4 py-2 text-caption tracking-[0.12em]",
                         selectedSize === size
                           ? "border-obsidian bg-obsidian text-ivory"
                           : "border-border-warm text-text-secondary hover:border-gold",
@@ -327,7 +386,10 @@ export default function ProductCard({
 
               <button
                 className={cn(
-                  "flex min-h-11 w-full items-center justify-center gap-2 rounded-sm px-4 py-3 font-dm-sans text-label uppercase tracking-[0.18em]",
+                  "flex w-full items-center justify-center gap-2 font-dm-sans uppercase",
+                  isGridView
+                    ? "min-h-10 rounded-sm px-3 py-2 text-caption tracking-[0.12em]"
+                    : "min-h-11 rounded-sm px-4 py-3 text-label tracking-[0.18em]",
                   isAdded
                     ? "bg-obsidian text-ivory"
                     : "bg-gold text-obsidian hover:bg-bark hover:text-ivory",
@@ -336,7 +398,11 @@ export default function ProductCard({
                 onClick={handleAddToBag}
                 type="button"
               >
-                {isAdded ? <Check className="size-4" /> : <Plus className="size-4" />}
+                {isAdded ? (
+                  <Check className={cn(isGridView ? "size-3.5" : "size-4")} />
+                ) : (
+                  <Plus className={cn(isGridView ? "size-3.5" : "size-4")} />
+                )}
                 {isAdded ? "Added To Bag" : "Add To Bag"}
               </button>
             </motion.div>

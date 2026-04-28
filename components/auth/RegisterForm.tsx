@@ -8,10 +8,16 @@ import { Eye, EyeOff } from "lucide-react";
 
 import AuthShell from "@/components/auth/AuthShell";
 import LoadingSpinner from "@/components/shared/LoadingSpinner";
+import PhoneField from "@/components/shared/PhoneField";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import type { RegisterPayload } from "@/lib/types";
+import {
+  type PhoneSelection,
+  validateInternationalPhone,
+  validateInternationalPhoneLive,
+} from "@/lib/utils/phone";
 import { useAuthStore } from "@/stores/authStore";
 
 interface RegisterValues {
@@ -38,7 +44,10 @@ const formFieldClassName =
 const primaryButtonClassName =
   "h-12 w-full rounded-lg bg-gold font-dm-sans text-body-sm font-medium text-obsidian hover:bg-sand";
 
-function validateRegister(values: RegisterValues): RegisterErrors {
+function validateRegister(
+  values: RegisterValues,
+  phoneCountry?: PhoneSelection,
+): RegisterErrors {
   const errors: RegisterErrors = {};
 
   if (!values.firstName.trim()) {
@@ -57,6 +66,14 @@ function validateRegister(values: RegisterValues): RegisterErrors {
 
   if (!values.password.trim()) {
     errors.password = "Please choose a password.";
+  }
+
+  if (values.phone.trim()) {
+    const phoneError = validateInternationalPhone(values.phone, {}, phoneCountry);
+
+    if (phoneError) {
+      errors.phone = phoneError;
+    }
   }
 
   if (!values.confirmPassword.trim()) {
@@ -149,6 +166,9 @@ export default function RegisterForm(): ReactElement {
     confirmPassword: "",
   });
   const [errors, setErrors] = useState<RegisterErrors>({});
+  const [phoneCountry, setPhoneCountry] = useState<PhoneSelection | undefined>(
+    undefined,
+  );
   const [isPasswordVisible, setIsPasswordVisible] = useState<boolean>(false);
   const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] =
     useState<boolean>(false);
@@ -164,11 +184,26 @@ export default function RegisterForm(): ReactElement {
     setSubmitError("");
   }
 
+  function handlePhoneChange(
+    value: string,
+    nextPhoneCountry: PhoneSelection,
+  ): void {
+    setValues((current) => ({ ...current, phone: value }));
+    setPhoneCountry(nextPhoneCountry);
+    setErrors((current) => ({
+      ...current,
+      phone: value.trim()
+        ? validateInternationalPhoneLive(value, nextPhoneCountry)
+        : undefined,
+    }));
+    setSubmitError("");
+  }
+
   async function handleSubmit(
     event: FormEvent<HTMLFormElement>,
   ): Promise<void> {
     event.preventDefault();
-    const nextErrors = validateRegister(values);
+    const nextErrors = validateRegister(values, phoneCountry);
 
     if (Object.keys(nextErrors).length > 0) {
       setErrors(nextErrors);
@@ -263,7 +298,7 @@ export default function RegisterForm(): ReactElement {
               onChange={(event): void =>
                 updateField("lastName", event.target.value)
               }
-              placeholder="Wanjiru"
+              placeholder="Doe"
               value={values.lastName}
             />
             <FieldError message={errors.lastName} />
@@ -295,14 +330,12 @@ export default function RegisterForm(): ReactElement {
           >
             Phone
           </Label>
-          <Input
-            className={formFieldClassName}
+          <PhoneField
+            error={errors.phone}
             id="phone"
-            onChange={(event): void => updateField("phone", event.target.value)}
-            placeholder="+254 XXX XXX XXX"
+            onChange={handlePhoneChange}
             value={values.phone}
           />
-          <FieldError message={errors.phone} />
         </div>
 
         <div className="space-y-2">

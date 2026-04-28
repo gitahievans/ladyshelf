@@ -9,9 +9,10 @@ import {
   useReducedMotion,
   type Variants,
 } from "framer-motion";
-import { Minus, Plus, ShoppingBag, Trash2, X } from "lucide-react";
+import { ShoppingBag, Trash2, X } from "lucide-react";
 import { Dialog as SheetPrimitive } from "radix-ui";
 
+import CartQuantityControl from "@/components/cart/CartQuantityControl";
 import EmptyState from "@/components/shared/EmptyState";
 import PriceDisplay from "@/components/shared/PriceDisplay";
 import { Button } from "@/components/ui/button";
@@ -54,7 +55,6 @@ export default function CartDrawer(): ReactElement {
   const totalItems = useCartStore((state) => state.totalItems);
   const removeItem = useCartStore((state) => state.removeItem);
   const toggleCart = useCartStore((state) => state.toggleCart);
-  const updateQuantity = useCartStore((state) => state.updateQuantity);
   const isMobile = useIsMobileDrawer();
   const reducedMotion = useReducedMotion();
   const overlayVariants: Variants = reducedMotion
@@ -179,27 +179,7 @@ export default function CartDrawer(): ReactElement {
                             </div>
 
                             <div className="mt-auto flex items-end justify-between gap-3 pt-4">
-                              <div className="inline-flex items-center rounded-full border border-border-warm bg-ivory">
-                                <button
-                                  aria-label={`Decrease quantity for ${item.productName}`}
-                                  className="inline-flex h-10 w-10 items-center justify-center text-obsidian transition-colors hover:text-gold"
-                                  onClick={(): void => updateQuantity(item.id, item.quantity - 1)}
-                                  type="button"
-                                >
-                                  <Minus className="size-4" />
-                                </button>
-                                <span className="min-w-8 text-center font-dm-sans text-body-sm font-medium text-obsidian">
-                                  {item.quantity}
-                                </span>
-                                <button
-                                  aria-label={`Increase quantity for ${item.productName}`}
-                                  className="inline-flex h-10 w-10 items-center justify-center text-obsidian transition-colors hover:text-gold"
-                                  onClick={(): void => updateQuantity(item.id, item.quantity + 1)}
-                                  type="button"
-                                >
-                                  <Plus className="size-4" />
-                                </button>
-                              </div>
+                              <CartQuantityControl compact item={item} />
 
                               <PriceDisplay
                                 currency={item.currency}

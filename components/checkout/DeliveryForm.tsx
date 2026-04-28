@@ -6,9 +6,15 @@ import Link from "next/link";
 import { ExternalLink, MapPin, Phone } from "lucide-react";
 
 import LocationSearch from "@/components/checkout/LocationSearch";
+import PhoneField from "@/components/shared/PhoneField";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  type PhoneSelection,
+  validateInternationalPhone,
+  validateInternationalPhoneLive,
+} from "@/lib/utils/phone";
 import type {
   DeliveryDetails,
   MapboxLocationSuggestion,
@@ -47,7 +53,10 @@ const initialValues: DeliveryDetails = {
   deliveryMethod: "delivery",
 };
 
-function validateDeliveryDetails(values: DeliveryDetails): DeliveryErrors {
+function validateDeliveryDetails(
+  values: DeliveryDetails,
+  phoneCountry?: PhoneSelection,
+): DeliveryErrors {
   const errors: DeliveryErrors = {};
 
   if (!values.fullName.trim()) {
@@ -60,11 +69,25 @@ function validateDeliveryDetails(values: DeliveryDetails): DeliveryErrors {
   }
   if (!values.phone.trim()) {
     errors.phone = "Please add the phone number we should use.";
+  } else {
+    const phoneError = validateInternationalPhone(values.phone, {
+      required: true,
+      requiredMessage: "Please add the phone number we should use.",
+    }, phoneCountry);
+
+    if (phoneError) {
+      errors.phone = phoneError;
+    }
   }
 
   if (values.deliveryMethod === "delivery") {
-    if (!values.locationLabel?.trim() || values.latitude == null || values.longitude == null) {
-      errors.locationLabel = "Please choose your location from the search suggestions.";
+    if (
+      !values.locationLabel?.trim() ||
+      values.latitude == null ||
+      values.longitude == null
+    ) {
+      errors.locationLabel =
+        "Please choose your location from the search suggestions.";
     }
     if (!values.county.trim()) {
       errors.county = "Please choose your delivery location from search first.";
@@ -73,7 +96,8 @@ function validateDeliveryDetails(values: DeliveryDetails): DeliveryErrors {
       errors.town = "Please choose your delivery location from search first.";
     }
     if (!values.streetAddress.trim()) {
-      errors.streetAddress = "Please add the building, estate, or exact drop-off address.";
+      errors.streetAddress =
+        "Please add the building, estate, or exact drop-off address.";
     }
   }
 
@@ -88,7 +112,9 @@ function FieldError({ message }: { message?: string }): ReactElement | null {
   return <p className="font-dm-sans text-caption text-error">{message}</p>;
 }
 
-function buildInitialLocationQuery(defaultValues?: Partial<DeliveryDetails>): string {
+function buildInitialLocationQuery(
+  defaultValues?: Partial<DeliveryDetails>,
+): string {
   if (!defaultValues) {
     return "";
   }
@@ -113,6 +139,9 @@ export default function DeliveryForm({
     ...defaultValues,
   });
   const [errors, setErrors] = useState<DeliveryErrors>({});
+  const [phoneCountry, setPhoneCountry] = useState<PhoneSelection | undefined>(
+    undefined,
+  );
   const initialLocationQuery = useMemo(
     () => buildInitialLocationQuery(defaultValues),
     [defaultValues],
@@ -140,6 +169,18 @@ export default function DeliveryForm({
     setErrors((current) => ({ ...current, [key]: undefined }));
   }
 
+  function handlePhoneChange(
+    value: string,
+    nextPhoneCountry: PhoneSelection,
+  ): void {
+    setFormValues((current) => ({ ...current, phone: value }));
+    setPhoneCountry(nextPhoneCountry);
+    setErrors((current) => ({
+      ...current,
+      phone: validateInternationalPhoneLive(value, nextPhoneCountry),
+    }));
+  }
+
   function handleLocationSelect(suggestion: MapboxLocationSuggestion): void {
     setFormValues((current) => ({
       ...current,
@@ -159,7 +200,7 @@ export default function DeliveryForm({
 
   function handleSubmit(event: FormEvent<HTMLFormElement>): void {
     event.preventDefault();
-    const nextErrors = validateDeliveryDetails(formValues);
+    const nextErrors = validateDeliveryDetails(formValues, phoneCountry);
 
     if (Object.keys(nextErrors).length > 0) {
       setErrors(nextErrors);
@@ -170,15 +211,19 @@ export default function DeliveryForm({
 
     onSubmit({
       ...formValues,
-      county: isPickup ? pickupInfo?.county ?? "Nairobi" : formValues.county.trim(),
-      town: isPickup ? pickupInfo?.town ?? "Roysambu" : formValues.town.trim(),
+      county: isPickup
+        ? (pickupInfo?.county ?? "Nairobi")
+        : formValues.county.trim(),
+      town: isPickup
+        ? (pickupInfo?.town ?? "Roysambu")
+        : formValues.town.trim(),
       locationLabel: isPickup
-        ? pickupInfo?.streetAddress ?? "Lumumba Drive, Roysambu"
+        ? (pickupInfo?.streetAddress ?? "Lumumba Drive, Roysambu")
         : formValues.locationLabel?.trim(),
       latitude: isPickup ? null : formValues.latitude,
       longitude: isPickup ? null : formValues.longitude,
       streetAddress: isPickup
-        ? pickupInfo?.streetAddress ?? "Lumumba Drive, Roysambu"
+        ? (pickupInfo?.streetAddress ?? "Lumumba Drive, Roysambu")
         : formValues.streetAddress.trim(),
       additionalInfo: formValues.additionalInfo?.trim() || undefined,
     });
@@ -202,7 +247,9 @@ export default function DeliveryForm({
       </div>
 
       <div className="space-y-3">
-        <p className="font-dm-sans text-body-sm text-obsidian">Delivery Method</p>
+        <p className="font-dm-sans text-body-sm text-obsidian">
+          Delivery Method
+        </p>
         <div className="grid gap-3">
           <button
             className={
@@ -217,7 +264,8 @@ export default function DeliveryForm({
               Standard Delivery
             </p>
             <p className="mt-1 font-dm-sans text-body-sm text-text-secondary">
-              Rider delivery is automatic within the set radius. Beyond that, checkout switches to parcel delivery.
+              Rider delivery is automatic within the set radius. Beyond that,
+              checkout switches to parcel delivery.
             </p>
           </button>
 
@@ -242,21 +290,29 @@ export default function DeliveryForm({
 
       <div className="grid gap-5 md:grid-cols-2">
         <div className="space-y-2 md:col-span-2">
-          <Label className="font-dm-sans text-body-sm text-obsidian" htmlFor="fullName">
+          <Label
+            className="font-dm-sans text-body-sm text-obsidian"
+            htmlFor="fullName"
+          >
             Full Name
           </Label>
           <Input
             className={fieldClassName}
             id="fullName"
-            onChange={(event): void => updateField("fullName", event.target.value)}
-            placeholder="Jane Wanjiru"
+            onChange={(event): void =>
+              updateField("fullName", event.target.value)
+            }
+            placeholder="Jane Doe"
             value={formValues.fullName}
           />
           <FieldError message={errors.fullName} />
         </div>
 
         <div className="space-y-2">
-          <Label className="font-dm-sans text-body-sm text-obsidian" htmlFor="email">
+          <Label
+            className="font-dm-sans text-body-sm text-obsidian"
+            htmlFor="email"
+          >
             Email
           </Label>
           <Input
@@ -271,17 +327,18 @@ export default function DeliveryForm({
         </div>
 
         <div className="space-y-2">
-          <Label className="font-dm-sans text-body-sm text-obsidian" htmlFor="phone">
+          <Label
+            className="font-dm-sans text-body-sm text-obsidian"
+            htmlFor="phone"
+          >
             Phone
           </Label>
-          <Input
-            className={fieldClassName}
+          <PhoneField
+            error={errors.phone}
             id="phone"
-            onChange={(event): void => updateField("phone", event.target.value)}
-            placeholder="+254 XXX XXX XXX"
+            onChange={handlePhoneChange}
             value={formValues.phone}
           />
-          <FieldError message={errors.phone} />
         </div>
 
         {formValues.deliveryMethod === "delivery" ? (
@@ -308,29 +365,50 @@ export default function DeliveryForm({
             </div>
 
             <div className="space-y-2">
-              <Label className="font-dm-sans text-body-sm text-obsidian" htmlFor="county">
+              <Label
+                className="font-dm-sans text-body-sm text-obsidian"
+                htmlFor="county"
+              >
                 County
               </Label>
-              <Input className={fieldClassName} id="county" readOnly value={formValues.county} />
+              <Input
+                className={fieldClassName}
+                id="county"
+                readOnly
+                value={formValues.county}
+              />
               <FieldError message={errors.county} />
             </div>
 
             <div className="space-y-2">
-              <Label className="font-dm-sans text-body-sm text-obsidian" htmlFor="town">
+              <Label
+                className="font-dm-sans text-body-sm text-obsidian"
+                htmlFor="town"
+              >
                 Town / Area
               </Label>
-              <Input className={fieldClassName} id="town" readOnly value={formValues.town} />
+              <Input
+                className={fieldClassName}
+                id="town"
+                readOnly
+                value={formValues.town}
+              />
               <FieldError message={errors.town} />
             </div>
 
             <div className="space-y-2 md:col-span-2">
-              <Label className="font-dm-sans text-body-sm text-obsidian" htmlFor="streetAddress">
+              <Label
+                className="font-dm-sans text-body-sm text-obsidian"
+                htmlFor="streetAddress"
+              >
                 Building / Estate / Street Address
               </Label>
               <Input
                 className={fieldClassName}
                 id="streetAddress"
-                onChange={(event): void => updateField("streetAddress", event.target.value)}
+                onChange={(event): void =>
+                  updateField("streetAddress", event.target.value)
+                }
                 placeholder="House number, apartment, estate, road"
                 value={formValues.streetAddress}
               />
@@ -351,7 +429,8 @@ export default function DeliveryForm({
                   <MapPin className="mt-0.5 size-4 shrink-0 text-gold" />
                   <span>
                     {pickupInfo?.streetAddress ?? "Lumumba Drive, Roysambu"},{" "}
-                    {pickupInfo?.town ?? "Roysambu"}, {pickupInfo?.county ?? "Nairobi"}
+                    {pickupInfo?.town ?? "Roysambu"},{" "}
+                    {pickupInfo?.county ?? "Nairobi"}
                   </span>
                 </p>
                 <p className="flex items-start gap-2">
@@ -359,8 +438,9 @@ export default function DeliveryForm({
                   <span>{pickupInfo?.contactPhone ?? "+254711000000"}</span>
                 </p>
                 <p>
-                  {pickupInfo?.openingHours ?? "Mon-Sat 9am-7pm"}. Collect within{" "}
-                  {pickupInfo?.collectionWindowHours ?? 72} hours after confirmation.
+                  {pickupInfo?.openingHours ?? "Mon-Sat 9am-7pm"}. Collect
+                  within {pickupInfo?.collectionWindowHours ?? 72} hours after
+                  confirmation.
                 </p>
                 {pickupInfo?.notes ? <p>{pickupInfo.notes}</p> : null}
                 {pickupInfo?.mapsUrl ? (
@@ -380,13 +460,18 @@ export default function DeliveryForm({
         )}
 
         <div className="space-y-2 md:col-span-2">
-          <Label className="font-dm-sans text-body-sm text-obsidian" htmlFor="additionalInfo">
+          <Label
+            className="font-dm-sans text-body-sm text-obsidian"
+            htmlFor="additionalInfo"
+          >
             Additional Info
           </Label>
           <textarea
             className={textAreaClassName}
             id="additionalInfo"
-            onChange={(event): void => updateField("additionalInfo", event.target.value)}
+            onChange={(event): void =>
+              updateField("additionalInfo", event.target.value)
+            }
             placeholder="Landmark, gate instructions, or anything else we should know."
             value={formValues.additionalInfo ?? ""}
           />

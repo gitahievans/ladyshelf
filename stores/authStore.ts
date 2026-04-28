@@ -3,7 +3,11 @@
 import { create } from "zustand";
 
 import type { AuthStore, RegisterPayload, User } from "@/lib/types";
-import { fetchCurrentUser, fetchCurrentUserFromSession } from "@/lib/api/account";
+import {
+  fetchCurrentUser,
+  fetchCurrentUserFromSession,
+  updateCurrentUser,
+} from "@/lib/api/account";
 import { createClient } from "@/lib/supabase/client";
 
 const DEFAULT_REDIRECT_PATH = "/auth/callback";
@@ -35,7 +39,7 @@ function normalizeAuthError(error: unknown): Error {
   return error;
 }
 
-export const useAuthStore = create<AuthStore>()((set) => ({
+export const useAuthStore = create<AuthStore>()((set, get) => ({
   user: null,
   isAuthenticated: false,
   isInitialized: false,
@@ -57,6 +61,29 @@ export const useAuthStore = create<AuthStore>()((set) => ({
         isInitialized: true,
         isLoading: false,
       });
+    }
+  },
+  refreshUser: async (): Promise<User | null> => {
+    try {
+      const user = await resolveUser();
+
+      set({
+        user,
+        isAuthenticated: Boolean(user),
+        isInitialized: true,
+        isLoading: false,
+      });
+
+      return user;
+    } catch {
+      set({
+        user: null,
+        isAuthenticated: false,
+        isInitialized: true,
+        isLoading: false,
+      });
+
+      return null;
     }
   },
   login: async (email, password): Promise<void> => {
@@ -139,6 +166,28 @@ export const useAuthStore = create<AuthStore>()((set) => ({
     });
 
     return { emailConfirmationRequired };
+  },
+  updateProfile: async (data): Promise<User> => {
+    set({ isLoading: true });
+
+    try {
+      const user = await updateCurrentUser(data);
+
+      set({
+        user,
+        isAuthenticated: true,
+        isInitialized: true,
+        isLoading: false,
+      });
+
+      return user;
+    } catch (error) {
+      set({ isLoading: false });
+      throw normalizeAuthError(error);
+    }
+  },
+  updatePhone: async (phone: string): Promise<User> => {
+    return get().updateProfile({ phone });
   },
   requestPasswordReset: async (email: string): Promise<void> => {
     set({ isLoading: true });

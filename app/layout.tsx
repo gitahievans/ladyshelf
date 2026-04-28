@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import type { ReactElement, ReactNode } from "react";
 import { Cormorant_Garamond, DM_Sans } from "next/font/google";
+import "react-international-phone/style.css";
 
 import AuthSessionBridge from "@/components/auth/AuthSessionBridge";
 import AppShell from "@/components/layout/AppShell";

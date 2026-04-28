@@ -22,10 +22,9 @@ const shopLinks: FooterLink[] = [
 const helpLinks: FooterLink[] = [
   { href: "/#about", label: "About Us" },
   { href: "/contact", label: "Contact" },
-  { href: "/sizing-guide", label: "Sizing Guide" },
-  { href: "/delivery", label: "Delivery Information" },
+  { href: "/delivery-info", label: "Delivery Information" },
   { href: "/returns", label: "Returns Policy" },
-  { href: "/faqs", label: "FAQs" },
+  { href: "/faq", label: "FAQ" },
 ];
 
 export default function Footer(): ReactElement {

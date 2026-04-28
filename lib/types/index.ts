@@ -111,6 +111,12 @@ export interface User {
   createdAt: string;
 }
 
+export interface UpdateCurrentUserPayload {
+  firstName?: string;
+  lastName?: string;
+  phone?: string;
+}
+
 export type AdminRole = "owner" | "attendant";
 
 export interface AdminPermissionAccess {
@@ -560,12 +566,15 @@ export interface AuthStore {
   isLoading: boolean;
   isInitialized: boolean;
   initialize: () => Promise<void>;
+  refreshUser: () => Promise<User | null>;
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
   loginWithGoogle: () => Promise<void>;
   register: (
     data: RegisterPayload,
   ) => Promise<{ emailConfirmationRequired: boolean }>;
+  updateProfile: (data: UpdateCurrentUserPayload) => Promise<User>;
+  updatePhone: (phone: string) => Promise<User>;
   requestPasswordReset: (email: string) => Promise<void>;
   updatePassword: (password: string) => Promise<void>;
 }

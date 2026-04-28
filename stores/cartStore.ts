@@ -4,6 +4,7 @@ import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
 import type { CartItem, CartStore } from "@/lib/types";
+import { clampCartItemQuantity } from "@/lib/utils/cartStock";
 
 interface CartStateSlice {
   items: CartItem[];
@@ -11,7 +12,9 @@ interface CartStateSlice {
 }
 
 function sanitizeCartItems(items: CartItem[]): CartItem[] {
-  return items;
+  return items
+    .map((item) => clampCartItemQuantity(item))
+    .filter((item): item is CartItem => item !== null && item.quantity > 0);
 }
 
 function calculateCartTotals(items: CartItem[]): Pick<CartStore, "subtotal" | "totalItems"> {
