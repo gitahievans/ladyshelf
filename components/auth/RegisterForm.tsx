@@ -4,15 +4,20 @@ import type { FormEvent, ReactElement } from "react";
 import { useState } from "react";
 import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
-import { Eye, EyeOff } from "lucide-react";
+import { ArrowRight, Eye, EyeOff, MailCheck } from "lucide-react";
 
 import AuthShell from "@/components/auth/AuthShell";
 import LoadingSpinner from "@/components/shared/LoadingSpinner";
 import PhoneField from "@/components/shared/PhoneField";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import type { RegisterPayload } from "@/lib/types";
 import {
   type PhoneSelection,
   validateInternationalPhone,
@@ -43,6 +48,15 @@ const formFieldClassName =
 
 const primaryButtonClassName =
   "h-12 w-full rounded-lg bg-gold font-dm-sans text-body-sm font-medium text-obsidian hover:bg-sand";
+
+const initialRegisterValues: RegisterValues = {
+  firstName: "",
+  lastName: "",
+  email: "",
+  phone: "",
+  password: "",
+  confirmPassword: "",
+};
 
 function validateRegister(
   values: RegisterValues,
@@ -157,14 +171,7 @@ export default function RegisterForm(): ReactElement {
   const loginWithGoogle = useAuthStore((state) => state.loginWithGoogle);
   const isLoading = useAuthStore((state) => state.isLoading);
 
-  const [values, setValues] = useState<RegisterValues>({
-    firstName: "",
-    lastName: "",
-    email: "",
-    phone: "",
-    password: "",
-    confirmPassword: "",
-  });
+  const [values, setValues] = useState<RegisterValues>(initialRegisterValues);
   const [errors, setErrors] = useState<RegisterErrors>({});
   const [phoneCountry, setPhoneCountry] = useState<PhoneSelection | undefined>(
     undefined,
@@ -174,6 +181,7 @@ export default function RegisterForm(): ReactElement {
     useState<boolean>(false);
   const [submitError, setSubmitError] = useState<string>("");
   const [successMessage, setSuccessMessage] = useState<string>("");
+  const [submittedEmail, setSubmittedEmail] = useState<string>("");
 
   function updateField<K extends keyof RegisterValues>(
     key: K,
@@ -211,20 +219,27 @@ export default function RegisterForm(): ReactElement {
     }
 
     try {
+      const submittedAddress = values.email.trim();
       const result = await register({
         firstName: values.firstName.trim(),
         lastName: values.lastName.trim(),
-        email: values.email.trim(),
+        email: submittedAddress,
         phone: values.phone.trim() || undefined,
         password: values.password,
       });
 
       setSubmitError("");
+      setSubmittedEmail(submittedAddress);
       setSuccessMessage(
         result.emailConfirmationRequired
           ? "Your account has been created. Please check your email to confirm your account before signing in."
           : "Your account is ready. You can continue into Wahi now.",
       );
+      setValues(initialRegisterValues);
+      setErrors({});
+      setPhoneCountry(undefined);
+      setIsPasswordVisible(false);
+      setIsConfirmPasswordVisible(false);
     } catch (error) {
       setSuccessMessage("");
       setSubmitError(
@@ -264,6 +279,79 @@ export default function RegisterForm(): ReactElement {
       heading="Join Wahi"
       subheading="Create your account"
     >
+      <Dialog
+        onOpenChange={(open): void => {
+          if (!open) {
+            setSuccessMessage("");
+          }
+        }}
+        open={Boolean(successMessage)}
+      >
+        <DialogContent
+          className="w-[min(92vw,28rem)] rounded-[28px] border border-border-warm bg-ivory p-0 text-obsidian shadow-card"
+          showCloseButton={false}
+        >
+          <DialogTitle className="sr-only">Registration successful</DialogTitle>
+          <DialogDescription className="sr-only">
+            Your account has been created and email confirmation is required before signing in.
+          </DialogDescription>
+          <div className="overflow-hidden rounded-[28px]">
+            <div className="border-b border-border-warm bg-cream px-6 pb-5 pt-6 sm:px-7 sm:pt-7">
+              <div className="flex size-14 items-center justify-center rounded-full bg-gold/20 text-gold">
+                <MailCheck className="size-7" />
+              </div>
+              <div className="mt-5 space-y-3">
+                <p className="font-dm-sans text-label uppercase tracking-[0.18em] text-gold">
+                  Check Your Email
+                </p>
+                <h2 className="font-cormorant text-h2 leading-none text-obsidian">
+                  Your Wahi account is almost ready.
+                </h2>
+                <p className="font-dm-sans text-body-sm leading-7 text-text-secondary">
+                  {successMessage}
+                </p>
+              </div>
+            </div>
+
+            <div className="space-y-5 px-6 pb-6 pt-5 sm:px-7 sm:pb-7">
+              <div className="rounded-2xl border border-border-warm bg-cream px-4 py-4">
+                <p className="font-dm-sans text-caption uppercase tracking-[0.14em] text-text-muted">
+                  Confirmation Email Sent To
+                </p>
+                <p className="mt-2 break-all font-dm-sans text-body-sm font-medium text-obsidian">
+                  {submittedEmail}
+                </p>
+              </div>
+
+              <div className="space-y-3 font-dm-sans text-body-sm text-text-secondary">
+                <p>Open the message from Wahi Fashion and confirm your email address.</p>
+                <p>Once confirmed, return here and sign in to continue shopping.</p>
+              </div>
+
+              <div className="flex flex-col gap-3 sm:flex-row">
+                <Button
+                  asChild
+                  className="h-12 flex-1 rounded-full bg-gold font-dm-sans text-body-sm font-medium text-obsidian hover:bg-sand"
+                >
+                  <Link href="/auth/login">
+                    Continue to Sign In
+                    <ArrowRight className="size-4" />
+                  </Link>
+                </Button>
+                <Button
+                  className="h-12 rounded-full border border-border-warm bg-transparent px-5 font-dm-sans text-body-sm font-medium text-obsidian hover:border-gold hover:bg-cream"
+                  onClick={(): void => setSuccessMessage("")}
+                  type="button"
+                  variant="ghost"
+                >
+                  Stay Here
+                </Button>
+              </div>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
       <form className="space-y-5" noValidate onSubmit={handleSubmit}>
         <div className="grid gap-5 sm:grid-cols-2">
           <div className="space-y-2">
@@ -427,17 +515,6 @@ export default function RegisterForm(): ReactElement {
             )}
           </Button>
         </div>
-
-        {successMessage ? (
-          <div className="rounded-lg border border-success/30 bg-success/10 px-4 py-4 text-left shadow-card">
-            <p className="font-dm-sans text-label uppercase tracking-[0.16em] text-success">
-              Check Your Email
-            </p>
-            <p className="mt-2 font-dm-sans text-body-sm text-success">
-              {successMessage}
-            </p>
-          </div>
-        ) : null}
 
         {submitError ? (
           <p className="rounded-lg border border-error/20 bg-error/10 px-4 py-3 font-dm-sans text-body-sm text-error">
