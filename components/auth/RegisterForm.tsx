@@ -4,7 +4,7 @@ import type { FormEvent, ReactElement } from "react";
 import { useState } from "react";
 import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
-import { ArrowRight, Eye, EyeOff, MailCheck } from "lucide-react";
+import { Eye, EyeOff, MailCheck } from "lucide-react";
 
 import AuthShell from "@/components/auth/AuthShell";
 import LoadingSpinner from "@/components/shared/LoadingSpinner";
@@ -325,26 +325,16 @@ export default function RegisterForm(): ReactElement {
 
               <div className="space-y-3 font-dm-sans text-body-sm text-text-secondary">
                 <p>Open the message from Wahi Fashion and confirm your email address.</p>
-                <p>Once confirmed, return here and sign in to continue shopping.</p>
               </div>
 
-              <div className="flex flex-col gap-3 sm:flex-row">
+              <div>
                 <Button
-                  asChild
-                  className="h-12 flex-1 rounded-full bg-gold font-dm-sans text-body-sm font-medium text-obsidian hover:bg-sand"
-                >
-                  <Link href="/auth/login">
-                    Continue to Sign In
-                    <ArrowRight className="size-4" />
-                  </Link>
-                </Button>
-                <Button
-                  className="h-12 rounded-full border border-border-warm bg-transparent px-5 font-dm-sans text-body-sm font-medium text-obsidian hover:border-gold hover:bg-cream"
+                  className="h-12 w-full rounded-full border border-border-warm bg-transparent px-5 font-dm-sans text-body-sm font-medium text-obsidian hover:border-gold hover:bg-cream"
                   onClick={(): void => setSuccessMessage("")}
                   type="button"
                   variant="ghost"
                 >
-                  Stay Here
+                  Got It
                 </Button>
               </div>
             </div>
