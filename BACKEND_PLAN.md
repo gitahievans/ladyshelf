@@ -1,5 +1,8 @@
 # Wahi Fashion Backend MVP Plan
 
+> Historical planning document. Do not treat this as the current implementation state.
+> Read `PROJECT_STATE.md` first. `PROJECT_STATE.md` is the canonical current-state document for the fullstack application.
+
 ## Summary
 - Build the backend in testable phases so each phase can be implemented, verified, and approved before the next one starts.
 - Use `Django + Django REST Framework + Postgres + Docker` as the application core, `Supabase Auth` for customer identity, `Supabase Storage` for media, `SasaPay` for prepaid checkout, `Africa’s Talking` for SMS, and `email` for store/customer notifications.

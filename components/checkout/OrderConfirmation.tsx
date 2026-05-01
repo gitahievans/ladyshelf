@@ -8,6 +8,7 @@ import { Check, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { scaleInVariant } from "@/lib/utils/animations";
 import { formatPrice } from "@/lib/utils/format";
+import { isOrderEligibleForSasaPayRetry } from "@/lib/utils/orderPayments";
 import type { Order } from "@/lib/types";
 
 interface OrderConfirmationProps {
@@ -72,9 +73,8 @@ export default function OrderConfirmation({
   const reducedMotion = useReducedMotion();
   const isGuest = !order.userId;
   const shouldOfferPaymentRetry =
-    order.paymentTiming === "prepay" &&
     !order.manualDeliveryFeeConfirmationRequired &&
-    order.paymentStatus === "failed" &&
+    isOrderEligibleForSasaPayRetry(order) &&
     typeof onRetryPayment === "function";
 
   return (

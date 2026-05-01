@@ -1,5 +1,6 @@
 import type { ReactElement } from "react";
 import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 
 import EmptyState from "@/components/shared/EmptyState";
 import PriceDisplay from "@/components/shared/PriceDisplay";
@@ -69,8 +70,9 @@ export default function RecentOrders({
           />
         ) : null}
         {orders.map((order) => (
-          <article
-            className="rounded-md border border-border-warm bg-ivory p-4"
+          <Link
+            className="block rounded-md border border-border-warm bg-ivory p-4 transition-colors hover:border-gold hover:bg-cream"
+            href={`/account/orders/${order.orderNumber}`}
             key={order.id}
           >
             <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
@@ -97,9 +99,13 @@ export default function RecentOrders({
                   {getStatusLabel(order)}
                 </p>
                 <PriceDisplay price={order.total} size="md" />
+                <p className="inline-flex items-center gap-2 font-dm-sans text-caption uppercase tracking-[0.16em] text-gold">
+                  View order
+                  <ArrowRight className="size-3.5" />
+                </p>
               </div>
             </div>
-          </article>
+          </Link>
         ))}
       </div>
     </section>

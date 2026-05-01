@@ -11,6 +11,7 @@ import OrderConfirmation from "@/components/checkout/OrderConfirmation";
 import OrderSummary from "@/components/checkout/OrderSummary";
 import PaymentMethod from "@/components/checkout/PaymentMethod";
 import Footer from "@/components/layout/Footer";
+import { Button } from "@/components/ui/button";
 import { createAccountAddress } from "@/lib/api/addresses";
 import {
   createCheckoutOrder,
@@ -21,6 +22,7 @@ import {
 } from "@/lib/api/checkout";
 import { cn } from "@/lib/utils/cn";
 import { formatPrice } from "@/lib/utils/format";
+import { isOrderEligibleForSasaPayRetry } from "@/lib/utils/orderPayments";
 import type {
   Address,
   AddressInput,
@@ -48,6 +50,7 @@ const steps: StepDefinition[] = [
 ];
 
 const PENDING_ORDER_STORAGE_KEY = "wahi-pending-order";
+const SASAPAY_OVERLAY_TIMEOUT_MS = 8000;
 
 function buildSavedAddressInput(details: DeliveryDetails): AddressInput {
   return {
@@ -179,16 +182,74 @@ function CheckoutPageContent(): ReactElement | null {
   const [isPlacingOrder, setIsPlacingOrder] = useState<boolean>(false);
   const [isRetryingPayment, setIsRetryingPayment] = useState<boolean>(false);
   const [isOpeningSasaPay, setIsOpeningSasaPay] = useState<boolean>(false);
+  const [hasCheckedStoredOrder, setHasCheckedStoredOrder] = useState<boolean>(false);
 
   const returnedOrderNumber = searchParams.get("order");
   const paymentReturnState = searchParams.get("payment");
   const isPaymentReturn = Boolean(returnedOrderNumber && paymentReturnState);
 
+  function readStoredPendingOrder(): Order | null {
+    if (typeof window === "undefined") {
+      return null;
+    }
+
+    const storedOrder = window.sessionStorage.getItem(PENDING_ORDER_STORAGE_KEY);
+
+    if (!storedOrder) {
+      return null;
+    }
+
+    try {
+      return JSON.parse(storedOrder) as Order;
+    } catch {
+      window.sessionStorage.removeItem(PENDING_ORDER_STORAGE_KEY);
+      return null;
+    }
+  }
+
+  function recoverPendingOrder(message?: string): void {
+    const storedOrder = readStoredPendingOrder();
+
+    setIsOpeningSasaPay(false);
+
+    if (!storedOrder) {
+      if (message) {
+        setPaymentActionError(message);
+      }
+      return;
+    }
+
+    setConfirmedOrder(storedOrder);
+    setCurrentStep(4);
+
+    if (message) {
+      setPaymentActionError(message);
+    }
+  }
+
   useEffect((): void => {
-    if (items.length === 0 && currentStep !== 4 && !isPaymentReturn && !isOpeningSasaPay) {
+    if (!hasCheckedStoredOrder) {
+      return;
+    }
+
+    if (
+      items.length === 0 &&
+      currentStep !== 4 &&
+      !isPaymentReturn &&
+      !isOpeningSasaPay &&
+      !confirmedOrder
+    ) {
       router.replace("/cart");
     }
-  }, [currentStep, isOpeningSasaPay, isPaymentReturn, items.length, router]);
+  }, [
+    confirmedOrder,
+    currentStep,
+    hasCheckedStoredOrder,
+    isOpeningSasaPay,
+    isPaymentReturn,
+    items.length,
+    router,
+  ]);
 
   useEffect((): void => {
     void (async (): Promise<void> => {
@@ -282,28 +343,14 @@ function CheckoutPageContent(): ReactElement | null {
   }, [currentStep, deliveryPreviewDetails, items]);
 
   useEffect((): void => {
-    if (items.length > 0) {
-      return;
+    const storedOrder = readStoredPendingOrder();
+
+    if (items.length === 0 && storedOrder && !confirmedOrder && currentStep !== 4) {
+      setConfirmedOrder(storedOrder);
+      setCurrentStep(4);
     }
 
-    const storedOrder = window.sessionStorage.getItem(PENDING_ORDER_STORAGE_KEY);
-    if (!storedOrder) {
-      return;
-    }
-
-    try {
-      const parsedOrder = JSON.parse(storedOrder) as Order;
-      const shouldDeferConfirmation =
-        parsedOrder.paymentTiming === "prepay" &&
-        parsedOrder.paymentStatus !== "paid";
-
-      if (!confirmedOrder && currentStep !== 4 && !shouldDeferConfirmation) {
-        setConfirmedOrder(parsedOrder);
-        setCurrentStep(4);
-      }
-    } catch {
-      window.sessionStorage.removeItem(PENDING_ORDER_STORAGE_KEY);
-    }
+    setHasCheckedStoredOrder(true);
   }, [confirmedOrder, currentStep, items.length]);
 
   useEffect((): void => {
@@ -341,10 +388,27 @@ function CheckoutPageContent(): ReactElement | null {
             : "We could not refresh your payment status yet.",
         );
       } finally {
+        setIsOpeningSasaPay(false);
         setCurrentStep(4);
       }
     })();
   }, [isPaymentReturn, returnedOrderNumber]);
+
+  useEffect((): (() => void) | void => {
+    if (!isOpeningSasaPay) {
+      return;
+    }
+
+    const timeoutId = window.setTimeout((): void => {
+      recoverPendingOrder(
+        "We could not confirm that SasaPay opened. You can review your order below and retry payment when ready.",
+      );
+    }, SASAPAY_OVERLAY_TIMEOUT_MS);
+
+    return (): void => {
+      window.clearTimeout(timeoutId);
+    };
+  }, [isOpeningSasaPay]);
 
   function buildPaymentReturnUrl(orderNumber: string, paymentState: string): string {
     if (typeof window === "undefined") {
@@ -353,14 +417,6 @@ function CheckoutPageContent(): ReactElement | null {
 
     const baseUrl = window.location.origin;
     return `${baseUrl}/checkout?order=${encodeURIComponent(orderNumber)}&payment=${paymentState}`;
-  }
-
-  function isOrderEligibleForSasaPay(order: Order): boolean {
-    return (
-      order.paymentTiming === "prepay" &&
-      order.paymentMethod === "mpesa" &&
-      order.orderStatus === "awaiting_payment"
-    );
   }
 
   async function beginSasaPayCheckout(order: Order): Promise<void> {
@@ -480,7 +536,7 @@ function CheckoutPageContent(): ReactElement | null {
         }
       }
 
-      if (isOrderEligibleForSasaPay(order)) {
+      if (isOrderEligibleForSasaPayRetry(order)) {
         window.sessionStorage.setItem(PENDING_ORDER_STORAGE_KEY, JSON.stringify(order));
         setIsOpeningSasaPay(true);
         clearCart();
@@ -588,7 +644,7 @@ function CheckoutPageContent(): ReactElement | null {
                 <OrderConfirmation
                   isRetryingPayment={isRetryingPayment}
                   onRetryPayment={
-                    isOrderEligibleForSasaPay(confirmedOrder)
+                    isOrderEligibleForSasaPayRetry(confirmedOrder)
                       ? (): void => {
                           void beginSasaPayCheckout(confirmedOrder);
                         }
@@ -661,6 +717,18 @@ function CheckoutPageContent(): ReactElement | null {
             <p className="mt-3 font-dm-sans text-body-sm text-text-secondary">
               Please hold on while we prepare your secure payment page.
             </p>
+            <Button
+              className="mt-6 h-11 rounded-full border border-border-warm bg-transparent px-5 font-dm-sans text-body-sm font-medium text-obsidian hover:border-gold hover:bg-cream"
+              onClick={(): void => {
+                recoverPendingOrder(
+                  "You can continue from your saved order below whenever you are ready.",
+                );
+              }}
+              type="button"
+              variant="ghost"
+            >
+              Return to Order
+            </Button>
           </div>
         </div>
       ) : null}

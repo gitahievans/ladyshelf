@@ -227,12 +227,20 @@ export interface AdminOrderListItem {
 export interface AdminOrderDetail extends Order {
   internalNotes: string;
   paymentTransactions: PaymentTransaction[];
+  receipt?: Receipt | null;
 }
 
 export interface AdminOrderUpdateInput {
   orderStatus?: OrderStatus;
   paymentStatus?: PaymentStatus;
   internalNotes?: string;
+}
+
+export interface AdminManualPaymentInput {
+  amountCollected?: number;
+  paymentMethod: PaymentMethod;
+  paymentReference?: string;
+  staffNote?: string;
 }
 
 export interface AdminPaymentListItem {
@@ -538,6 +546,22 @@ export interface PaymentTransaction {
   paidAt?: string | null;
   failedAt?: string | null;
   lastSyncedAt?: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface Receipt {
+  id: number;
+  receiptNumber: string;
+  status: "issued" | "sent" | "failed";
+  paymentTransactionId?: string | null;
+  issuedAt: string;
+  sentAt?: string | null;
+  sentToEmail: string;
+  totalPaid: number;
+  currency: "KES";
+  paymentMethod: PaymentMethod;
+  paymentReference: string;
   createdAt: string;
   updatedAt: string;
 }

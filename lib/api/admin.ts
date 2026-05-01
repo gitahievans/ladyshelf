@@ -11,6 +11,7 @@ import type {
   AdminInventoryRow,
   AdminOrderDetail,
   AdminOrderListItem,
+  AdminManualPaymentInput,
   AdminOrderUpdateInput,
   AdminPaymentDetail,
   AdminPaymentListItem,
@@ -393,6 +394,43 @@ export async function updateAdminOrder({
     method: "PATCH",
     path: `/api/v1/admin/orders/${encodeURIComponent(orderNumber)}`,
     body: input,
+  });
+}
+
+export async function markAdminOrderPaid({
+  input,
+  orderNumber,
+}: {
+  input: AdminManualPaymentInput;
+  orderNumber: string;
+}): Promise<AdminOrderDetail> {
+  const accessToken = await getAccessToken();
+
+  if (!accessToken) {
+    throw new AdminApiError("Please sign in to mark this order as paid.", 401);
+  }
+
+  return fetchAdminResource<AdminOrderDetail>({
+    accessToken,
+    method: "POST",
+    path: `/api/v1/admin/orders/${encodeURIComponent(orderNumber)}/mark-paid`,
+    body: input,
+  });
+}
+
+export async function resendAdminOrderReceipt(
+  orderNumber: string,
+): Promise<AdminOrderDetail> {
+  const accessToken = await getAccessToken();
+
+  if (!accessToken) {
+    throw new AdminApiError("Please sign in to resend this receipt.", 401);
+  }
+
+  return fetchAdminResource<AdminOrderDetail>({
+    accessToken,
+    method: "POST",
+    path: `/api/v1/admin/orders/${encodeURIComponent(orderNumber)}/receipt/resend`,
   });
 }
 

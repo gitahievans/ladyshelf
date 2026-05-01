@@ -134,13 +134,23 @@ export default function CartDrawer(): ReactElement {
 
                 <div className="flex-1 overflow-y-auto px-5 py-5">
                   {items.length === 0 ? (
-                    <EmptyState
-                      className="border-none bg-transparent px-0 py-16 shadow-none"
-                      ctaHref="/shop"
-                      ctaLabel="Shop the Collection"
-                      description="Your next signature piece is waiting."
-                      title="Your cart is ready for something great."
-                    />
+                    <div className="py-16">
+                      <EmptyState
+                        className="border-none bg-transparent px-0 py-0 shadow-none"
+                        description="Your next signature piece is waiting."
+                        title="Your cart is ready for something great."
+                      />
+                      <div className="mt-6 flex justify-center">
+                        <Button
+                          asChild
+                          className="h-11 rounded-full bg-gold px-6 font-dm-sans text-body-sm font-medium text-obsidian hover:bg-sand"
+                        >
+                          <Link href="/shop" onClick={toggleCart}>
+                            Shop the Collection
+                          </Link>
+                        </Button>
+                      </div>
+                    </div>
                   ) : (
                     <div className="space-y-4">
                       {items.map((item) => (

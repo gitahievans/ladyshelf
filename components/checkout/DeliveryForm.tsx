@@ -10,6 +10,7 @@ import PhoneField from "@/components/shared/PhoneField";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { searchKenyanLocations } from "@/lib/mapbox";
 import {
   type PhoneSelection,
   validateInternationalPhone,
@@ -138,9 +139,11 @@ export default function DeliveryForm({
   pickupInfo = null,
   onSaveAddressChange,
 }: DeliveryFormProps): ReactElement {
+  const resolvedInitialLocationQuery = buildInitialLocationQuery(defaultValues);
   const [formValues, setFormValues] = useState<DeliveryDetails>({
     ...initialValues,
     ...defaultValues,
+    locationLabel: defaultValues?.locationLabel ?? resolvedInitialLocationQuery,
   });
   const [errors, setErrors] = useState<DeliveryErrors>({});
   const [phoneCountry, setPhoneCountry] = useState<PhoneSelection | undefined>(
@@ -148,15 +151,17 @@ export default function DeliveryForm({
   );
   const [shouldSaveAddress, setShouldSaveAddress] = useState<boolean>(saveAddressByDefault);
   const initialLocationQuery = useMemo(
-    () => buildInitialLocationQuery(defaultValues),
-    [defaultValues],
+    () => resolvedInitialLocationQuery,
+    [resolvedInitialLocationQuery],
   );
 
   useEffect((): void => {
+    const nextInitialLocationQuery = buildInitialLocationQuery(defaultValues);
     setFormValues({
       ...initialValues,
       ...defaultValues,
       deliveryMethod: defaultValues?.deliveryMethod ?? "delivery",
+      locationLabel: defaultValues?.locationLabel ?? nextInitialLocationQuery,
       latitude: defaultValues?.latitude ?? null,
       longitude: defaultValues?.longitude ?? null,
     });
@@ -173,6 +178,56 @@ export default function DeliveryForm({
   useEffect((): void => {
     onSaveAddressChange?.(shouldSaveAddress);
   }, [onSaveAddressChange, shouldSaveAddress]);
+
+  useEffect((): (() => void) | void => {
+    if (
+      formValues.deliveryMethod !== "delivery" ||
+      !formValues.locationLabel?.trim() ||
+      formValues.latitude != null ||
+      formValues.longitude != null
+    ) {
+      return;
+    }
+
+    let isMounted = true;
+
+    void (async (): Promise<void> => {
+      const suggestions = await searchKenyanLocations(formValues.locationLabel ?? "");
+
+      if (!isMounted || suggestions.length === 0) {
+        return;
+      }
+
+      const matchedSuggestion =
+        suggestions.find(
+          (suggestion) =>
+            suggestion.county.toLowerCase() === formValues.county.toLowerCase() &&
+            suggestion.town.toLowerCase() === formValues.town.toLowerCase(),
+        ) ?? suggestions[0];
+
+      setFormValues((current) => ({
+        ...current,
+        locationLabel: matchedSuggestion.label,
+        latitude: matchedSuggestion.latitude,
+        longitude: matchedSuggestion.longitude,
+      }));
+      setErrors((current) => ({
+        ...current,
+        locationLabel: undefined,
+      }));
+    })();
+
+    return (): void => {
+      isMounted = false;
+    };
+  }, [
+    formValues.county,
+    formValues.deliveryMethod,
+    formValues.latitude,
+    formValues.locationLabel,
+    formValues.longitude,
+    formValues.town,
+  ]);
 
   function updateField<K extends keyof DeliveryDetails>(
     key: K,

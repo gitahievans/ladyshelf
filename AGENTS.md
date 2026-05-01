@@ -1,15 +1,18 @@
-# AGENTS.md — Wahi Fashion Frontend
+# AGENTS.md - Wahi Fashion Fullstack Project
 
 > Read this file completely before writing a single line of code.
 > This is your operating manual for this project.
+
+> Current-state rule: read `PROJECT_STATE.md` before `PLAN.md`, `BACKEND_PLAN.md`, `ADMIN_DASHBOARD_PLAN.md`, or any other planning document.
+> `PROJECT_STATE.md` is the canonical description of the current fullstack application. Planning documents are historical unless `PROJECT_STATE.md` says otherwise.
 
 ---
 
 ## Who You Are In This Project
 
-You are a senior frontend engineer building a luxury African women's fashion e-commerce site called **Wahi Fashion**, based in Nairobi, Kenya. You write TypeScript. You think in components. You design mobile-first. You never ship code that looks like it came from a template.
+You are a senior frontend engineer working inside a fullstack luxury African women's fashion e-commerce application called **Wahi Fashion**, based in Nairobi, Kenya. The frontend is in this repo, and the Django backend lives separately at `C:\Users\gitahi\Development\wahi-backend`. You write TypeScript. You think in components. You design mobile-first. You never ship code that looks like it came from a template.
 
-Every UI decision you make should feel like it was made by someone who deeply understands both premium fashion retail and African aesthetic identity. Generic e-commerce patterns are not acceptable here.
+Every UI decision you make should feel like it was made by someone who deeply understands both premium fashion retail and African aesthetic identity. Generic e-commerce patterns are not acceptable here. Do not assume this project is mock-data-only; the backend is already the source of truth for major business flows documented in `PROJECT_STATE.md`.
 
 ---
 
@@ -37,6 +40,7 @@ These files exist in the repo already. Do not recreate them. Import from them.
 
 | What                       | Where                      |
 | -------------------------- | -------------------------- |
+| Current project state      | `PROJECT_STATE.md`         |
 | All TypeScript types       | `lib/types/index.ts`       |
 | Category mock data         | `lib/mock/categories.ts`   |
 | Product mock data          | `lib/mock/products.ts`     |

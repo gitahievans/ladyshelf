@@ -1,0 +1,261 @@
+# Wahi Fashion Project State
+
+This is the canonical current-state document for Wahi Fashion.
+
+Read this file before using `PLAN.md`, `BACKEND_PLAN.md`, `ADMIN_DASHBOARD_PLAN.md`, or other historical planning documents. Those files explain how the work was planned; this file explains what is true now.
+
+Last updated: 2026-04-30
+
+## Current Working Mode
+
+Wahi Fashion is a fullstack e-commerce application.
+
+Work may span both repositories:
+
+- Frontend: `C:\Users\gitahi\Development\wahi-fasion`
+- Backend: `C:\Users\gitahi\Development\wahi-backend`
+
+Do not assume this is a frontend-only mock-data application. The frontend began as a mock-data build, but major flows now use the Django backend and Supabase-backed authentication.
+
+## Application Architecture
+
+### Frontend
+
+- Next.js 16 App Router
+- TypeScript strict mode
+- Tailwind CSS v4 with Wahi design tokens
+- shadcn/ui primitives themed for the project
+- Zustand for client state
+- Framer Motion for animation
+- Supabase Auth client/session handling
+- Mapbox geocoding for delivery-location search
+- Vercel production frontend: `https://wahi-fashion.vercel.app`
+- Local frontend: `http://localhost:3000`
+
+### Backend
+
+- Separate Django backend in `C:\Users\gitahi\Development\wahi-backend`
+- Django REST Framework API under `/api/v1/`
+- Postgres-ready Docker setup
+- Django admin for operational management
+- Supabase JWT verification via JWKS
+- SasaPay sandbox integration for prepaid M-Pesa payments
+- Local backend: `http://localhost:8000`
+
+## Data Source Rules
+
+- The backend is the source of truth for catalog, categories, variants, stock, checkout quotes, delivery rules, pickup information, order creation, account order history, wishlist for authenticated users, admin operations, and payment status where implemented.
+- Frontend mock catalog data may still exist and may be used as a resilience fallback in some storefront flows.
+- Do not rebuild features as mock-only unless the user explicitly asks for a temporary mock.
+- Preserve the approved storefront UX when replacing mock-backed behavior with API-backed behavior.
+
+## Frontend Current State
+
+Implemented customer-facing routes include:
+
+- `/`
+- `/shop`
+- `/shop/[slug]`
+- `/search`
+- `/wishlist`
+- `/cart`
+- `/checkout`
+- `/account`
+- `/auth/login`
+- `/auth/register`
+- `/auth/forgot-password`
+- `/auth/update-password`
+- `/auth/complete-profile`
+- `/auth/callback`
+- `/contact`
+- `/delivery-info`
+- `/faq`
+- `/returns`
+
+Implemented admin-facing routes include:
+
+- `/admin`
+- `/admin/catalog`
+- `/admin/customers`
+- `/admin/customers/[id]`
+- `/admin/inventory`
+- `/admin/orders`
+- `/admin/orders/[orderNumber]`
+- `/admin/payments`
+- `/admin/payments/[id]`
+- `/admin/settings`
+- `/admin/settings/delivery-zones`
+- `/admin/settings/pickup`
+- `/admin/staff`
+
+Important frontend integration files:
+
+- `lib/api/catalog.ts`
+- `lib/api/account.ts`
+- `lib/api/addresses.ts`
+- `lib/api/wishlist.ts`
+- `lib/api/orders.ts`
+- `lib/api/checkout.ts`
+- `lib/api/admin.ts`
+- `lib/supabase/client.ts`
+- `lib/supabase/server.ts`
+- `lib/supabase/proxy.ts`
+- `stores/authStore.ts`
+- `stores/wishlistStore.ts`
+- `stores/cartStore.ts`
+
+## Backend Current State
+
+Completed backend capabilities:
+
+- Health check and API documentation
+- Supabase-authenticated customer profile sync
+- Customer address book
+- Catalog categories, products, and variants
+- Stock-aware product variants
+- Authenticated wishlist
+- Account order history
+- Checkout quote authority
+- Pickup information
+- Distance-based rider delivery and parcel fallback logic
+- Guest and authenticated order creation
+- Order lifecycle statuses for manual fulfillment
+- Stock decrement on order creation
+- Email notifications for order/payment events
+- Branded HTML receipt emails after payment confirmation
+- SasaPay sandbox payment initiation
+- SasaPay callback handling
+- SasaPay payment status sync
+- Payment transaction persistence
+- Expiry flow for unpaid prepaid orders with stock restoration
+- Admin APIs for dashboard, staff permissions, catalog, customers, inventory, orders, payments, delivery settings, and pickup settings
+
+Key backend API areas currently consumed by the frontend:
+
+- `GET /api/v1/account/me`
+- `GET/POST/PATCH/DELETE /api/v1/account/addresses`
+- `GET /api/v1/account/orders`
+- `GET /api/v1/catalog/categories`
+- `GET /api/v1/catalog/products`
+- `GET /api/v1/catalog/products/<slug>`
+- `GET/POST/DELETE /api/v1/wishlist/`
+- `GET /api/v1/checkout/pickup-info`
+- `POST /api/v1/checkout/quote`
+- `POST /api/v1/checkout/orders`
+- `POST /api/v1/payments/sasapay/checkout`
+- `POST /api/v1/payments/sasapay/callback`
+- `POST /api/v1/payments/sasapay/status-sync`
+- Admin endpoints under `/api/v1/admin/...`
+
+## Auth State
+
+- Supabase Auth is the identity source of truth.
+- Django owns customer profile and business data.
+- Email/password registration, confirmation, login, logout, forgot password, and update password flows are implemented.
+- Account hydration from backend `/api/v1/account/me` is implemented.
+- Google sign-in may still appear in the UI, but the OAuth callback flow is not considered solved. Do not treat Google OAuth as working unless it has been explicitly fixed and verified.
+
+## Checkout, Orders, and Payments
+
+- Checkout no longer relies on fixed frontend-only delivery rules.
+- Backend quote responses control fulfillment mode, available payment options, delivery fees, and totals.
+- Store pickup is prepay only.
+- Parcel delivery is prepay only.
+- Pay-on-delivery is available only for rider-served locations and only with M-Pesa.
+- Order creation is backend-backed for guest and authenticated customers.
+- Prepaid orders use SasaPay sandbox/test-mode integration.
+- Prepaid orders are not live-money production payments yet.
+- Rider pay-on-delivery orders notify immediately on placement.
+- Prepaid customer/staff notifications happen after payment confirmation.
+- Prepaid customers receive branded receipt emails after confirmed SasaPay payment; pending-payment customer emails are not sent for prepaid orders.
+- Pay-on-delivery orders send the existing order confirmation/delivery note at placement, then staff can mark the order paid from the admin order detail page to generate and email the receipt.
+- Admin order detail supports receipt status display and receipt resend.
+- Unpaid prepaid orders can expire after 30 minutes through the backend expiry command, restoring stock and retaining admin history.
+
+## Fulfillment and Operations
+
+- Django admin remains available for backend operations.
+- A frontend admin dashboard also exists and consumes backend admin APIs.
+- Pickup location is Roysambu / Lumumba Drive.
+- Pickup instructions should include location, contact details, Google Maps link, and a 72-hour collection window.
+- Rider delivery uses straight-line distance from the shop location.
+- Parcel delivery begins beyond the configured rider/parcel switch radius.
+- Current seeded delivery setting context:
+  - rider max radius: `50 km`
+  - parcel switch radius: `50 km`
+  - rider base fee for `0-10 km`: `KES 200`
+  - each additional `10 km` band: `+KES 200`
+  - settings are editable from admin interfaces
+
+## Known Limitations / Deferred Work
+
+- SasaPay is still sandbox/test-mode, not production live money.
+- Production SasaPay credentials, callback URLs, merchant setup, live transaction reconciliation, and go-live verification remain deferred.
+- SMS notifications are planned through Africa's Talking but are not implemented as the active notification channel yet.
+- Google OAuth is not verified as working.
+- Returns, exchanges, and refunds remain manual for MVP.
+- There is no customer-facing real-time order tracking in MVP.
+- Some frontend mock data still exists and should not be mistaken for the primary source of truth.
+- Repo-wide frontend lint may include unrelated existing issues; check the latest task context before treating lint as a clean global signal.
+
+## Historical Plan Status
+
+The original frontend-only plan has been superseded by the fullstack implementation.
+
+Completed major phases:
+
+- Phase 1: Django backend foundation
+- Phase 2: Authentication, profiles, and customer data, except unresolved Google OAuth
+- Phase 3: Catalog, search, and inventory integration
+- Phase 4: Wishlist and account order history
+- Phase 5: Checkout rules and delivery logic
+- Phase 6: Orders and manual fulfillment workflow
+- Phase 7 sandbox: SasaPay test-mode payment initiation, callbacks, status sync, transaction persistence, and unpaid prepaid expiry
+
+Main remaining payment work:
+
+- SasaPay production/live-money rollout
+- production callback verification
+- final merchant credential setup
+- live payment reconciliation checks
+
+## Verification Commands
+
+Frontend:
+
+```powershell
+npm run lint
+npx tsc --noEmit
+npm run build
+```
+
+Backend, from `C:\Users\gitahi\Development\wahi-backend`:
+
+```powershell
+docker compose run --rm backend python manage.py test
+docker compose run --rm backend python manage.py makemigrations --check
+docker compose run --rm backend python manage.py check
+```
+
+Use the narrower backend test command when working in a specific app, for example:
+
+```powershell
+docker compose run --rm backend python manage.py test payments checkout orders
+```
+
+## Documentation Maintenance Rule
+
+After any major change, update this file in the same task.
+
+Major changes include:
+
+- backend schema/model changes
+- new or changed API endpoints
+- auth flow changes
+- checkout, payment, order, delivery, inventory, or notification changes
+- frontend data-source changes from mock to API or API to mock
+- admin dashboard capability changes
+- deployment, environment, or production integration changes
+- resolved or newly discovered limitations
+
+When a plan file disagrees with this file, treat this file as current and the plan file as historical.

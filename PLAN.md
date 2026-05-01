@@ -1,4 +1,7 @@
-# PLAN.md — Wahi Fashion Frontend Build Plan
+# PLAN.md - Wahi Fashion Frontend Build Plan
+
+> Historical planning document. Do not treat this as the current implementation state.
+> Read `PROJECT_STATE.md` first. `PROJECT_STATE.md` is the canonical current-state document for the fullstack application.
 
 > Execute phases in strict order. Complete and verify each phase before starting the next.
 > Read AGENTS.md, context.md, and architecture.md in full before starting Phase 1.
