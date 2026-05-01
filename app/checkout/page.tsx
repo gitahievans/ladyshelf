@@ -11,7 +11,6 @@ import OrderConfirmation from "@/components/checkout/OrderConfirmation";
 import OrderSummary from "@/components/checkout/OrderSummary";
 import PaymentMethod from "@/components/checkout/PaymentMethod";
 import Footer from "@/components/layout/Footer";
-import { Button } from "@/components/ui/button";
 import { createAccountAddress } from "@/lib/api/addresses";
 import {
   createCheckoutOrder,
@@ -717,18 +716,6 @@ function CheckoutPageContent(): ReactElement | null {
             <p className="mt-3 font-dm-sans text-body-sm text-text-secondary">
               Please hold on while we prepare your secure payment page.
             </p>
-            <Button
-              className="mt-6 h-11 rounded-full border border-border-warm bg-transparent px-5 font-dm-sans text-body-sm font-medium text-obsidian hover:border-gold hover:bg-cream"
-              onClick={(): void => {
-                recoverPendingOrder(
-                  "You can continue from your saved order below whenever you are ready.",
-                );
-              }}
-              type="button"
-              variant="ghost"
-            >
-              Return to Order
-            </Button>
           </div>
         </div>
       ) : null}
