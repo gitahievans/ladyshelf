@@ -400,7 +400,7 @@ function CheckoutPageContent(): ReactElement | null {
 
     const timeoutId = window.setTimeout((): void => {
       recoverPendingOrder(
-        "We could not confirm that SasaPay opened. You can review your order below and retry payment when ready.",
+        "We could not confirm that SasaPay opened. Your order is saved and you can retry payment when ready.",
       );
     }, SASAPAY_OVERLAY_TIMEOUT_MS);
 

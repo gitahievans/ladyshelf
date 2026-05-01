@@ -41,12 +41,16 @@ function getOrderHeadline(order: Order): string {
 }
 
 function getOrderMessage(order: Order): string {
+  const pendingPaymentActionMessage = order.userId
+    ? "Use View Your Orders to review it and retry payment when ready."
+    : "Retry payment when ready from this page.";
+
   if (order.deliveryMode === "pickup") {
     if (order.paymentStatus === "paid") {
       return "Your payment has been received. Your piece will be prepared for store pickup in Roysambu.";
     }
 
-    return "Your pickup request has been created. Complete payment to confirm your store pickup.";
+    return `Your pickup request has been created, but we have not received payment confirmation yet. ${pendingPaymentActionMessage}`;
   }
 
   if (order.deliveryMode === "parcel" && order.paymentStatus === "paid") {
@@ -57,7 +61,7 @@ function getOrderMessage(order: Order): string {
     return "Your order is logged and will be prepared for rider dispatch.";
   }
 
-  return "Your order has been created. Payment confirmation is the next step before we prepare it.";
+  return `Your order has been created, but we have not received payment confirmation yet. ${pendingPaymentActionMessage}`;
 }
 
 function getStatusLabel(value: string): string {
