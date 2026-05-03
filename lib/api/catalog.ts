@@ -1,13 +1,6 @@
-import {
-  allProducts as mockProducts,
-  categories as mockCategories,
-  getProductBySlug as getMockProductBySlug,
-} from "@/lib/mock";
 import type { Category, CategorySlug, Product, UIStore } from "@/lib/types";
+import { getApiBaseUrl } from "@/lib/api/baseUrl";
 import { getCatalogColors } from "@/lib/utils/catalog";
-import { normalizeSearchQuery } from "@/lib/utils/search";
-
-const DEFAULT_API_BASE_URL = "http://localhost:8000";
 
 export interface CatalogSnapshot {
   categories: Category[];
@@ -22,10 +15,6 @@ interface FetchCatalogProductsOptions {
   newArrival?: boolean;
   query?: string;
   sortBy?: UIStore["sortBy"];
-}
-
-function getApiBaseUrl(): string {
-  return process.env.NEXT_PUBLIC_API_BASE_URL ?? DEFAULT_API_BASE_URL;
 }
 
 function buildProductsUrl(options: FetchCatalogProductsOptions): string {
@@ -60,72 +49,6 @@ function buildProductsUrl(options: FetchCatalogProductsOptions): string {
   return `${getApiBaseUrl()}/api/v1/catalog/products${queryString ? `?${queryString}` : ""}`;
 }
 
-function fallbackProducts(options: FetchCatalogProductsOptions = {}): Product[] {
-  let products = [...mockProducts];
-
-  if (options.category && options.category !== "all") {
-    products = products.filter(
-      (product) => product.categorySlug === options.category,
-    );
-  }
-
-  if (options.featured) {
-    products = products.filter((product) => product.isFeatured);
-  }
-
-  if (options.newArrival) {
-    products = products.filter((product) => product.isNewArrival);
-  }
-
-  if (options.query?.trim()) {
-    const normalizedQuery = normalizeSearchQuery(options.query);
-    products = products.filter((product) =>
-      normalizeSearchQuery(
-        [
-          product.name,
-          product.description,
-          product.categorySlug,
-          product.tags.join(" "),
-          product.material ?? "",
-          product.badge ?? "",
-        ].join(" "),
-      ).includes(normalizedQuery),
-    );
-  }
-
-  if (options.sortBy) {
-    switch (options.sortBy) {
-      case "newest":
-        products.sort(
-          (first, second) =>
-            new Date(second.createdAt).getTime() -
-            new Date(first.createdAt).getTime(),
-        );
-        break;
-      case "price-asc":
-        products.sort((first, second) => first.price - second.price);
-        break;
-      case "price-desc":
-        products.sort((first, second) => second.price - first.price);
-        break;
-      case "rating":
-        products.sort((first, second) => second.rating - first.rating);
-        break;
-      case "bestseller":
-        products.sort(
-          (first, second) => second.reviewCount - first.reviewCount,
-        );
-        break;
-    }
-  }
-
-  if (options.limit) {
-    return products.slice(0, options.limit);
-  }
-
-  return products;
-}
-
 export async function fetchCatalogCategories(): Promise<Category[]> {
   try {
     const response = await fetch(`${getApiBaseUrl()}/api/v1/catalog/categories`, {
@@ -138,7 +61,7 @@ export async function fetchCatalogCategories(): Promise<Category[]> {
 
     return (await response.json()) as Category[];
   } catch {
-    return mockCategories;
+    return [];
   }
 }
 
@@ -156,7 +79,7 @@ export async function fetchCatalogProducts(
 
     return (await response.json()) as Product[];
   } catch {
-    return fallbackProducts(options);
+    return [];
   }
 }
 
@@ -181,8 +104,33 @@ export async function fetchCatalogProductBySlug(
 
     return (await response.json()) as Product;
   } catch {
-    return getMockProductBySlug(slug) ?? null;
+    return null;
   }
+}
+
+export async function fetchCatalogProductVariantAvailability(
+  slug: string,
+  variantId: string,
+): Promise<{
+  product: Product;
+  variant: Product["variants"][number];
+} | null> {
+  const product = await fetchCatalogProductBySlug(slug);
+
+  if (!product) {
+    return null;
+  }
+
+  const variant = product.variants.find((entry) => entry.id === variantId);
+
+  if (!variant) {
+    return null;
+  }
+
+  return {
+    product,
+    variant,
+  };
 }
 
 export async function fetchCatalogSnapshot(): Promise<CatalogSnapshot> {

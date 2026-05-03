@@ -138,7 +138,10 @@ export default function AdminOrderDetailManager({ orderNumber }: AdminOrderDetai
   }
 
   const canMarkPaid =
-    order.paymentTiming === "pay_on_delivery" && order.paymentStatus !== "paid";
+    order.paymentTiming === "pay_on_delivery" &&
+    order.paymentStatus !== "paid" &&
+    order.orderStatus !== "cancelled" &&
+    order.total > 0;
 
   return (
     <section className="space-y-6">
@@ -169,13 +172,59 @@ export default function AdminOrderDetailManager({ orderNumber }: AdminOrderDetai
                 <div key={item.id} className="grid gap-2 py-4 md:grid-cols-4 md:items-center">
                   <div className="md:col-span-2">
                     <p className="font-dm-sans text-body-sm font-medium text-obsidian">{item.productName}</p>
-                    <p className="font-dm-sans text-caption text-text-muted">{item.size} · {item.color} · Qty {item.quantity}</p>
+                    <p className="font-dm-sans text-caption text-text-muted">
+                      {item.size} · {item.color} · Qty {item.quantity}
+                      {item.cancelledQuantity ? ` · Cancelled ${item.cancelledQuantity}` : ""}
+                    </p>
                   </div>
                   <p className="font-dm-sans text-body-sm text-text-secondary">{item.variantId}</p>
-                  <p className="font-dm-sans text-body-sm font-semibold text-obsidian md:text-right">{formatPrice(item.price * item.quantity, item.currency)}</p>
+                  <p className="font-dm-sans text-body-sm font-semibold text-obsidian md:text-right">
+                    {formatPrice(item.price * (item.quantity - (item.cancelledQuantity ?? 0)), item.currency)}
+                  </p>
                 </div>
               ))}
             </div>
+          </div>
+          <div className="rounded-lg border border-border-warm bg-ivory p-5 shadow-card">
+            <h3 className="font-cormorant text-h4 text-obsidian">Cancellation history</h3>
+            {order.cancellations?.length ? (
+              <div className="mt-4 divide-y divide-border-warm">
+                {order.cancellations.map((cancellation) => (
+                  <div key={cancellation.id} className="space-y-3 py-4">
+                    <div className="flex flex-col gap-1 md:flex-row md:items-center md:justify-between">
+                      <p className="font-dm-sans text-body-sm font-medium text-obsidian">
+                        {cancellation.reasonLabel}
+                      </p>
+                      <p className="font-dm-sans text-caption text-text-muted">
+                        {formatDate(cancellation.createdAt)}
+                      </p>
+                    </div>
+                    {cancellation.note ? (
+                      <p className="font-dm-sans text-body-sm text-text-secondary">{cancellation.note}</p>
+                    ) : null}
+                    <div className="space-y-2">
+                      {cancellation.items.map((item) => (
+                        <div
+                          className="flex items-center justify-between gap-3 font-dm-sans text-body-sm"
+                          key={`${cancellation.id}-${item.orderItemId}`}
+                        >
+                          <span className="text-text-secondary">
+                            {item.productName} x{item.quantity}
+                          </span>
+                          <span className="font-medium text-obsidian">
+                            {formatPrice(item.lineTotal, order.currency)}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="mt-3 font-dm-sans text-body text-text-secondary">
+                No cancellations recorded.
+              </p>
+            )}
           </div>
           <div className="rounded-lg border border-border-warm bg-ivory p-5 shadow-card">
             <h3 className="font-cormorant text-h4 text-obsidian">Payment transactions</h3>

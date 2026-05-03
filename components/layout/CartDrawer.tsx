@@ -189,7 +189,11 @@ export default function CartDrawer(): ReactElement {
                             </div>
 
                             <div className="mt-auto flex items-end justify-between gap-3 pt-4">
-                              <CartQuantityControl compact item={item} />
+                              <CartQuantityControl
+                                availableStock={null}
+                                compact
+                                item={item}
+                              />
 
                               <PriceDisplay
                                 currency={item.currency}

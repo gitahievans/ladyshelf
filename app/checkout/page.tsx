@@ -12,6 +12,7 @@ import OrderSummary from "@/components/checkout/OrderSummary";
 import PaymentMethod from "@/components/checkout/PaymentMethod";
 import Footer from "@/components/layout/Footer";
 import { createAccountAddress } from "@/lib/api/addresses";
+import { fetchCatalogProducts } from "@/lib/api/catalog";
 import {
   createCheckoutOrder,
   createSasaPayCheckoutSession,
@@ -20,6 +21,10 @@ import {
   syncSasaPayStatus,
 } from "@/lib/api/checkout";
 import { cn } from "@/lib/utils/cn";
+import {
+  buildCartStockAdjustmentMessage,
+  reconcileCartItemsWithProducts,
+} from "@/lib/utils/cartStock";
 import { formatPrice } from "@/lib/utils/format";
 import { isOrderEligibleForSasaPayRetry } from "@/lib/utils/orderPayments";
 import type {
@@ -161,6 +166,7 @@ function CheckoutPageContent(): ReactElement | null {
   const subtotal = useCartStore((state) => state.subtotal);
   const totalItems = useCartStore((state) => state.totalItems);
   const clearCart = useCartStore((state) => state.clearCart);
+  const replaceItems = useCartStore((state) => state.replaceItems);
 
   const [currentStep, setCurrentStep] = useState<CheckoutStep>(1);
   const [deliveryDetails, setDeliveryDetails] = useState<DeliveryDetails | null>(null);
@@ -182,6 +188,8 @@ function CheckoutPageContent(): ReactElement | null {
   const [isRetryingPayment, setIsRetryingPayment] = useState<boolean>(false);
   const [isOpeningSasaPay, setIsOpeningSasaPay] = useState<boolean>(false);
   const [hasCheckedStoredOrder, setHasCheckedStoredOrder] = useState<boolean>(false);
+  const [cartSyncNotice, setCartSyncNotice] = useState<string | null>(null);
+  const [isCheckingCartStock, setIsCheckingCartStock] = useState<boolean>(false);
 
   const returnedOrderNumber = searchParams.get("order");
   const paymentReturnState = searchParams.get("payment");
@@ -226,7 +234,7 @@ function CheckoutPageContent(): ReactElement | null {
     }
   }
 
-  useEffect((): void => {
+  useEffect(() => {
     if (!hasCheckedStoredOrder) {
       return;
     }
@@ -250,12 +258,69 @@ function CheckoutPageContent(): ReactElement | null {
     router,
   ]);
 
-  useEffect((): void => {
+  useEffect(() => {
     void (async (): Promise<void> => {
       const nextPickupInfo = await fetchPickupInfo();
       setPickupInfo(nextPickupInfo);
     })();
   }, []);
+
+  useEffect(() => {
+    if (items.length === 0) {
+      setCartSyncNotice(null);
+      setIsCheckingCartStock(false);
+      return;
+    }
+
+    let isMounted = true;
+
+    setIsCheckingCartStock(true);
+
+    void (async (): Promise<void> => {
+      try {
+        const liveProducts = await fetchCatalogProducts();
+
+        if (!isMounted) {
+          return;
+        }
+
+        if (liveProducts.length === 0) {
+          setCartSyncNotice(
+            "We could not verify live stock right now. We will confirm it again before your order moves forward.",
+          );
+          return;
+        }
+
+        const reconciliation = reconcileCartItemsWithProducts(items, liveProducts);
+        const hasChanges =
+          reconciliation.adjustments.length > 0 ||
+          reconciliation.items.length !== items.length;
+
+        if (hasChanges) {
+          replaceItems(reconciliation.items);
+        }
+
+        if (reconciliation.adjustments.length > 0) {
+          setCartSyncNotice(
+            reconciliation.adjustments
+              .map((adjustment) => buildCartStockAdjustmentMessage(adjustment))
+              .join(" "),
+          );
+          return;
+        }
+
+        setCartSyncNotice(null);
+      } finally {
+        if (isMounted) {
+          setIsCheckingCartStock(false);
+        }
+      }
+    })();
+
+    return (): void => {
+      isMounted = false;
+    };
+  }, [items, replaceItems]);
 
   const userAddress = user?.addresses[0] ?? null;
   const deliveryDefaults = useMemo(() => {
@@ -296,6 +361,41 @@ function CheckoutPageContent(): ReactElement | null {
     }
 
     setCurrentStep(step);
+  }
+
+  async function refreshCartAvailability(): Promise<{
+    hasAdjustments: boolean;
+  }> {
+    const liveProducts = await fetchCatalogProducts();
+
+    if (liveProducts.length === 0) {
+      setCartSyncNotice(
+        "We could not verify live stock right now. Please try again in a moment.",
+      );
+      return { hasAdjustments: false };
+    }
+
+    const reconciliation = reconcileCartItemsWithProducts(items, liveProducts);
+    const hasAdjustments =
+      reconciliation.adjustments.length > 0 ||
+      reconciliation.items.length !== items.length;
+
+    if (hasAdjustments) {
+      replaceItems(reconciliation.items);
+      setCartSyncNotice(
+        reconciliation.adjustments.length > 0
+          ? reconciliation.adjustments
+              .map((adjustment) => buildCartStockAdjustmentMessage(adjustment))
+              .join(" ")
+          : "Your bag was updated to match current stock.",
+      );
+    } else {
+      setCartSyncNotice(null);
+    }
+
+    return {
+      hasAdjustments,
+    };
   }
 
   useEffect(() => {
@@ -455,6 +555,15 @@ function CheckoutPageContent(): ReactElement | null {
     setDeliveryError(null);
 
     try {
+      const { hasAdjustments } = await refreshCartAvailability();
+
+      if (hasAdjustments) {
+        setDeliveryError(
+          "Your bag changed while we checked live stock. Please review it, then continue again.",
+        );
+        return;
+      }
+
       const nextQuote = await fetchCheckoutQuote({
         cartItems: items,
         deliveryDetails: data,
@@ -488,6 +597,16 @@ function CheckoutPageContent(): ReactElement | null {
     setPaymentError(null);
 
     try {
+      const { hasAdjustments } = await refreshCartAvailability();
+
+      if (hasAdjustments) {
+        setPaymentError(
+          "Your bag changed while we checked live stock. Please review your delivery details and continue again.",
+        );
+        setCurrentStep(1);
+        return;
+      }
+
       const nextQuote = await fetchCheckoutQuote({
         cartItems: items,
         deliveryDetails,
@@ -520,6 +639,16 @@ function CheckoutPageContent(): ReactElement | null {
     setPaymentActionError(null);
 
     try {
+      const { hasAdjustments } = await refreshCartAvailability();
+
+      if (hasAdjustments) {
+        setPlaceOrderError(
+          "Your bag changed while we checked live stock. Please review your order again before placing it.",
+        );
+        setCurrentStep(1);
+        return;
+      }
+
       const order = await createCheckoutOrder({
         cartItems: items,
         deliveryDetails,
@@ -589,8 +718,23 @@ function CheckoutPageContent(): ReactElement | null {
             onStepClick={handleStepClick}
           />
 
+          {cartSyncNotice ? (
+            <div className="rounded-2xl border border-gold/30 bg-cream p-4">
+              <p className="font-dm-sans text-body-sm text-text-secondary">
+                {cartSyncNotice}
+              </p>
+            </div>
+          ) : null}
+
           <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,1.55fr)_320px]">
             <div className="space-y-6">
+              {isCheckingCartStock ? (
+                <div className="flex items-center gap-3 rounded-2xl border border-border-warm bg-cream p-4 font-dm-sans text-body-sm text-text-secondary shadow-card">
+                  <Loader2 className="size-4 animate-spin text-gold" />
+                  Checking live stock for your bag.
+                </div>
+              ) : null}
+
               {currentStep === 1 ? (
                 <DeliveryForm
                   defaultValues={deliveryDefaults}

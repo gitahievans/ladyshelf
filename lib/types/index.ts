@@ -75,6 +75,9 @@ export interface CartItem {
   productId: string;
   variantId: string;
   quantity: number;
+  cancelledQuantity?: number;
+  cancellableQuantity?: number;
+  isFullyCancelled?: boolean;
   productName: string;
   productImage: string;
   price: number;
@@ -524,8 +527,48 @@ export interface Order {
   deliveryMode: CheckoutDeliveryMode;
   manualDeliveryFeeConfirmationRequired: boolean;
   pickupInstructions?: PickupInfo | null;
+  paymentExpiresAt?: string | null;
+  canCancel?: boolean;
+  cancellationUnavailableReason?: string;
+  cancellations?: OrderCancellation[];
   createdAt: string;
   updatedAt: string;
+}
+
+export type OrderCancellationReason =
+  | "ordered_by_mistake"
+  | "changed_mind"
+  | "wrong_size_or_color"
+  | "delivery_timing"
+  | "found_another_option"
+  | "other";
+
+export interface OrderCancellationItem {
+  orderItemId: string;
+  productName: string;
+  quantity: number;
+  unitPrice: number;
+  lineTotal: number;
+}
+
+export interface OrderCancellation {
+  id: string;
+  source: "customer" | "staff";
+  reason: OrderCancellationReason;
+  reasonLabel: string;
+  note: string;
+  items: OrderCancellationItem[];
+  createdAt: string;
+}
+
+export interface OrderCancellationInput {
+  orderNumber: string;
+  items: Array<{
+    orderItemId: string;
+    quantity: number;
+  }>;
+  reason: OrderCancellationReason;
+  note?: string;
 }
 
 export interface PaymentTransaction {
@@ -580,6 +623,7 @@ export interface CartStore {
   isOpen: boolean;
   addItem: (item: CartItem) => void;
   removeItem: (cartItemId: string) => void;
+  replaceItems: (items: CartItem[]) => void;
   updateQuantity: (cartItemId: string, quantity: number) => void;
   clearCart: () => void;
   toggleCart: () => void;

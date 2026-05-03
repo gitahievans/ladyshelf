@@ -13,11 +13,14 @@ import { useCartStore } from "@/stores/cartStore";
 
 interface CartItemProps {
   item: CartItemType;
+  availableStock: number | null;
 }
 
-export default function CartItem({ item }: CartItemProps): ReactElement {
+export default function CartItem({
+  item,
+  availableStock,
+}: CartItemProps): ReactElement {
   const removeItem = useCartStore((state) => state.removeItem);
-  const updateQuantity = useCartStore((state) => state.updateQuantity);
   const reducedMotion = useReducedMotion();
   const [isPendingRemoval, setIsPendingRemoval] = useState<boolean>(false);
   const [isVisible, setIsVisible] = useState<boolean>(true);
@@ -101,7 +104,18 @@ export default function CartItem({ item }: CartItemProps): ReactElement {
             </div>
 
             <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-              <CartQuantityControl disabled={isPendingRemoval} item={item} />
+              <div className="space-y-2">
+                <CartQuantityControl
+                  availableStock={availableStock}
+                  disabled={isPendingRemoval}
+                  item={item}
+                />
+                {availableStock === 0 ? (
+                  <p className="font-dm-sans text-caption text-error">
+                    This variant is no longer available.
+                  </p>
+                ) : null}
+              </div>
 
               <div className="space-y-1 text-left sm:text-right">
                 <p className="font-dm-sans text-caption uppercase tracking-[0.14em] text-text-muted">

@@ -15,6 +15,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { fetchCatalogProductVariantAvailability } from "@/lib/api/catalog";
 import { fadeUpVariant } from "@/lib/utils/animations";
 import { cn } from "@/lib/utils/cn";
 import type { CartItem, Product, ProductVariant } from "@/lib/types";
@@ -56,6 +57,8 @@ export default function ProductInfo({
   );
   const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(null);
   const [isAdded, setIsAdded] = useState<boolean>(false);
+  const [isCheckingAvailability, setIsCheckingAvailability] = useState<boolean>(false);
+  const [stockFeedback, setStockFeedback] = useState<string | null>(null);
 
   useEffect((): (() => void) | void => {
     if (!isAdded) {
@@ -71,26 +74,50 @@ export default function ProductInfo({
     };
   }, [isAdded]);
 
+  useEffect((): void => {
+    setStockFeedback(null);
+  }, [selectedVariant]);
+
   const stockMessage = getStockMessage(selectedVariant);
   const isUnavailable = !selectedVariant || selectedVariant.stock === 0;
 
-  function handleAddToBag(): void {
+  async function handleAddToBag(): Promise<void> {
     if (!selectedVariant || selectedVariant.stock === 0) {
       return;
     }
 
+    setIsCheckingAvailability(true);
+    setStockFeedback(null);
+
+    const liveAvailability = await fetchCatalogProductVariantAvailability(
+      product.slug,
+      selectedVariant.id,
+    );
+
+    if (!liveAvailability) {
+      setStockFeedback("We could not confirm live stock right now.");
+      setIsCheckingAvailability(false);
+      return;
+    }
+
+    if (liveAvailability.variant.stock <= 0) {
+      setStockFeedback("This variant is now out of stock.");
+      setIsCheckingAvailability(false);
+      return;
+    }
+
     const cartItem: CartItem = {
-      id: `cart-${product.id}-${selectedVariant.id}`,
-      productId: product.id,
-      variantId: selectedVariant.id,
+      id: `cart-${liveAvailability.product.id}-${liveAvailability.variant.id}`,
+      productId: liveAvailability.product.id,
+      variantId: liveAvailability.variant.id,
       quantity: 1,
-      productName: product.name,
-      productImage: product.images[0] ?? "",
-      price: product.price,
-      currency: product.currency,
-      size: selectedVariant.size,
-      color: selectedVariant.color,
-      colorHex: selectedVariant.colorHex,
+      productName: liveAvailability.product.name,
+      productImage: liveAvailability.product.images[0] ?? "",
+      price: liveAvailability.product.price,
+      currency: liveAvailability.product.currency,
+      size: liveAvailability.variant.size,
+      color: liveAvailability.variant.color,
+      colorHex: liveAvailability.variant.colorHex,
     };
 
     addItem(cartItem);
@@ -100,6 +127,7 @@ export default function ProductInfo({
     }
 
     setIsAdded(true);
+    setIsCheckingAvailability(false);
   }
 
   return (
@@ -160,7 +188,7 @@ export default function ProductInfo({
                   : "text-text-secondary",
           )}
         >
-          {stockMessage}
+          {stockFeedback ?? stockMessage}
         </p>
       </div>
 
@@ -173,13 +201,19 @@ export default function ProductInfo({
               ? "bg-obsidian text-ivory"
               : "bg-gold text-obsidian hover:bg-bark hover:text-ivory",
         )}
-        disabled={isUnavailable}
-        onClick={handleAddToBag}
+        disabled={isUnavailable || isCheckingAvailability}
+        onClick={(): void => {
+          void handleAddToBag();
+        }}
         type="button"
         whileTap={reducedMotion || isUnavailable ? undefined : { scale: 0.98 }}
       >
         {isAdded ? <Check className="size-4" /> : <ShoppingBag className="size-4" />}
-        {isAdded ? "Added To Bag" : "Add to Bag"}
+        {isCheckingAvailability
+          ? "Checking Availability"
+          : isAdded
+            ? "Added To Bag"
+            : "Add to Bag"}
       </motion.button>
 
       <button

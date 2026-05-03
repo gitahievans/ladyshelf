@@ -45,7 +45,7 @@ Do not assume this is a frontend-only mock-data application. The frontend began 
 ## Data Source Rules
 
 - The backend is the source of truth for catalog, categories, variants, stock, checkout quotes, delivery rules, pickup information, order creation, account order history, wishlist for authenticated users, admin operations, and payment status where implemented.
-- Frontend mock catalog data may still exist and may be used as a resilience fallback in some storefront flows.
+- Frontend mock catalog data may still exist in the repo for historical reference, but live storefront catalog, search, cart stock checks, and checkout stock validation should use backend data rather than mock fallbacks.
 - Do not rebuild features as mock-only unless the user explicitly asks for a temporary mock.
 - Preserve the approved storefront UX when replacing mock-backed behavior with API-backed behavior.
 
@@ -97,6 +97,7 @@ Important frontend integration files:
 - `lib/api/orders.ts`
 - `lib/api/checkout.ts`
 - `lib/api/admin.ts`
+- `lib/utils/cartStock.ts`
 - `lib/supabase/client.ts`
 - `lib/supabase/server.ts`
 - `lib/supabase/proxy.ts`
@@ -121,6 +122,7 @@ Completed backend capabilities:
 - Guest and authenticated order creation
 - Order lifecycle statuses for manual fulfillment
 - Stock decrement on order creation
+- Customer item-level cancellation for eligible pay-on-delivery orders, with stock restoration
 - Email notifications for order/payment events
 - Branded HTML receipt emails after payment confirmation
 - SasaPay sandbox payment initiation
@@ -135,6 +137,7 @@ Key backend API areas currently consumed by the frontend:
 - `GET /api/v1/account/me`
 - `GET/POST/PATCH/DELETE /api/v1/account/addresses`
 - `GET /api/v1/account/orders`
+- `POST /api/v1/account/orders/<order_number>/cancellations`
 - `GET /api/v1/catalog/categories`
 - `GET /api/v1/catalog/products`
 - `GET /api/v1/catalog/products/<slug>`
@@ -159,6 +162,7 @@ Key backend API areas currently consumed by the frontend:
 
 - Checkout no longer relies on fixed frontend-only delivery rules.
 - Backend quote responses control fulfillment mode, available payment options, delivery fees, and totals.
+- Cart and checkout stock validation should reconcile against backend catalog stock before the customer proceeds, with backend checkout/order creation remaining the final authority.
 - Store pickup is prepay only.
 - Parcel delivery is prepay only.
 - Pay-on-delivery is available only for rider-served locations and only with M-Pesa.
@@ -169,7 +173,9 @@ Key backend API areas currently consumed by the frontend:
 - Prepaid customer/staff notifications happen after payment confirmation.
 - Prepaid customers receive branded receipt emails after confirmed SasaPay payment; pending-payment customer emails are not sent for prepaid orders.
 - Pay-on-delivery orders send the existing order confirmation/delivery note at placement, then staff can mark the order paid from the admin order detail page to generate and email the receipt.
+- Authenticated customers can cancel item quantities from pay-on-delivery orders while the order is still `new`; cancellation restores stock, adjusts the payable total, records an audit trail, and emails customer/staff.
 - Admin order detail supports receipt status display and receipt resend.
+- Admin order detail displays item cancellation quantities and cancellation history.
 - Unpaid prepaid orders can expire after 30 minutes through the backend expiry command, restoring stock and retaining admin history.
 
 ## Fulfillment and Operations
@@ -193,7 +199,7 @@ Key backend API areas currently consumed by the frontend:
 - Production SasaPay credentials, callback URLs, merchant setup, live transaction reconciliation, and go-live verification remain deferred.
 - SMS notifications are planned through Africa's Talking but are not implemented as the active notification channel yet.
 - Google OAuth is not verified as working.
-- Returns, exchanges, and refunds remain manual for MVP.
+- Returns, exchanges, prepaid cancellations, and refunds remain manual for MVP.
 - There is no customer-facing real-time order tracking in MVP.
 - Some frontend mock data still exists and should not be mistaken for the primary source of truth.
 - Repo-wide frontend lint may include unrelated existing issues; check the latest task context before treating lint as a clean global signal.

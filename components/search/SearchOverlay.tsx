@@ -13,7 +13,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { fetchCatalogSnapshot } from "@/lib/api/catalog";
-import { allProducts, categories as mockCategories } from "@/lib/mock";
 import { getSearchResultGroups, searchProducts } from "@/lib/utils/search";
 import type { Category, Product, SearchFiltersState } from "@/lib/types";
 
@@ -38,8 +37,8 @@ export default function SearchOverlay({
   onOpenChange,
 }: SearchOverlayProps): ReactElement {
   const router = useRouter();
-  const [categories, setCategories] = useState<Category[]>(mockCategories);
-  const [products, setProducts] = useState<Product[]>(allProducts);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
   const [query, setQuery] = useState<string>("");
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
 

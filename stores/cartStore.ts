@@ -4,7 +4,6 @@ import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
 import type { CartItem, CartStore } from "@/lib/types";
-import { clampCartItemQuantity } from "@/lib/utils/cartStock";
 
 interface CartStateSlice {
   items: CartItem[];
@@ -13,8 +12,11 @@ interface CartStateSlice {
 
 function sanitizeCartItems(items: CartItem[]): CartItem[] {
   return items
-    .map((item) => clampCartItemQuantity(item))
-    .filter((item): item is CartItem => item !== null && item.quantity > 0);
+    .map((item) => ({
+      ...item,
+      quantity: Math.max(1, Math.trunc(item.quantity)),
+    }))
+    .filter((item): item is CartItem => item.quantity > 0);
 }
 
 function calculateCartTotals(items: CartItem[]): Pick<CartStore, "subtotal" | "totalItems"> {
@@ -68,6 +70,9 @@ export const useCartStore = create<CartStore>()(
             state.isOpen,
           ),
         );
+      },
+      replaceItems: (items): void => {
+        set((state) => buildCartState(items, state.isOpen));
       },
       updateQuantity: (cartItemId, quantity): void => {
         set((state) => {

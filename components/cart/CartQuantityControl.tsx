@@ -5,15 +5,13 @@ import { useEffect, useState } from "react";
 import { Minus, Plus } from "lucide-react";
 
 import { cn } from "@/lib/utils/cn";
-import {
-  buildCartStockLimitMessage,
-  getAvailableCartItemStock,
-} from "@/lib/utils/cartStock";
+import { buildCartStockLimitMessage } from "@/lib/utils/cartStock";
 import type { CartItem } from "@/lib/types";
 import { useCartStore } from "@/stores/cartStore";
 
 interface CartQuantityControlProps {
   item: CartItem;
+  availableStock: number | null;
   compact?: boolean;
   disabled?: boolean;
   className?: string;
@@ -21,13 +19,13 @@ interface CartQuantityControlProps {
 
 export default function CartQuantityControl({
   item,
+  availableStock,
   compact = false,
   disabled = false,
   className,
 }: CartQuantityControlProps): ReactElement {
   const updateQuantity = useCartStore((state) => state.updateQuantity);
   const [stockMessage, setStockMessage] = useState<string>("");
-  const availableStock = getAvailableCartItemStock(item);
 
   useEffect((): (() => void) | void => {
     if (!stockMessage) {
@@ -57,7 +55,7 @@ export default function CartQuantityControl({
       return;
     }
 
-    if (availableStock <= item.quantity) {
+    if (availableStock !== null && availableStock <= item.quantity) {
       setStockMessage(buildCartStockLimitMessage(item, availableStock));
       return;
     }

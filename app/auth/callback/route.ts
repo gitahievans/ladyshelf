@@ -1,18 +1,14 @@
 import { createServerClient } from "@supabase/ssr";
 import { type NextRequest, NextResponse } from "next/server";
+import { getApiBaseUrl } from "@/lib/api/baseUrl";
 
 const DEFAULT_AUTH_REDIRECT_PATH = "/account";
 const COMPLETE_PROFILE_PATH = "/auth/complete-profile";
 const LOGIN_PATH = "/auth/login";
 const PASSWORD_RECOVERY_PATH = "/auth/update-password";
-const DEFAULT_API_BASE_URL = "http://localhost:8000";
 
 interface AccountProfileResponse {
   phone?: string | null;
-}
-
-function getApiBaseUrl(): string {
-  return process.env.NEXT_PUBLIC_API_BASE_URL ?? DEFAULT_API_BASE_URL;
 }
 
 function getSafeRedirectPath(nextPath: string | null): string {

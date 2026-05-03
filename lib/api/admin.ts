@@ -27,9 +27,8 @@ import type {
   Product,
   ProductVariant,
 } from "@/lib/types";
+import { getApiBaseUrl } from "@/lib/api/baseUrl";
 import { createClient } from "@/lib/supabase/client";
-
-const DEFAULT_API_BASE_URL = "http://localhost:8000";
 
 export class AdminApiError extends Error {
   status: number;
@@ -104,10 +103,6 @@ function summarizeAdminValidationErrors(payload: Record<string, unknown>): strin
   }
 
   return fieldMessages.join(" ");
-}
-
-function getApiBaseUrl(): string {
-  return process.env.NEXT_PUBLIC_API_BASE_URL ?? DEFAULT_API_BASE_URL;
 }
 
 async function getAccessToken(): Promise<string | null> {

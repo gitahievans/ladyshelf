@@ -8,6 +8,7 @@ import { Check, Heart, Plus, ShoppingBag } from "lucide-react";
 
 import Badge from "@/components/shared/Badge";
 import PriceDisplay from "@/components/shared/PriceDisplay";
+import { fetchCatalogProductVariantAvailability } from "@/lib/api/catalog";
 import { fadeUpVariant, scaleInVariant } from "@/lib/utils/animations";
 import { cn } from "@/lib/utils/cn";
 import { getAvailableSizes, isInStock } from "@/lib/utils/format";
@@ -37,6 +38,8 @@ export default function ProductCard({
   const [selectedColor, setSelectedColor] = useState<string>("");
   const [selectedSize, setSelectedSize] = useState<string>("");
   const [isAdded, setIsAdded] = useState<boolean>(false);
+  const [isCheckingAvailability, setIsCheckingAvailability] = useState<boolean>(false);
+  const [quickAddFeedback, setQuickAddFeedback] = useState<string | null>(null);
   const isGridView = viewMode === "grid";
 
   const inStock = isInStock(product.variants);
@@ -90,6 +93,10 @@ export default function ProductCard({
     };
   }, [isAdded]);
 
+  useEffect((): void => {
+    setQuickAddFeedback(null);
+  }, [selectedColor, selectedSize]);
+
   function handleCardClick(): void {
     router.push(`/shop/${product.slug}`);
   }
@@ -116,29 +123,52 @@ export default function ProductCard({
     }
   }
 
-  function handleAddToBag(event: React.MouseEvent<HTMLButtonElement>): void {
+  async function handleAddToBag(
+    event: React.MouseEvent<HTMLButtonElement>,
+  ): Promise<void> {
     event.stopPropagation();
 
     if (!selectedVariant) {
       return;
     }
 
+    setIsCheckingAvailability(true);
+    setQuickAddFeedback(null);
+
+    const liveAvailability = await fetchCatalogProductVariantAvailability(
+      product.slug,
+      selectedVariant.id,
+    );
+
+    if (!liveAvailability) {
+      setQuickAddFeedback("We could not confirm live stock right now.");
+      setIsCheckingAvailability(false);
+      return;
+    }
+
+    if (liveAvailability.variant.stock <= 0) {
+      setQuickAddFeedback("This variant is now out of stock.");
+      setIsCheckingAvailability(false);
+      return;
+    }
+
     const cartItem: CartItem = {
-      id: `cart-${product.id}-${selectedVariant.id}`,
-      productId: product.id,
-      variantId: selectedVariant.id,
+      id: `cart-${liveAvailability.product.id}-${liveAvailability.variant.id}`,
+      productId: liveAvailability.product.id,
+      variantId: liveAvailability.variant.id,
       quantity: 1,
-      productName: product.name,
-      productImage: product.images[0] ?? "",
-      price: product.price,
-      currency: product.currency,
-      size: selectedVariant.size,
-      color: selectedVariant.color,
-      colorHex: selectedVariant.colorHex,
+      productName: liveAvailability.product.name,
+      productImage: liveAvailability.product.images[0] ?? "",
+      price: liveAvailability.product.price,
+      currency: liveAvailability.product.currency,
+      size: liveAvailability.variant.size,
+      color: liveAvailability.variant.color,
+      colorHex: liveAvailability.variant.colorHex,
     };
 
     addItem(cartItem);
     setIsAdded(true);
+    setIsCheckingAvailability(false);
   }
 
   function selectColor(
@@ -394,8 +424,10 @@ export default function ProductCard({
                     ? "bg-obsidian text-ivory"
                     : "bg-gold text-obsidian hover:bg-bark hover:text-ivory",
                 )}
-                disabled={!selectedVariant}
-                onClick={handleAddToBag}
+                disabled={!selectedVariant || isCheckingAvailability}
+                onClick={(event): void => {
+                  void handleAddToBag(event);
+                }}
                 type="button"
               >
                 {isAdded ? (
@@ -403,8 +435,18 @@ export default function ProductCard({
                 ) : (
                   <Plus className={cn(isGridView ? "size-3.5" : "size-4")} />
                 )}
-                {isAdded ? "Added To Bag" : "Add To Bag"}
+                {isCheckingAvailability
+                  ? "Checking Availability"
+                  : isAdded
+                    ? "Added To Bag"
+                    : "Add To Bag"}
               </button>
+
+              {quickAddFeedback ? (
+                <p className="font-dm-sans text-caption text-error">
+                  {quickAddFeedback}
+                </p>
+              ) : null}
             </motion.div>
           ) : null}
         </AnimatePresence>

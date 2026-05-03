@@ -8,11 +8,15 @@ import { formatPrice } from "@/lib/utils/format";
 interface CartSummaryProps {
   subtotal: number;
   itemCount: number;
+  checkoutDisabled?: boolean;
+  helperMessage?: string | null;
 }
 
 export default function CartSummary({
   subtotal,
   itemCount,
+  checkoutDisabled = false,
+  helperMessage = null,
 }: CartSummaryProps): ReactElement {
   return (
     <aside className="rounded-2xl border border-border-warm bg-cream p-6 shadow-card lg:sticky lg:top-24">
@@ -60,12 +64,28 @@ export default function CartSummary({
         </div>
 
         <div className="space-y-3">
-          <Button
-            asChild
-            className="h-12 w-full rounded-full bg-gold font-dm-sans text-body-sm font-medium text-obsidian hover:bg-sand"
-          >
-            <Link href="/checkout">Proceed to Checkout</Link>
-          </Button>
+          {checkoutDisabled ? (
+            <Button
+              className="h-12 w-full rounded-full bg-gold font-dm-sans text-body-sm font-medium text-obsidian hover:bg-sand"
+              disabled
+              type="button"
+            >
+              Proceed to Checkout
+            </Button>
+          ) : (
+            <Button
+              asChild
+              className="h-12 w-full rounded-full bg-gold font-dm-sans text-body-sm font-medium text-obsidian hover:bg-sand"
+            >
+              <Link href="/checkout">Proceed to Checkout</Link>
+            </Button>
+          )}
+
+          {helperMessage ? (
+            <p className="font-dm-sans text-caption text-text-secondary">
+              {helperMessage}
+            </p>
+          ) : null}
 
           <Button
             asChild

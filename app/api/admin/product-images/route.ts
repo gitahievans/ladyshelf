@@ -3,11 +3,11 @@ import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { AdminPermissionSet, AdminUploadedProductImage } from "@/lib/types";
+import { getApiBaseUrl } from "@/lib/api/baseUrl";
 import { createAdminStorageClient } from "@/lib/supabase/admin";
 
 export const runtime = "nodejs";
 
-const DEFAULT_API_BASE_URL = "http://localhost:8000";
 const PRODUCT_IMAGES_BUCKET = "product-images";
 const ALLOWED_IMAGE_TYPES = new Set(["image/jpeg", "image/png", "image/webp"]);
 const MAX_IMAGE_SIZE_BYTES = 8 * 1024 * 1024;
@@ -18,10 +18,6 @@ function slugify(value: string): string {
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "");
-}
-
-function getApiBaseUrl(): string {
-  return process.env.NEXT_PUBLIC_API_BASE_URL ?? DEFAULT_API_BASE_URL;
 }
 
 function sanitizeFileName(fileName: string): string {
