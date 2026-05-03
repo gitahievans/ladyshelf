@@ -309,6 +309,13 @@ export default function Navbar(): ReactElement {
                       </Link>
                     ) : null}
                     <Link
+                      className="flex h-12 items-center justify-center rounded-full border border-ivory/20 px-6 font-dm-sans text-body-sm font-medium text-ivory"
+                      href="/account/orders"
+                      onClick={(): void => setIsMobileMenuOpen(false)}
+                    >
+                      My Orders
+                    </Link>
+                    <Link
                       className="flex h-12 items-center justify-center rounded-full bg-gold px-6 font-dm-sans text-body-sm font-medium text-obsidian"
                       href="/account"
                       onClick={(): void => setIsMobileMenuOpen(false)}

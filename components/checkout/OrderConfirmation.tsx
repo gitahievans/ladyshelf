@@ -189,7 +189,7 @@ export default function OrderConfirmation({
             className="h-12 rounded-full border border-bark/20 bg-transparent px-6 font-dm-sans text-body-sm font-medium text-obsidian hover:border-gold hover:bg-ivory"
             variant="ghost"
           >
-            <Link href="/account">View Your Orders</Link>
+            <Link href="/account/orders">View Your Orders</Link>
           </Button>
         ) : null}
         <Button

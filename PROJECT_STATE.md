@@ -61,6 +61,7 @@ Implemented customer-facing routes include:
 - `/cart`
 - `/checkout`
 - `/account`
+- `/account/orders`
 - `/auth/login`
 - `/auth/register`
 - `/auth/forgot-password`

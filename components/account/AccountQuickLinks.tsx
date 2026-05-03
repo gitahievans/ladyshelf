@@ -1,6 +1,6 @@
 import type { ReactElement } from "react";
 import Link from "next/link";
-import { Heart, Search, ShoppingBag } from "lucide-react";
+import { Heart, ReceiptText, ShoppingBag } from "lucide-react";
 
 interface AccountQuickLinksProps {
   wishlistCount: number;
@@ -35,11 +35,11 @@ export default function AccountQuickLinks({
       meta: `${cartCount} in bag`,
     },
     {
-      description: "Discover new arrivals, fabrics, and statement silhouettes.",
-      href: "/search",
-      icon: Search,
-      label: "Search",
-      meta: "Explore the collection",
+      description: "Track, review, and reopen the orders you may need to manage quickly.",
+      href: "/account/orders",
+      icon: ReceiptText,
+      label: "Recent Orders",
+      meta: "Manage your orders",
     },
   ];
 
