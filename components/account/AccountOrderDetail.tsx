@@ -4,7 +4,7 @@ import type { ReactElement } from "react";
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { AlertCircle, ExternalLink, XCircle } from "lucide-react";
+import { ExternalLink, XCircle } from "lucide-react";
 
 import Footer from "@/components/layout/Footer";
 import EmptyState from "@/components/shared/EmptyState";
@@ -471,18 +471,6 @@ export default function AccountOrderDetail({
                 </div>
 
                 <div className="space-y-3">
-                  {order.paymentTiming === "pay_on_delivery" && !order.canCancel ? (
-                    <div className="rounded-2xl border border-border-warm bg-ivory p-4">
-                      <div className="flex gap-3">
-                        <AlertCircle className="mt-0.5 size-4 shrink-0 text-gold" />
-                        <p className="font-dm-sans text-body-sm text-text-secondary">
-                          {order.cancellationUnavailableReason ??
-                            "This order can no longer be cancelled online."}
-                        </p>
-                      </div>
-                    </div>
-                  ) : null}
-
                   {isOrderEligibleForSasaPayRetry(order) ? (
                     <Button
                       className="h-12 w-full rounded-full bg-gold font-dm-sans text-body-sm font-medium text-obsidian hover:bg-sand"
