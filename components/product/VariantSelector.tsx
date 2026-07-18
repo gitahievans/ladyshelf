@@ -16,26 +16,13 @@ export default function VariantSelector({
   variants,
   onVariantChange,
 }: VariantSelectorProps): ReactElement {
-  const availableColors = useMemo((): string[] => {
-    const colors = new Set<string>();
-
-    variants.forEach((variant) => {
-      if (variant.stock > 0) {
-        colors.add(variant.color);
-      }
-    });
-
-    return [...colors];
-  }, [variants]);
-
-  const [selectedColor, setSelectedColor] = useState<string>("");
-  const [selectedSize, setSelectedSize] = useState<string>("");
-
-  useEffect((): void => {
-    if (!selectedColor && availableColors.length > 0) {
-      setSelectedColor(availableColors[0] ?? "");
-    }
-  }, [availableColors, selectedColor]);
+  const firstAvailableVariant = variants.find((variant) => variant.stock > 0);
+  const [selectedColor, setSelectedColor] = useState<string>(
+    firstAvailableVariant?.color ?? "",
+  );
+  const [selectedSize, setSelectedSize] = useState<string>(
+    firstAvailableVariant?.size ?? "",
+  );
 
   const selectedVariant = useMemo((): ProductVariant | null => {
     if (!selectedColor || !selectedSize) {
@@ -64,7 +51,14 @@ export default function VariantSelector({
           variant.stock > 0,
       );
 
-      return currentSizeStillAvailable ? currentSize : "";
+      if (currentSizeStillAvailable) {
+        return currentSize;
+      }
+
+      return (
+        variants.find((variant) => variant.color === color && variant.stock > 0)
+          ?.size ?? ""
+      );
     });
   }
 

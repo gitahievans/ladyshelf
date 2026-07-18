@@ -61,7 +61,7 @@ export default function AdminShell({
         <aside className="border-b border-border-warm bg-obsidian px-6 py-6 text-ivory lg:col-span-1 lg:border-r lg:border-b-0 lg:px-8">
           <Link href="/admin" className="inline-flex flex-col items-start gap-3">
             <Image
-              alt="Wahi Fashion logo"
+              alt="Lady Shelf logo"
               className="h-12 w-auto object-contain"
               height={72}
               priority

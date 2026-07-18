@@ -58,6 +58,7 @@ const productImageOverrides = new Map<string, string[]>([
 function applyProductImageOverrides(products: Product[]): Product[] {
   return products.map((product) => ({
     ...product,
+    brand: "Lady Shelf",
     images: productImageOverrides.get(product.slug) ?? product.images,
   }));
 }

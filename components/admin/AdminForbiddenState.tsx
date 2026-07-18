@@ -11,7 +11,7 @@ export default function AdminForbiddenState(): ReactElement {
           Access Restricted
         </p>
         <h1 className="mt-3 font-cormorant text-h1 text-obsidian">
-          This space is for Wahi staff.
+          This space is for Lady Shelf staff.
         </h1>
         <p className="mt-4 font-dm-sans text-body text-text-secondary">
           Your account is signed in, but it does not have an active admin role.

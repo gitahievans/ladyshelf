@@ -6,7 +6,7 @@ const sections = [
   {
     title: "Visit the Studio",
     body: [
-      "Wahi Fashion welcomes clients to our Roysambu studio for fittings, styling conversations, and collection previews. We are at Lumumba Drive, Roysambu, Nairobi.",
+      "Lady Shelf welcomes clients for fittings, styling conversations, and collection previews.",
       "Studio hours are Monday to Saturday from 9am to 7pm, and Sunday from 11am to 5pm.",
     ],
   },
@@ -20,7 +20,7 @@ const sections = [
   {
     title: "Email Support",
     body: [
-      "For collaborations, media, or detailed customer support, email hello@wahifashion.africa.",
+      "For collaborations, media, or detailed customer support, visit ladyshelf.site.",
       "We aim to respond within one business day, and sooner for active order issues.",
     ],
   },
@@ -33,7 +33,7 @@ export default function ContactPage(): ReactElement {
       ctaHref="/shop"
       ctaLabel="Shop the Collection"
       ctaTitle="Ready to choose your next look?"
-      eyebrow="Speak with Wahi"
+      eyebrow="Speak with Lady Shelf"
       introduction="Whether you need help with an order, delivery guidance, or a styling question, our team is here to make the experience feel personal and easy."
       sections={[...sections]}
       title="Contact"

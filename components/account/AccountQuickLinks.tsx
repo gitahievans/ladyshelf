@@ -49,7 +49,7 @@ export default function AccountQuickLinks({
         <p className="font-dm-sans text-label uppercase tracking-[0.16em] text-gold">
           Quick Access
         </p>
-        <h2 className="mt-2 font-cormorant text-h2">Your Wahi shortcuts</h2>
+        <h2 className="mt-2 font-cormorant text-h2">Your Lady Shelf shortcuts</h2>
       </div>
 
       <div className="mt-6 grid gap-4 md:grid-cols-3">

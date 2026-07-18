@@ -147,7 +147,7 @@ export default function Navbar(): ReactElement {
               href="/"
             >
               <Image
-                alt="Wahi Fashion logo"
+                alt="Lady Shelf logo"
                 className="h-12 w-auto object-contain xl:h-14"
                 height={88}
                 priority
@@ -159,7 +159,7 @@ export default function Navbar(): ReactElement {
 
           <Link className="justify-self-center lg:hidden" href="/">
             <Image
-              alt="Wahi Fashion logo"
+              alt="Lady Shelf logo"
               className="h-10 w-auto object-contain"
               height={72}
               priority
@@ -347,7 +347,7 @@ export default function Navbar(): ReactElement {
                       href="/auth/register"
                       onClick={(): void => setIsMobileMenuOpen(false)}
                     >
-                      Join Wahi
+                      Join Lady Shelf
                     </Link>
                   </>
                 )}

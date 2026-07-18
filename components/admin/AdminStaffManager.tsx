@@ -175,7 +175,7 @@ export default function AdminStaffManager(): ReactElement {
             id="staff-email"
             value={email}
             onChange={(event) => setEmail(event.target.value)}
-            placeholder="staff@wahifashion.com"
+            placeholder="staff@ladyshelf.site"
             className="mt-2 h-11 rounded-sm border-border-warm bg-cream px-4 font-dm-sans text-body-sm text-obsidian focus-visible:border-gold"
           />
         </div>

@@ -491,7 +491,7 @@ export default function DeliveryForm({
               </p>
               <div className="space-y-2 font-dm-sans text-body-sm text-text-secondary">
                 <p className="font-medium text-obsidian">
-                  {pickupInfo?.name ?? "Wahi Fashion Roysambu Pickup"}
+                  {pickupInfo?.name ?? "Lady Shelf Pickup"}
                 </p>
                 <p className="flex items-start gap-2">
                   <MapPin className="mt-0.5 size-4 shrink-0 text-gold" />
@@ -560,7 +560,7 @@ export default function DeliveryForm({
               className="font-medium text-gold transition-colors hover:text-bark"
               href="/auth/register"
             >
-              Join Wahi
+              Join Lady Shelf
             </Link>
             .
           </p>

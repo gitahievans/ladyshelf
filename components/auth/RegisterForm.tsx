@@ -233,7 +233,7 @@ export default function RegisterForm(): ReactElement {
       setSuccessMessage(
         result.emailConfirmationRequired
           ? "Your account has been created. Please check your email to confirm your account before signing in."
-          : "Your account is ready. You can continue into Wahi now.",
+          : "Your account is ready. You can continue into Lady Shelf now.",
       );
       setValues(initialRegisterValues);
       setErrors({});
@@ -276,7 +276,7 @@ export default function RegisterForm(): ReactElement {
           </Link>
         </p>
       }
-      heading="Join Wahi"
+      heading="Join Lady Shelf"
       subheading="Create your account"
     >
       <Dialog
@@ -305,7 +305,7 @@ export default function RegisterForm(): ReactElement {
                   Check Your Email
                 </p>
                 <h2 className="font-cormorant text-h2 leading-none text-obsidian">
-                  Your Wahi account is almost ready.
+                  Your Lady Shelf account is almost ready.
                 </h2>
                 <p className="font-dm-sans text-body-sm leading-7 text-text-secondary">
                   {successMessage}
@@ -324,7 +324,7 @@ export default function RegisterForm(): ReactElement {
               </div>
 
               <div className="space-y-3 font-dm-sans text-body-sm text-text-secondary">
-                <p>Open the message from Wahi Fashion and confirm your email address.</p>
+                <p>Open the message from Lady Shelf and confirm your email address.</p>
               </div>
 
               <div>
@@ -501,7 +501,7 @@ export default function RegisterForm(): ReactElement {
                 Preparing your account...
               </span>
             ) : (
-              "Join Wahi"
+              "Join Lady Shelf"
             )}
           </Button>
         </div>

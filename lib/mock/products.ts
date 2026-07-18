@@ -8,7 +8,7 @@ export const officeProducts: Product[] = [
     id: 'prod-001',
     slug: 'obsidian-power-blazer',
     name: 'Obsidian Power Blazer',
-    brand: 'Wahi Fashion',
+    brand: 'Lady Shelf',
     categorySlug: 'office-formal',
     description:
       'A blazer that walks into the room before you say a word. Structured shoulders, a nipped waist, and a clean single-button closure engineered for presence. Cut from a premium ponte fabric that holds its shape through a ten-hour day.',
@@ -40,7 +40,7 @@ export const officeProducts: Product[] = [
     id: 'prod-002',
     slug: 'mahogany-wrap-skirt',
     name: 'Mahogany Wrap Skirt',
-    brand: 'Wahi Fashion',
+    brand: 'Lady Shelf',
     categorySlug: 'office-formal',
     description:
       'A midi wrap skirt that moves the way ambition does — with precision and intention. The deep mahogany tone commands attention in any boardroom. Pairs effortlessly with the Obsidian Power Blazer for a complete power look.',
@@ -73,7 +73,7 @@ export const officeProducts: Product[] = [
     id: 'prod-003',
     slug: 'gold-thread-blouse',
     name: 'Gold Thread Blouse',
-    brand: 'Wahi Fashion',
+    brand: 'Lady Shelf',
     categorySlug: 'office-formal',
     description:
       'A silk-touch blouse with subtle gold thread weave that catches the light at every turn. Professional enough for the boardroom, striking enough to be remembered. The V-neckline and relaxed tuck-in silhouette flatter every body type.',
@@ -107,7 +107,7 @@ export const officeProducts: Product[] = [
     id: 'prod-004',
     slug: 'structured-sand-trousers',
     name: 'Structured Sand Trousers',
-    brand: 'Wahi Fashion',
+    brand: 'Lady Shelf',
     categorySlug: 'office-formal',
     description:
       'Wide-leg tailored trousers in a warm sand tone that holds its line from the 8am meeting to the evening send-off. A high-rise waist and pressed creases create an elongating silhouette that commands the room.',
@@ -140,7 +140,7 @@ export const officeProducts: Product[] = [
     id: 'prod-005',
     slug: 'ivory-pencil-dress',
     name: 'Ivory Pencil Dress',
-    brand: 'Wahi Fashion',
+    brand: 'Lady Shelf',
     categorySlug: 'office-formal',
     description:
       'A sleeveless knee-length pencil dress that transitions from board meeting to after-work drinks without a second thought. The subtle back slit offers ease of movement without compromising the clean silhouette.',
@@ -173,7 +173,7 @@ export const officeProducts: Product[] = [
     id: 'prod-006',
     slug: 'bark-button-down-shirt',
     name: 'Bark Button-Down Shirt',
-    brand: 'Wahi Fashion',
+    brand: 'Lady Shelf',
     categorySlug: 'office-formal',
     description:
       'A relaxed-fit button-down in our signature bark tone. Slightly oversized for that effortless tuck-in or leave-out styling. The curved hem and subtle texture make it the most versatile piece in your work wardrobe.',
@@ -205,7 +205,7 @@ export const officeProducts: Product[] = [
     id: 'prod-007',
     slug: 'pinstripe-coord-set',
     name: 'Pinstripe Co-ord Set',
-    brand: 'Wahi Fashion',
+    brand: 'Lady Shelf',
     categorySlug: 'office-formal',
     description:
       'A matching blazer and straight-leg trouser set in a fine ivory pinstripe. Wear together for a complete power look or style separately to double your wardrobe options. This is investment dressing at its finest.',
@@ -244,7 +244,7 @@ export const casualProducts: Product[] = [
     id: 'prod-008',
     slug: 'sundown-linen-dress',
     name: 'Sundown Linen Dress',
-    brand: 'Wahi Fashion',
+    brand: 'Lady Shelf',
     categorySlug: 'casual',
     description:
       'A breezy midi linen dress in sun-kissed terracotta that belongs on every rooftop, brunch, and Saturday morning. The relaxed A-line silhouette and adjustable tie waist make it as comfortable as it is effortlessly stylish.',
@@ -277,7 +277,7 @@ export const casualProducts: Product[] = [
     id: 'prod-009',
     slug: 'wide-leg-denim-set',
     name: 'Wide Leg Denim Set',
-    brand: 'Wahi Fashion',
+    brand: 'Lady Shelf',
     categorySlug: 'casual',
     description:
       'A coordinated denim set that elevates the everyday. The cropped off-shoulder top and wide-leg trouser work as a matching set or styled separately. Premium stretch denim with just the right amount of structure.',
@@ -310,7 +310,7 @@ export const casualProducts: Product[] = [
     id: 'prod-010',
     slug: 'cream-oversized-tee',
     name: 'Cream Oversized Tee',
-    brand: 'Wahi Fashion',
+    brand: 'Lady Shelf',
     categorySlug: 'casual',
     description:
       'The foundation of every great casual wardrobe. A premium heavyweight oversized tee in warm cream with a clean, unfussy silhouette. Tuck it, knot it, or let it fall — it works every way.',
@@ -343,7 +343,7 @@ export const casualProducts: Product[] = [
     id: 'prod-011',
     slug: 'rust-cargo-pants',
     name: 'Rust Cargo Pants',
-    brand: 'Wahi Fashion',
+    brand: 'Lady Shelf',
     categorySlug: 'casual',
     description:
       'Utility meets luxury in these tapered cargo pants. The warm rust tone and clean pocket placement give you that designer-street edge without looking like you tried too hard. High waist, tapered leg, effortless confidence.',
@@ -376,7 +376,7 @@ export const casualProducts: Product[] = [
     id: 'prod-012',
     slug: 'kaftan-day-dress',
     name: 'Kaftan Day Dress',
-    brand: 'Wahi Fashion',
+    brand: 'Lady Shelf',
     categorySlug: 'casual',
     description:
       'A contemporary kaftan that bridges heritage and modernity. Lightweight printed fabric, an easy drop silhouette, and vibrant African-inspired print make this the most effortless piece you will reach for on any given weekend.',
@@ -409,7 +409,7 @@ export const casualProducts: Product[] = [
     id: 'prod-013',
     slug: 'satin-slip-skirt',
     name: 'Satin Slip Skirt',
-    brand: 'Wahi Fashion',
+    brand: 'Lady Shelf',
     categorySlug: 'casual',
     description:
       'A bias-cut midi satin slip skirt that takes you from casual coffee to candlelit dinner. The fluid drape and soft sheen catch the light in the most flattering way. Style with an oversized tee for day or a tucked blouse for evening.',
@@ -449,7 +449,7 @@ export const partyProducts: Product[] = [
     id: 'prod-014',
     slug: 'midnight-gown',
     name: 'Midnight Gown',
-    brand: 'Wahi Fashion',
+    brand: 'Lady Shelf',
     categorySlug: 'party-evening',
     description:
       'A floor-length gown in deep obsidian with a dramatic cowl neckline and open back. This is the dress that makes the rest of the room go quiet. Fluid crepe construction that moves with the grace of every step you take.',
@@ -480,7 +480,7 @@ export const partyProducts: Product[] = [
     id: 'prod-015',
     slug: 'gold-sequin-mini',
     name: 'Gold Sequin Mini',
-    brand: 'Wahi Fashion',
+    brand: 'Lady Shelf',
     categorySlug: 'party-evening',
     description:
       'Make an entrance in this fully sequined A-line mini dress that turns every light source into a spotlight. The subtle A-line cut flatters every silhouette, while the gold sequins reference our signature brand colour throughout.',
@@ -513,7 +513,7 @@ export const partyProducts: Product[] = [
     id: 'prod-016',
     slug: 'ruched-bodycon-dress',
     name: 'Ruched Bodycon Dress',
-    brand: 'Wahi Fashion',
+    brand: 'Lady Shelf',
     categorySlug: 'party-evening',
     description:
       'A midi bodycon dress with strategic ruching that sculpts the silhouette and creates the most flattering drape. The deep V-neckline and thigh-high side slit add drama without sacrifice. Every celebration deserves this dress.',
@@ -546,7 +546,7 @@ export const partyProducts: Product[] = [
     id: 'prod-017',
     slug: 'velvet-statement-jumpsuit',
     name: 'Velvet Statement Jumpsuit',
-    brand: 'Wahi Fashion',
+    brand: 'Lady Shelf',
     categorySlug: 'party-evening',
     description:
       'A wide-leg velvet jumpsuit in deep emerald that is equal parts commanding and sensual. The deep V-neckline, cinched waist, and dramatic flare make this the centerpiece of any occasion. One piece. Infinite presence.',
@@ -580,7 +580,7 @@ export const partyProducts: Product[] = [
     id: 'prod-018',
     slug: 'cocktail-wrap-dress',
     name: 'Cocktail Wrap Dress',
-    brand: 'Wahi Fashion',
+    brand: 'Lady Shelf',
     categorySlug: 'party-evening',
     description:
       'A knee-length wrap dress with flutter sleeves and a deep surplice neckline that flatters every body type. The bold geometric print in terracotta and gold is a conversation starter before you even arrive.',
@@ -610,7 +610,7 @@ export const partyProducts: Product[] = [
     id: 'prod-019',
     slug: 'off-shoulder-gown',
     name: 'Off-Shoulder Gown',
-    brand: 'Wahi Fashion',
+    brand: 'Lady Shelf',
     categorySlug: 'party-evening',
     description:
       'A floor-length off-shoulder gown with a fitted bodice and flowing A-line skirt in blush rose. The sweetheart neckline and boning detail create an hourglass silhouette that photographs beautifully from every angle.',
@@ -649,7 +649,7 @@ export const traditionalProducts: Product[] = [
     id: 'prod-020',
     slug: 'ankara-maxi-dress',
     name: 'Ankara Maxi Dress',
-    brand: 'Wahi Fashion',
+    brand: 'Lady Shelf',
     categorySlug: 'traditional-african',
     description:
       'A sweeping ankara maxi dress in a bold geometric blue and gold print. The off-shoulder neckline and layered ruffle hem are pure statement dressing rooted in African heritage. Wear your culture, wear your confidence.',
@@ -682,10 +682,10 @@ export const traditionalProducts: Product[] = [
     id: 'prod-021',
     slug: 'kitenge-wrap-skirt',
     name: 'Kitenge Wrap Skirt',
-    brand: 'Wahi Fashion',
+    brand: 'Lady Shelf',
     categorySlug: 'traditional-african',
     description:
-      'A vibrant kitenge wrap skirt in an exclusive Wahi-commissioned print. The adjustable tie waist, sweep-length hem, and bold colours celebrate East African textile tradition with a modern, wearable silhouette.',
+      'A vibrant kitenge wrap skirt in an exclusive Lady Shelf-commissioned print. The adjustable tie waist, sweep-length hem, and bold colours celebrate East African textile tradition with a modern, wearable silhouette.',
     images: [
       'https://icdvsrhauwfomggyswbt.supabase.co/storage/v1/object/public/wahi/23.jpg',
       'https://icdvsrhauwfomggyswbt.supabase.co/storage/v1/object/public/wahi/25.jpg',
@@ -712,7 +712,7 @@ export const traditionalProducts: Product[] = [
     id: 'prod-022',
     slug: 'kente-fusion-blazer',
     name: 'Kente Fusion Blazer',
-    brand: 'Wahi Fashion',
+    brand: 'Lady Shelf',
     categorySlug: 'traditional-african',
     description:
       'A structured blazer featuring kente-inspired woven panels on the sleeves and lapels against a deep mahogany base. This is what cultural fusion looks like at its finest — where the boardroom meets heritage.',
@@ -744,7 +744,7 @@ export const traditionalProducts: Product[] = [
     id: 'prod-023',
     slug: 'ankara-puff-sleeve-top',
     name: 'Ankara Puff Sleeve Top',
-    brand: 'Wahi Fashion',
+    brand: 'Lady Shelf',
     categorySlug: 'traditional-african',
     description:
       'A cropped ankara top with voluminous puff sleeves and a square neckline. The structured sleeves and vibrant geometric print make this an instant statement piece. Pairs effortlessly with high-waisted jeans or a tailored skirt.',
@@ -777,7 +777,7 @@ export const traditionalProducts: Product[] = [
     id: 'prod-024',
     slug: 'contemporary-kaftan-gown',
     name: 'Contemporary Kaftan Gown',
-    brand: 'Wahi Fashion',
+    brand: 'Lady Shelf',
     categorySlug: 'traditional-african',
     description:
       'A contemporary kaftan gown that bridges tradition and modern luxury. Floor-length, wide sleeves, and a rich hand-embroidered neckline detail. This is cultural pride elevated to its highest form.',
@@ -816,7 +816,7 @@ export const accessoryProducts: Product[] = [
     id: 'prod-025',
     slug: 'mahogany-leather-tote',
     name: 'Mahogany Leather Tote',
-    brand: 'Wahi Fashion',
+    brand: 'Lady Shelf',
     categorySlug: 'accessories',
     description:
       'A structured leather tote in deep mahogany with gold hardware and a suede interior. Large enough for everything your day demands, refined enough to carry into any room. The gold WF monogram embossing is a quiet signature.',
@@ -846,7 +846,7 @@ export const accessoryProducts: Product[] = [
     id: 'prod-026',
     slug: 'gold-statement-necklace',
     name: 'Gold Statement Necklace',
-    brand: 'Wahi Fashion',
+    brand: 'Lady Shelf',
     categorySlug: 'accessories',
     description:
       'A bold layered statement necklace in 18k gold-plated brass with geometric African-inspired pendants. Three adjustable chains that wear together or separately. The centerpiece of any look you build.',
@@ -875,10 +875,10 @@ export const accessoryProducts: Product[] = [
     id: 'prod-027',
     slug: 'silk-print-headwrap',
     name: 'Silk Print Headwrap',
-    brand: 'Wahi Fashion',
+    brand: 'Lady Shelf',
     categorySlug: 'accessories',
     description:
-      'A generous 100% silk headwrap in an exclusive Wahi print. Versatile enough to style as a turban, wrap, or sash around a bag handle. The kind of accessory that transforms every look it touches.',
+      'A generous 100% silk headwrap in an exclusive Lady Shelf print. Versatile enough to style as a turban, wrap, or sash around a bag handle. The kind of accessory that transforms every look it touches.',
     images: [
       'https://icdvsrhauwfomggyswbt.supabase.co/storage/v1/object/public/wahi/15.png',
       'https://icdvsrhauwfomggyswbt.supabase.co/storage/v1/object/public/wahi/16.jpg',
@@ -906,7 +906,7 @@ export const accessoryProducts: Product[] = [
     id: 'prod-028',
     slug: 'woven-crossbody-bag',
     name: 'Woven Crossbody Bag',
-    brand: 'Wahi Fashion',
+    brand: 'Lady Shelf',
     categorySlug: 'accessories',
     description:
       'A hand-woven crossbody bag in natural raffia with leather trim and a gold chain strap. The artisan weave references East African basket-making tradition in a thoroughly modern silhouette. Limited quantities, handcrafted individually.',

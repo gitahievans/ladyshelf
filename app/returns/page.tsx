@@ -34,7 +34,7 @@ export default function ReturnsPage(): ReactElement {
       ctaLabel="Contact Support"
       ctaTitle="Need help with a return?"
       eyebrow="Before You Send It Back"
-      introduction="We want every Wahi purchase to feel considered and confident. If something is not quite right, here is how we handle returns with care."
+      introduction="We want every Lady Shelf purchase to feel considered and confident. If something is not quite right, here is how we handle returns with care."
       sections={[...sections]}
       title="Returns Policy"
     />

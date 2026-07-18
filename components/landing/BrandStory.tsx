@@ -10,8 +10,8 @@ import SectionHeader from "@/components/shared/SectionHeader";
 import { fadeUpVariant } from "@/lib/utils/animations";
 
 const brandStoryParagraphs = [
-  "Nairobi's fashion scene is alive, dynamic, and ever-evolving — and Wahi Fashion was created to be at the centre of it all. We saw a gap in the market: a woman who wanted more than what was on offer. More polish. More confidence. More range for every part of her life.",
-  "She moves from boardroom mornings to rooftop evenings, from brunch in linen to heritage worn with quiet pride. Wahi exists for that full story — premium fashion that feels personal, modern, and unmistakably African without ever becoming costume.",
+  "Nairobi's fashion scene is alive, dynamic, and ever-evolving — and Lady Shelf was created to be at the centre of it all. We saw a gap in the market: a woman who wanted more than what was on offer. More polish. More confidence. More range for every part of her life.",
+  "She moves from boardroom mornings to rooftop evenings, from brunch in linen to heritage worn with quiet pride. Lady Shelf exists for that full story — premium fashion that feels personal, modern, and unmistakably African without ever becoming costume.",
   "This is why every collection is curated with intention. Tailoring that holds presence. Occasionwear that earns a second glance. Traditional pieces given the same editorial respect as every other category. More than fashion. A lifestyle.",
 ];
 
@@ -29,7 +29,7 @@ export default function BrandStory(): ReactElement {
         <div className="relative overflow-hidden rounded-md">
           <div className="relative aspect-[4/5]">
             <Image
-              alt="Wahi Fashion editorial portrait"
+              alt="Lady Shelf editorial portrait"
               className="object-cover"
               fill
               sizes="(max-width: 1024px) 100vw, 50vw"
@@ -58,7 +58,7 @@ export default function BrandStory(): ReactElement {
             className="inline-flex min-h-11 items-center justify-center rounded-sm border border-bark/30 px-6 py-3 font-dm-sans text-label uppercase tracking-[0.18em] text-obsidian hover:border-gold hover:text-gold"
             href="/shop"
           >
-            Meet Wahi Fashion
+            Meet Lady Shelf
           </Link>
         </div>
       </div>

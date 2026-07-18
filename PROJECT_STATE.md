@@ -1,14 +1,14 @@
-# Wahi Fashion Project State
+# Lady Shelf Project State
 
-This is the canonical current-state document for Wahi Fashion.
+This is the canonical current-state document for Lady Shelf.
 
 Read this file before using `PLAN.md`, `BACKEND_PLAN.md`, `ADMIN_DASHBOARD_PLAN.md`, or other historical planning documents. Those files explain how the work was planned; this file explains what is true now.
 
-Last updated: 2026-04-30
+Last updated: 2026-05-06
 
 ## Current Working Mode
 
-Wahi Fashion is a fullstack e-commerce application.
+Lady Shelf is a fullstack e-commerce application.
 
 Work may span both repositories:
 
@@ -23,13 +23,13 @@ Do not assume this is a frontend-only mock-data application. The frontend began 
 
 - Next.js 16 App Router
 - TypeScript strict mode
-- Tailwind CSS v4 with Wahi design tokens
+- Tailwind CSS v4 with Lady Shelf design tokens
 - shadcn/ui primitives themed for the project
 - Zustand for client state
 - Framer Motion for animation
 - Supabase Auth client/session handling
 - Mapbox geocoding for delivery-location search
-- Vercel production frontend: `https://wahi-fashion.vercel.app`
+- Production frontend: `https://ladyshelf.site`
 - Local frontend: `http://localhost:3000`
 
 ### Backend
@@ -106,6 +106,14 @@ Important frontend integration files:
 - `stores/wishlistStore.ts`
 - `stores/cartStore.ts`
 
+Variant-specific product imagery is now supported end-to-end:
+
+- Product variants include an optional `imageUrl` field.
+- Product detail pages default to the first available variant and prioritize the selected color's variant image over product-level gallery images.
+- Size selection preserves stock/SKU selection behavior but does not drive gallery image changes.
+- Admin catalog management can associate each variant with one of the product's uploaded Supabase-backed image URLs.
+- Checkout/cart/order validation snapshots the variant image when present, falling back to the first product image for older products.
+
 ## Backend Current State
 
 Completed backend capabilities:
@@ -132,6 +140,7 @@ Completed backend capabilities:
 - Payment transaction persistence
 - Expiry flow for unpaid prepaid orders with stock restoration
 - Admin APIs for dashboard, staff permissions, catalog, customers, inventory, orders, payments, delivery settings, and pickup settings
+- Variant-level image URLs for color-specific storefront display, with product-image fallback for existing catalog items
 
 Key backend API areas currently consumed by the frontend:
 

@@ -30,7 +30,7 @@ import { formatPrice } from "@/lib/utils/format";
 const defaultProductInput: AdminCatalogProductInput = {
   slug: "",
   name: "",
-  brand: "Wahi Fashion",
+  brand: "Lady Shelf",
   categorySlug: "casual",
   description: "",
   images: [],
@@ -52,6 +52,7 @@ const defaultVariantInput: AdminVariantInput = {
   size: "M",
   color: "",
   colorHex: "#000000",
+  imageUrl: "",
   stock: 0,
 };
 
@@ -73,7 +74,12 @@ interface ProductRowProps {
 interface VariantStockProps {
   canManage: boolean;
   color: string;
-  onSave: (variantId: string, stock: number) => Promise<void>;
+  imageUrl?: string;
+  onSave: (
+    variantId: string,
+    input: Pick<AdminVariantInput, "imageUrl" | "stock">,
+  ) => Promise<void>;
+  productImages: string[];
   size: string;
   sku: string;
   stock: number;
@@ -567,14 +573,17 @@ function ProductRow({
     }
   }
 
-  async function saveVariant(variantId: string, stock: number): Promise<void> {
+  async function saveVariant(
+    variantId: string,
+    input: Pick<AdminVariantInput, "imageUrl" | "stock">,
+  ): Promise<void> {
     setLocalError(null);
     setLocalMessage(null);
 
     try {
       const variantAdminId =
         draft.variants.find((variant) => variant.id === variantId)?.adminId ?? variantId;
-      const updated = await updateAdminVariant(variantAdminId, { stock });
+      const updated = await updateAdminVariant(variantAdminId, input);
       const nextDraft = {
         ...draft,
         variants: draft.variants.map((variant) =>
@@ -582,7 +591,7 @@ function ProductRow({
         ),
       };
       setDraft(nextDraft);
-      setLocalMessage("Variant stock saved.");
+      setLocalMessage("Variant saved.");
     } catch (saveError) {
       setLocalError(
         saveError instanceof Error
@@ -725,6 +734,8 @@ function ProductRow({
               variantId={variant.id}
               sku={variant.sku}
               color={variant.color}
+              imageUrl={variant.imageUrl}
+              productImages={draft.images}
               size={variant.size}
               stock={variant.stock}
               onSave={saveVariant}
@@ -735,7 +746,7 @@ function ProductRow({
         {canManage ? (
           <div className="mt-5 rounded-sm border border-border-warm bg-ivory p-4">
             <p className="font-dm-sans text-caption uppercase tracking-widest text-text-muted">Add variant</p>
-            <div className="mt-4 grid gap-4 xl:grid-cols-[minmax(0,1.2fr)_minmax(0,0.9fr)_minmax(0,0.9fr)_auto] xl:items-end">
+            <div className="mt-4 grid gap-4 xl:grid-cols-[minmax(0,1.2fr)_minmax(0,0.9fr)_minmax(0,0.9fr)_minmax(0,1.4fr)_auto] xl:items-end">
               <div>
                 <FieldLabel>Color</FieldLabel>
                 <Input
@@ -776,6 +787,27 @@ function ProductRow({
                 />
               </div>
 
+              <div>
+                <FieldLabel>Variant image</FieldLabel>
+                <select
+                  value={variantDraft.imageUrl ?? ""}
+                  onChange={(event) =>
+                    setVariantDraft({
+                      ...variantDraft,
+                      imageUrl: event.target.value,
+                    })
+                  }
+                  className="h-11 w-full rounded-sm border border-border-warm bg-cream px-3 font-dm-sans text-body-sm"
+                >
+                  <option value="">Use product image fallback</option>
+                  {draft.images.map((image, index) => (
+                    <option key={`${image}-${index}`} value={image}>
+                      Product image {index + 1}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
               <Button
                 type="button"
                 onClick={() => void addVariant()}
@@ -795,20 +827,19 @@ function ProductRow({
 function VariantStock({
   canManage,
   color,
+  imageUrl,
   onSave,
+  productImages,
   size,
   sku,
   stock,
   variantId,
 }: VariantStockProps): ReactElement {
   const [nextStock, setNextStock] = useState(String(stock));
-
-  useEffect((): void => {
-    setNextStock(String(stock));
-  }, [stock]);
+  const [nextImageUrl, setNextImageUrl] = useState(imageUrl ?? "");
 
   return (
-    <div className="grid gap-4 rounded-sm border border-border-warm bg-ivory p-4 xl:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)_minmax(0,0.9fr)_minmax(0,0.9fr)_auto] xl:items-end">
+    <div className="grid gap-4 rounded-sm border border-border-warm bg-ivory p-4 xl:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)_minmax(0,0.9fr)_minmax(0,0.9fr)_minmax(0,1.4fr)_auto] xl:items-end">
       <div>
         <FieldLabel>SKU</FieldLabel>
         <div className="flex h-11 items-center rounded-sm border border-border-warm bg-cream px-3 font-dm-sans text-body-sm text-text-secondary">
@@ -841,13 +872,35 @@ function VariantStock({
         />
       </div>
 
+      <div>
+        <FieldLabel>Variant image</FieldLabel>
+        <select
+          disabled={!canManage}
+          value={nextImageUrl}
+          onChange={(event) => setNextImageUrl(event.target.value)}
+          className="h-11 w-full rounded-sm border border-border-warm bg-cream px-3 font-dm-sans text-body-sm disabled:cursor-not-allowed disabled:opacity-80"
+        >
+          <option value="">Use product image fallback</option>
+          {productImages.map((image, index) => (
+            <option key={`${variantId}-${image}-${index}`} value={image}>
+              Product image {index + 1}
+            </option>
+          ))}
+        </select>
+      </div>
+
       {canManage ? (
         <Button
           type="button"
-          onClick={() => void onSave(variantId, Number(nextStock) || 0)}
+          onClick={() =>
+            void onSave(variantId, {
+              imageUrl: nextImageUrl,
+              stock: Number(nextStock) || 0,
+            })
+          }
           className="h-11 rounded-sm bg-gold px-6 font-dm-sans text-caption uppercase tracking-widest text-obsidian hover:bg-sand"
         >
-          Save Stock
+          Save Variant
         </Button>
       ) : (
         <div className="flex h-11 items-center">

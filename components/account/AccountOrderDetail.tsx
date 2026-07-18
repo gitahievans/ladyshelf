@@ -605,7 +605,7 @@ export default function AccountOrderDetail({
                 <textarea
                   className="min-h-24 w-full rounded-lg border border-border-warm bg-ivory px-4 py-3 font-dm-sans text-body-sm text-obsidian outline-none placeholder:text-text-muted focus:border-gold"
                   onChange={(event): void => setCancellationNote(event.target.value)}
-                  placeholder="Optional detail for the Wahi team"
+                  placeholder="Optional detail for the Lady Shelf team"
                   value={cancellationNote}
                 />
               </div>

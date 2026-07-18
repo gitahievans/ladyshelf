@@ -44,7 +44,7 @@ const slides: HeroSlide[] = [
   },
   {
     image: brandMedia.heroSlides[4] ?? brandMedia.hero,
-    label: "Wahi Signatures",
+    label: "Lady Shelf Signatures",
     headline: "Crafted for the Modern Muse",
     subtitle: "Editorial texture, elevated cuts, and African fashion with a more intentional point of view.",
   },

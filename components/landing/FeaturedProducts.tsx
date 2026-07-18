@@ -29,7 +29,7 @@ export default function FeaturedProducts({
           align="center"
           label="Hand-Picked For You"
           title="Featured Collection"
-          subtitle="A tight edit of the pieces that define Wahi now: decisive tailoring, soft power, and statement dressing with roots."
+          subtitle="A tight edit of the pieces that define Lady Shelf now: decisive tailoring, soft power, and statement dressing with roots."
         />
 
         <motion.div

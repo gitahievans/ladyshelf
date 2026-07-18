@@ -33,7 +33,7 @@ export default function AuthShell({
           <div className="space-y-4 text-center">
             <div className="flex justify-center">
               <Image
-                alt="Wahi Fashion logo"
+                alt="Lady Shelf logo"
                 className="h-14 w-auto object-contain"
                 height={80}
                 priority

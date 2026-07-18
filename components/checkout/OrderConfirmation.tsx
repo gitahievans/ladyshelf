@@ -211,7 +211,7 @@ export default function OrderConfirmation({
           <p className="font-dm-sans text-body-sm text-text-secondary">
             Your email confirmation is on the way. Save time next time.{" "}
             <Link className="font-medium text-gold transition-colors hover:text-bark" href="/auth/register">
-              Join Wahi
+              Join Lady Shelf
             </Link>
             .
           </p>

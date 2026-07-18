@@ -32,6 +32,7 @@ export interface ProductVariant {
   size: Size;
   color: ColorName;
   colorHex: string;
+  imageUrl?: string;
   stock: number;
   sku: string;
 }
@@ -85,6 +86,7 @@ export interface CartItem {
   size: Size;
   color: ColorName;
   colorHex: string;
+  imageUrl?: string;
 }
 
 // ─────────────────────────────────────────────
@@ -325,6 +327,7 @@ export interface AdminVariantInput {
   size: string;
   color: string;
   colorHex: string;
+  imageUrl?: string;
   stock: number;
   sku?: string;
 }
@@ -343,6 +346,7 @@ export interface AdminInventoryRow {
   size: string;
   color: string;
   colorHex: string;
+  imageUrl: string;
   stock: number;
   sku: string;
 }

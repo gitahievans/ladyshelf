@@ -24,6 +24,7 @@ import { useWishlistStore } from "@/stores/wishlistStore";
 
 interface ProductInfoProps {
   categoryName: string;
+  onVariantChange?: (variant: ProductVariant | null) => void;
   product: Product;
 }
 
@@ -45,6 +46,7 @@ function getStockMessage(selectedVariant: ProductVariant | null): string {
 
 export default function ProductInfo({
   categoryName,
+  onVariantChange,
   product,
 }: ProductInfoProps): ReactElement {
   const reducedMotion = useReducedMotion();
@@ -77,6 +79,10 @@ export default function ProductInfo({
   useEffect((): void => {
     setStockFeedback(null);
   }, [selectedVariant]);
+
+  useEffect((): void => {
+    onVariantChange?.(selectedVariant);
+  }, [onVariantChange, selectedVariant]);
 
   const stockMessage = getStockMessage(selectedVariant);
   const isUnavailable = !selectedVariant || selectedVariant.stock === 0;
@@ -112,12 +118,14 @@ export default function ProductInfo({
       variantId: liveAvailability.variant.id,
       quantity: 1,
       productName: liveAvailability.product.name,
-      productImage: liveAvailability.product.images[0] ?? "",
+      productImage:
+        liveAvailability.variant.imageUrl || liveAvailability.product.images[0] || "",
       price: liveAvailability.product.price,
       currency: liveAvailability.product.currency,
       size: liveAvailability.variant.size,
       color: liveAvailability.variant.color,
       colorHex: liveAvailability.variant.colorHex,
+      imageUrl: liveAvailability.variant.imageUrl,
     };
 
     addItem(cartItem);

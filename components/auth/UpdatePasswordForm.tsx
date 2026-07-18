@@ -60,7 +60,7 @@ export default function UpdatePasswordForm(): ReactElement {
         </p>
       }
       heading="Choose a New Password"
-      subheading="Create a fresh password for your Wahi account."
+      subheading="Create a fresh password for your Lady Shelf account."
     >
       <form className="space-y-5" onSubmit={handleSubmit}>
         <div className="space-y-2">

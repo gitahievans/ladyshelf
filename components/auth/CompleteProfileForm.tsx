@@ -143,7 +143,7 @@ export default function CompleteProfileForm(): ReactElement {
             One Last Step
           </p>
           <p className="mt-2 font-dm-sans text-body-sm text-text-secondary">
-            Please provide use with your phone number before your Wahi account
+            Please provide use with your phone number before your Lady Shelf account
             is fully ready.
           </p>
         </div>

@@ -115,7 +115,7 @@ export default function LoginForm(): ReactElement {
             className="font-medium text-gold transition-colors hover:text-sand"
             href="/auth/register"
           >
-            Join Wahi
+            Join Lady Shelf
           </Link>
         </p>
       }

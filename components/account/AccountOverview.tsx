@@ -92,7 +92,7 @@ export default function AccountOverview(): ReactElement {
               ctaHref="/auth/login"
               ctaLabel="Sign In"
               description="Your account page opens once you sign in. From there you can revisit orders, addresses, and saved pieces."
-              title="Your Wahi account is waiting"
+              title="Your Lady Shelf account is waiting"
             />
           </div>
         </section>

@@ -38,7 +38,7 @@ export default function Footer(): ReactElement {
               href="/"
             >
               <Image
-                alt="Wahi Fashion logo"
+                alt="Lady Shelf logo"
                 className="h-28 w-auto object-contain lg:h-32"
                 height={192}
                 src={brandMedia.logoWhite}
@@ -113,15 +113,13 @@ export default function Footer(): ReactElement {
             Contact
           </p>
           <div className="space-y-3 font-dm-sans text-body-sm text-text-muted">
-            <p>Lumumba Drive, Roysambu, Nairobi</p>
-            <p>wahifashion.africa</p>
-            <p>Mon-Sat 9am-7pm, Sun 11am-5pm</p>
+            <p>ladyshelf.site</p>
           </div>
         </div>
       </div>
 
       <div className="border-t border-bark/30 px-6 py-4 text-center font-dm-sans text-caption text-text-muted">
-        &copy; 2026 Wahi Fashion. All rights reserved.
+        &copy; 2026 Lady Shelf. All rights reserved.
       </div>
     </footer>
   );

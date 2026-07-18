@@ -6,7 +6,7 @@ const sections = [
   {
     title: "Where We Deliver",
     body: [
-      "Wahi Fashion serves customers across Nairobi and beyond through a mix of rider delivery, parcel dispatch, and pickup options depending on location.",
+      "Lady Shelf serves customers across Nairobi and beyond through a mix of rider delivery, parcel dispatch, and pickup options depending on location.",
       "Your available delivery method is determined during checkout after you confirm your address details.",
     ],
   },
@@ -34,7 +34,7 @@ export default function DeliveryInfoPage(): ReactElement {
       ctaLabel="Talk to Support"
       ctaTitle="Questions about delivery?"
       eyebrow="Shipping with Care"
-      introduction="Every Wahi order is handled with attention, and delivery options are shaped around your location so the experience stays reliable."
+      introduction="Every Lady Shelf order is handled with attention, and delivery options are shaped around your location so the experience stays reliable."
       sections={[...sections]}
       title="Delivery Information"
     />

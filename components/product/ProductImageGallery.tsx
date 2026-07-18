@@ -11,15 +11,30 @@ import { cn } from "@/lib/utils/cn";
 interface ProductImageGalleryProps {
   images: string[];
   productName: string;
+  variantImage?: string;
 }
 
 export default function ProductImageGallery({
   images,
   productName,
+  variantImage,
 }: ProductImageGalleryProps): ReactElement {
   const reducedMotion = useReducedMotion();
   const mobileCarouselRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState<number>(0);
+  const displayImages =
+    images.length > 0 || variantImage
+      ? [
+          ...(variantImage ? [variantImage] : []),
+          ...images.filter((image) => image !== variantImage),
+        ]
+      : [];
+
+  if (displayImages.length === 0) {
+    return (
+      <div className="relative aspect-product overflow-hidden rounded-md bg-cream" />
+    );
+  }
 
   function handleMobileScroll(): void {
     const carousel = mobileCarouselRef.current;
@@ -54,7 +69,7 @@ export default function ProductImageGallery({
         onScroll={handleMobileScroll}
         ref={mobileCarouselRef}
       >
-        {images.map((image, index) => (
+        {displayImages.map((image, index) => (
           <div
             className="relative aspect-product w-full shrink-0 snap-center overflow-hidden"
             key={`${image}-${index}`}
@@ -72,7 +87,7 @@ export default function ProductImageGallery({
       </div>
 
       <div className="flex items-center justify-center gap-2 lg:hidden">
-        {images.map((image, index) => (
+        {displayImages.map((image, index) => (
           <button
             aria-label={`Show image ${index + 1}`}
             className={cn(
@@ -97,7 +112,7 @@ export default function ProductImageGallery({
                 className="absolute inset-0"
                 exit="hidden"
                 initial="hidden"
-                key={images[activeIndex]}
+                key={displayImages[activeIndex]}
                 variants={
                   reducedMotion
                     ? {
@@ -113,7 +128,7 @@ export default function ProductImageGallery({
                   fill
                   priority={activeIndex === 0}
                   sizes="(max-width: 1024px) 100vw, 60vw"
-                  src={images[activeIndex] ?? images[0] ?? ""}
+                  src={displayImages[activeIndex] ?? displayImages[0]}
                 />
               </motion.div>
             </AnimatePresence>
@@ -121,7 +136,7 @@ export default function ProductImageGallery({
         </div>
 
         <div className="flex flex-col gap-3">
-          {images.map((image, index) => (
+          {displayImages.map((image, index) => (
             <button
               aria-label={`Preview image ${index + 1}`}
               className={cn(

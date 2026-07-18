@@ -24,7 +24,7 @@ const dmSans = DM_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "Wahi Fashion",
+  title: "Lady Shelf",
   description: "Luxury women's fashion. More than fashion — a lifestyle.",
 };
 

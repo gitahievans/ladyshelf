@@ -127,7 +127,7 @@ export default function SearchOverlay({
         className="top-[50%] !grid max-h-[85vh] !w-[min(1280px,calc(100vw-5rem))] !max-w-[1280px] gap-6 overflow-y-auto rounded-[20px] border border-border-warm bg-cream p-6 text-obsidian shadow-card sm:!w-[min(1280px,calc(100vw-4rem))] sm:!max-w-[1280px] lg:p-8"
         showCloseButton={false}
       >
-        <DialogTitle className="sr-only">Search Wahi Fashion</DialogTitle>
+        <DialogTitle className="sr-only">Search Lady Shelf</DialogTitle>
         <div className="grid gap-6 lg:grid-cols-[minmax(0,1.1fr)_minmax(360px,0.9fr)] lg:items-start">
           <div className="space-y-6">
             <SearchBar
