@@ -44,10 +44,9 @@ export const brandMedia = {
     buildStorageUrl("hero4.jpg"),
     buildStorageUrl("12.jpg"),
   ],
-  logo: "https://nehcexpdaoypguejwnvg.supabase.co/storage/v1/object/public/product-images/Black%20Logo.png",
-  logoWhite:
-    "https://nehcexpdaoypguejwnvg.supabase.co/storage/v1/object/public/product-images/White%20Logo.png",
-  logoTransparent: buildStorageUrl("logo transparent.png"),
+  logo: "/branding/ladyshelf-logo-light.png",
+  logoWhite: "/branding/ladyshelf-logo-light.png",
+  logoTransparent: "/branding/ladyshelf-logo-light.png",
 } as const;
 
 export const productImageUrls = productImageFileNames.map(buildStorageUrl);

@@ -18,7 +18,6 @@ import {
 
 import SearchOverlay from "@/components/search/SearchOverlay";
 import { fetchAdminMeFromSession } from "@/lib/api/admin";
-import { brandMedia } from "@/lib/mock/media";
 import { fadeInVariant } from "@/lib/utils/animations";
 import { cn } from "@/lib/utils/cn";
 import { useAuthStore } from "@/stores/authStore";
@@ -35,6 +34,8 @@ const navigationLinks: NavigationLink[] = [
   { href: "/shop", label: "Collections" },
   { href: "/#about", label: "About" },
 ];
+
+const navbarLogoSrc = "/branding/ladyshelf-logo-light-transparent.png";
 
 export default function Navbar(): ReactElement {
   const router = useRouter();
@@ -151,7 +152,7 @@ export default function Navbar(): ReactElement {
                 className="h-12 w-auto object-contain xl:h-14"
                 height={88}
                 priority
-                src={brandMedia.logoWhite}
+                src={navbarLogoSrc}
                 width={244}
               />
             </Link>
@@ -163,7 +164,7 @@ export default function Navbar(): ReactElement {
               className="h-10 w-auto object-contain"
               height={72}
               priority
-              src={brandMedia.logoWhite}
+              src={navbarLogoSrc}
               width={188}
             />
           </Link>

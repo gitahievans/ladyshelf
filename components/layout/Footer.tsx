@@ -3,12 +3,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { Camera, MessageCircle, Music2 } from "lucide-react";
 
-import { brandMedia } from "@/lib/mock/media";
-
 interface FooterLink {
   href: string;
   label: string;
 }
+
+const footerLogoSrc = "/branding/ladyshelf-logo-light-transparent.png";
 
 const shopLinks: FooterLink[] = [
   { href: "/shop", label: "All Products" },
@@ -41,7 +41,7 @@ export default function Footer(): ReactElement {
                 alt="Lady Shelf logo"
                 className="h-28 w-auto object-contain lg:h-32"
                 height={192}
-                src={brandMedia.logoWhite}
+                src={footerLogoSrc}
                 width={520}
               />
             </Link>
