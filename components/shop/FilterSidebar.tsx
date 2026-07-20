@@ -70,7 +70,7 @@ export default function FilterSidebar({
   return (
     <aside
       className={cn(
-        "hidden h-fit space-y-8 rounded-lg border border-border-warm bg-cream p-6 lg:block",
+        "hidden h-fit space-y-8 rounded-lg border border-border-warm bg-cream p-6 lg:sticky lg:top-shop-sidebar lg:block lg:max-h-shop-sidebar lg:overflow-y-auto",
         className,
       )}
     >

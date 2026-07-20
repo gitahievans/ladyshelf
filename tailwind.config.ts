@@ -63,6 +63,13 @@ const config = {
         container: "1280px",
         "auth-card": "420px",
       },
+      inset: {
+        "shop-sidebar": "calc(var(--navbar-height) + var(--spacing-4))",
+      },
+      maxHeight: {
+        "shop-sidebar":
+          "calc(100vh - var(--navbar-height) - var(--spacing-8))",
+      },
       borderRadius: {
         none: "0",
         sm: "2px",
