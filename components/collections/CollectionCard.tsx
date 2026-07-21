@@ -6,23 +6,19 @@ import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
 import { ArrowUpRight, ImageOff } from "lucide-react";
 
-import type { CollectionViewMode } from "@/components/collections/CollectionViewToggle";
 import { cn } from "@/lib/utils/cn";
 import type { Category } from "@/lib/types";
 
 interface CollectionCardProps {
   category: Category;
   isFeature: boolean;
-  viewMode: CollectionViewMode;
 }
 
 export default function CollectionCard({
   category,
   isFeature,
-  viewMode,
 }: CollectionCardProps): ReactElement {
   const reducedMotion = useReducedMotion();
-  const isList = viewMode === "list";
   const pieceLabel = `${category.productCount} ${category.productCount === 1 ? "piece" : "pieces"}`;
   const hasImage = category.image.trim().length > 0;
 
@@ -32,11 +28,9 @@ export default function CollectionCard({
         aria-label={`Explore ${category.name}, ${pieceLabel}`}
         className={cn(
           "group relative block overflow-hidden rounded-md bg-mahogany shadow-card outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-4 focus-visible:ring-offset-ivory",
-          isList
-            ? "h-64 md:h-80"
-            : isFeature
-              ? "aspect-category md:aspect-auto md:h-96"
-              : "aspect-category",
+          isFeature
+            ? "aspect-category md:aspect-auto md:h-96"
+            : "aspect-category",
         )}
         href={`/shop?category=${category.slug}`}
       >
@@ -51,11 +45,9 @@ export default function CollectionCard({
               className="object-cover"
               fill
               sizes={
-                isList
+                isFeature
                   ? "(max-width: 768px) 100vw, 1280px"
-                  : isFeature
-                    ? "(max-width: 768px) 100vw, 1280px"
-                    : "(max-width: 768px) 100vw, 50vw"
+                  : "(max-width: 768px) 100vw, 50vw"
               }
               src={category.image}
             />

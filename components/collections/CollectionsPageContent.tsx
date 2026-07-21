@@ -6,6 +6,7 @@ import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
 
 import CollectionCard from "@/components/collections/CollectionCard";
+import CollectionListItem from "@/components/collections/CollectionListItem";
 import CollectionViewToggle from "@/components/collections/CollectionViewToggle";
 import type { CollectionViewMode } from "@/components/collections/CollectionViewToggle";
 import Footer from "@/components/layout/Footer";
@@ -125,15 +126,17 @@ export default function CollectionsPageContent({
                   key={collection.id}
                   variants={reducedMotion ? undefined : fadeUpVariant}
                 >
-                  <CollectionCard
-                    category={collection}
-                    isFeature={
-                      viewMode === "grid" &&
-                      index === collections.length - 1 &&
-                      collections.length % 2 === 1
-                    }
-                    viewMode={viewMode}
-                  />
+                  {viewMode === "grid" ? (
+                    <CollectionCard
+                      category={collection}
+                      isFeature={
+                        index === collections.length - 1 &&
+                        collections.length % 2 === 1
+                      }
+                    />
+                  ) : (
+                    <CollectionListItem category={collection} />
+                  )}
                 </motion.div>
               ))}
             </motion.div>
