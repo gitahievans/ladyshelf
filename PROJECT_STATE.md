@@ -54,6 +54,7 @@ Do not assume this is a frontend-only mock-data application. The frontend began 
 Implemented customer-facing routes include:
 
 - `/`
+- `/collections`
 - `/shop`
 - `/shop/[slug]`
 - `/search`
