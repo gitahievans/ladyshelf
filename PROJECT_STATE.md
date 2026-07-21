@@ -4,7 +4,7 @@ This is the canonical current-state document for Lady Shelf.
 
 Read this file before using `PLAN.md`, `BACKEND_PLAN.md`, `ADMIN_DASHBOARD_PLAN.md`, or other historical planning documents. Those files explain how the work was planned; this file explains what is true now.
 
-Last updated: 2026-05-06
+Last updated: 2026-07-22
 
 ## Current Working Mode
 
@@ -115,6 +115,15 @@ Variant-specific product imagery is now supported end-to-end:
 - Admin catalog management can associate each variant with one of the product's uploaded Supabase-backed image URLs.
 - Checkout/cart/order validation snapshots the variant image when present, falling back to the first product image for older products.
 
+AI-assisted catalog image generation is implemented on the feature branch:
+
+- Admins can manually select batches of one to five products and queue asynchronous generation.
+- Each product receives an all-or-nothing review set of three 768x1024 candidates: Hero, Alternate, and Detail.
+- Candidate review supports approval, rejection, regeneration, atomic publication, and restoration of the previous gallery.
+- Draft candidate URLs remain separate from public product galleries until explicit publication.
+- Manual product-image upload and manual draft publication remain available.
+- The protected homepage Hero and Our Story media sources are guarded by `npm run check:protected-media`.
+
 ## Backend Current State
 
 Completed backend capabilities:
@@ -142,6 +151,9 @@ Completed backend capabilities:
 - Expiry flow for unpaid prepaid orders with stock restoration
 - Admin APIs for dashboard, staff permissions, catalog, customers, inventory, orders, payments, delivery settings, and pickup settings
 - Variant-level image URLs for color-specific storefront display, with product-image fallback for existing catalog items
+- Draft/published catalog visibility, with unpublished products excluded from public catalog, wishlist, and checkout validation paths
+- Asynchronous Cloudflare Workers AI product-image jobs, Supabase draft/final storage, review state, retries, rollback, cleanup tracking, and admin APIs
+- A bounded worker command and inactive systemd service/timer templates for processing queued image generations
 
 Key backend API areas currently consumed by the frontend:
 
@@ -214,6 +226,9 @@ Key backend API areas currently consumed by the frontend:
 - There is no customer-facing real-time order tracking in MVP.
 - Some frontend mock data still exists and should not be mistaken for the primary source of truth.
 - Repo-wide frontend lint may include unrelated existing issues; check the latest task context before treating lint as a clean global signal.
+- AI product-image generation remains disabled until its protected backend credentials and bucket name are configured.
+- The image-generation systemd timer is supplied as a template only and must not be activated without a separately approved deployment phase.
+- A real Cloudflare/Supabase smoke test and production migration remain deferred until separately approved.
 
 ## Historical Plan Status
 
@@ -244,6 +259,7 @@ Frontend:
 npm run lint
 npx tsc --noEmit
 npm run build
+npm run check:protected-media
 ```
 
 Backend, from `C:\Users\gitahi\Development\wahi-backend`:

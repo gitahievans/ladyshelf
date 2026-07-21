@@ -62,6 +62,7 @@ export interface Product {
   reviewCount: number;
   isFeatured: boolean;
   isNewArrival: boolean;
+  isPublished?: boolean;
   material?: string;
   careInstructions?: string;
   createdAt: string;
@@ -309,6 +310,7 @@ export interface AdminCatalogProductInput {
   review_count: number;
   isFeatured: boolean;
   isNewArrival: boolean;
+  isPublished?: boolean;
   material?: string;
   careInstructions?: string;
   created_at: string;
@@ -336,6 +338,81 @@ export interface AdminUploadedProductImage {
   name: string;
   path: string;
   url: string;
+}
+
+export type ImageGenerationBatchStatus =
+  | "queued"
+  | "processing"
+  | "ready_for_review"
+  | "partially_failed"
+  | "completed"
+  | "cancelled";
+
+export type ProductImageGenerationStatus =
+  | "queued"
+  | "generating"
+  | "ready_for_review"
+  | "needs_regeneration"
+  | "approved"
+  | "published"
+  | "failed"
+  | "cancelled";
+
+export type ProductImageCandidateStatus =
+  | "queued"
+  | "generating"
+  | "ready"
+  | "approved"
+  | "rejected"
+  | "failed";
+
+export type ProductImageShotType = "hero" | "alternate" | "detail";
+
+export interface ProductImageCandidate {
+  id: string;
+  shotType: ProductImageShotType;
+  status: ProductImageCandidateStatus;
+  prompt: string;
+  publicUrl: string;
+  mimeType: string;
+  width: number;
+  height: number;
+  attemptCount: number;
+  errorCode: string;
+  errorMessage: string;
+  reviewedAt: string | null;
+}
+
+export interface ProductImageGeneration {
+  id: string;
+  productId: string;
+  productName: string;
+  productSlug: string;
+  status: ProductImageGenerationStatus;
+  model: string;
+  attemptCount: number;
+  nextAttemptAt: string | null;
+  errorCode: string;
+  errorMessage: string;
+  previousImages: string[];
+  canPublish: boolean;
+  canRestore: boolean;
+  candidates: ProductImageCandidate[];
+  created_at: string;
+  updated_at: string;
+  published_at: string | null;
+}
+
+export interface ImageGenerationBatch {
+  id: string;
+  status: ImageGenerationBatchStatus;
+  provider: "cloudflare";
+  model: string;
+  productCount: number;
+  generations: ProductImageGeneration[];
+  createdAt: string;
+  updatedAt: string;
+  completedAt: string | null;
 }
 
 export interface AdminInventoryRow {
