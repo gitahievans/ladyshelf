@@ -1,7 +1,7 @@
 "use client";
 
 import type { ReactElement } from "react";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useSyncExternalStore } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 
@@ -21,6 +21,25 @@ interface ShopPageContentProps {
   initialProducts: Product[];
 }
 
+type ShopViewMode = "grid" | "list";
+
+const viewStorageKey = "lady-shelf-shop-view";
+const viewStorageEvent = "lady-shelf-shop-view-change";
+
+function getSavedViewMode(): ShopViewMode {
+  if (typeof window === "undefined") return "grid";
+
+  return window.sessionStorage.getItem(viewStorageKey) === "list"
+    ? "list"
+    : "grid";
+}
+
+function subscribeToViewMode(onChange: () => void): () => void {
+  window.addEventListener(viewStorageEvent, onChange);
+
+  return (): void => window.removeEventListener(viewStorageEvent, onChange);
+}
+
 export default function ShopPageContent({
   initialCategories,
   initialProducts,
@@ -29,10 +48,19 @@ export default function ShopPageContent({
   const categoryParam = searchParams.get("category");
   const selectedCategory = useUIStore((state) => state.selectedCategory);
   const sortBy = useUIStore((state) => state.sortBy);
-  const viewMode = useUIStore((state) => state.viewMode);
   const filters = useUIStore((state) => state.filters);
   const setCategory = useUIStore((state) => state.setCategory);
   const setFilters = useUIStore((state) => state.setFilters);
+  const viewMode = useSyncExternalStore(
+    subscribeToViewMode,
+    getSavedViewMode,
+    (): ShopViewMode => "grid",
+  );
+
+  function handleViewModeChange(nextView: ShopViewMode): void {
+    window.sessionStorage.setItem(viewStorageKey, nextView);
+    window.dispatchEvent(new Event(viewStorageEvent));
+  }
 
   const priceBounds = useMemo<[number, number]>(() => {
     if (initialProducts.length === 0) {
@@ -135,7 +163,11 @@ export default function ShopPageContent({
                 colors={colorOptions}
                 priceBounds={priceBounds}
               />
-              <ViewToggle className="shrink-0" />
+              <ViewToggle
+                className="shrink-0"
+                onViewModeChange={handleViewModeChange}
+                viewMode={viewMode}
+              />
             </div>
             <SortDropdown className="w-full" />
           </div>
@@ -154,7 +186,10 @@ export default function ShopPageContent({
                 </div>
                 <div className="flex items-center gap-3">
                   <SortDropdown />
-                  <ViewToggle />
+                  <ViewToggle
+                    onViewModeChange={handleViewModeChange}
+                    viewMode={viewMode}
+                  />
                 </div>
               </div>
 
