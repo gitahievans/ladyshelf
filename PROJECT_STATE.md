@@ -248,6 +248,9 @@ Key backend API areas currently consumed by the frontend:
 - Repo-wide frontend lint may include unrelated existing issues; check the latest task context before treating lint as a clean global signal.
 - Owner browser verification of the production `/admin/catalog` AI image workflow remains required after the backend deployment.
 - The AI image production smoke records and generated storage objects are intentionally retained for audit unless the owner separately approves cleanup.
+- Candidate rejection in the AI image review UI currently fails with the generic admin error `Unable to complete this admin action.` Backend inspection indicates the reject service likely needs to initialize its default Supabase storage client before deleting draft objects.
+- Owners need a UI action to cancel/remove an unwanted active AI generation from the Catalog workspace. The safest first version should cancel non-generating work only and must not change the live product gallery.
+- One production accessory Detail candidate for `mahogany-leather-tote` repeatedly failed with backend-safe provider configuration/request validation. Hero and Alternate were ready; Detail likely needs backend prompt/request hardening or better sanitized provider diagnostics.
 
 ## Historical Plan Status
 
