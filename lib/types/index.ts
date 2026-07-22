@@ -62,6 +62,7 @@ export interface Product {
   reviewCount: number;
   isFeatured: boolean;
   isNewArrival: boolean;
+  isPublished?: boolean;
   material?: string;
   careInstructions?: string;
   createdAt: string;
@@ -309,6 +310,7 @@ export interface AdminCatalogProductInput {
   review_count: number;
   isFeatured: boolean;
   isNewArrival: boolean;
+  isPublished?: boolean;
   material?: string;
   careInstructions?: string;
   created_at: string;
@@ -336,6 +338,164 @@ export interface AdminUploadedProductImage {
   name: string;
   path: string;
   url: string;
+}
+
+export type ImageGenerationBatchStatus =
+  | "queued"
+  | "processing"
+  | "ready_for_review"
+  | "partially_failed"
+  | "completed"
+  | "cancelled";
+
+export type ProductImageGenerationStatus =
+  | "queued"
+  | "generating"
+  | "ready_for_review"
+  | "needs_regeneration"
+  | "approved"
+  | "published"
+  | "failed"
+  | "cancelled";
+
+export type ProductImagePublicationMode = "append" | "replace";
+
+export type ProductImageCandidateStatus =
+  | "queued"
+  | "generating"
+  | "ready"
+  | "approved"
+  | "rejected"
+  | "failed";
+
+export type ProductImageShotType = "hero" | "alternate" | "detail";
+
+export type ProductImageBodyProfile = "automatic" | "slim" | "curvy" | "athletic";
+export type ProductImageSkinTone =
+  | "automatic"
+  | "light_brown"
+  | "medium_brown"
+  | "deep_brown";
+export type ProductImageComposition =
+  | "automatic"
+  | "standing"
+  | "seated"
+  | "walking"
+  | "three_quarter";
+export type ProductImageDetailFocus =
+  | "automatic"
+  | "fabric"
+  | "pattern"
+  | "stitching"
+  | "closure"
+  | "construction";
+
+export interface ProductImageModelRegenerationSettings {
+  color: string | null;
+  bodyProfile: ProductImageBodyProfile;
+  skinTone: ProductImageSkinTone;
+  composition: ProductImageComposition;
+  instruction: string;
+}
+
+export interface ProductImageDetailRegenerationSettings {
+  color: string | null;
+  detailFocus: ProductImageDetailFocus;
+  instruction: string;
+}
+
+export interface ProductImageSetRegenerationRequest {
+  scope: "set";
+  shots: {
+    hero: ProductImageModelRegenerationSettings;
+    alternate: ProductImageModelRegenerationSettings;
+    detail: ProductImageDetailRegenerationSettings;
+  };
+}
+
+export interface ProductImageAlternateRegenerationRequest {
+  scope: "shot";
+  shots: { alternate: ProductImageModelRegenerationSettings };
+}
+
+export interface ProductImageDetailRegenerationRequest {
+  scope: "shot";
+  shots: { detail: ProductImageDetailRegenerationSettings };
+}
+
+export type ProductImageRegenerationRequest =
+  | ProductImageSetRegenerationRequest
+  | ProductImageAlternateRegenerationRequest
+  | ProductImageDetailRegenerationRequest;
+
+export interface ProductImageCandidateOverrides {
+  requested?: Partial<
+    ProductImageModelRegenerationSettings & ProductImageDetailRegenerationSettings
+  >;
+  resolved?: {
+    color?: string | null;
+    bodyProfile?: Exclude<ProductImageBodyProfile, "automatic">;
+    skinTone?: Exclude<ProductImageSkinTone, "automatic"> | "dark_brown";
+    composition?: ProductImageComposition;
+    detailFocus?: ProductImageDetailFocus;
+    identity?: string;
+    hair?: string;
+    stature?: string;
+    pose?: string;
+  };
+}
+
+export interface ProductImageCandidate {
+  id: string;
+  shotType: ProductImageShotType;
+  status: ProductImageCandidateStatus;
+  prompt: string;
+  promptPolicyVersion: string;
+  regenerationRevision: number;
+  manualOverrides: ProductImageCandidateOverrides;
+  publicUrl: string;
+  mimeType: string;
+  width: number;
+  height: number;
+  attemptCount: number;
+  errorCode: string;
+  errorMessage: string;
+  reviewedAt: string | null;
+}
+
+export interface ProductImageGeneration {
+  id: string;
+  productId: string;
+  productName: string;
+  productSlug: string;
+  status: ProductImageGenerationStatus;
+  model: string;
+  attemptCount: number;
+  nextAttemptAt: string | null;
+  errorCode: string;
+  errorMessage: string;
+  previousImages: string[];
+  publicationMode: ProductImagePublicationMode | null;
+  currentGalleryCount: number;
+  catalogColors: string[];
+  canPublish: boolean;
+  canRestore: boolean;
+  candidates: ProductImageCandidate[];
+  created_at: string;
+  updated_at: string;
+  published_at: string | null;
+}
+
+export interface ImageGenerationBatch {
+  id: string;
+  status: ImageGenerationBatchStatus;
+  provider: "cloudflare";
+  model: string;
+  productCount: number;
+  generations: ProductImageGeneration[];
+  createdAt: string;
+  updatedAt: string;
+  completedAt: string | null;
 }
 
 export interface AdminInventoryRow {

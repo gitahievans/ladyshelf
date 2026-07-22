@@ -23,6 +23,11 @@ import type {
   AdminStaffRecord,
   AdminStaffUser,
   AdminUploadedProductImage,
+  ImageGenerationBatch,
+  ProductImageCandidate,
+  ProductImageGeneration,
+  ProductImagePublicationMode,
+  ProductImageRegenerationRequest,
   Category,
   Product,
   ProductVariant,
@@ -578,6 +583,91 @@ export async function updateAdminProduct(id: string, input: Partial<AdminCatalog
     body: input,
   });
   return normalizeAdminProduct(product);
+}
+
+export async function fetchImageGenerationBatches(
+  status?: "active",
+): Promise<ImageGenerationBatch[]> {
+  const accessToken = await getAccessToken();
+  if (!accessToken) throw new AdminApiError("Please sign in to view image generation.", 401);
+  return fetchAdminResource<ImageGenerationBatch[]>({
+    accessToken,
+    path: `/api/v1/admin/image-generations/batches${status ? `?status=${status}` : ""}`,
+  });
+}
+
+export async function createImageGenerationBatch(
+  productIds: string[],
+): Promise<ImageGenerationBatch> {
+  const accessToken = await getAccessToken();
+  if (!accessToken) throw new AdminApiError("Please sign in to generate product images.", 401);
+  return fetchAdminResource<ImageGenerationBatch>({
+    accessToken,
+    method: "POST",
+    path: "/api/v1/admin/image-generations/batches",
+    body: { productIds: productIds.map((id) => Number(id)) },
+  });
+}
+
+async function mutateImageCandidate(
+  candidateId: string,
+  action: "approve" | "reject",
+): Promise<ProductImageCandidate> {
+  const accessToken = await getAccessToken();
+  if (!accessToken) throw new AdminApiError("Please sign in to review product images.", 401);
+  return fetchAdminResource<ProductImageCandidate>({
+    accessToken,
+    method: "POST",
+    path: `/api/v1/admin/image-generations/candidates/${encodeURIComponent(candidateId)}/${action}`,
+  });
+}
+
+export async function approveImageCandidate(candidateId: string): Promise<ProductImageCandidate> {
+  return mutateImageCandidate(candidateId, "approve");
+}
+
+export async function rejectImageCandidate(candidateId: string): Promise<ProductImageCandidate> {
+  return mutateImageCandidate(candidateId, "reject");
+}
+
+export async function regenerateImageCandidate(
+  candidateId: string,
+  request: ProductImageRegenerationRequest,
+): Promise<ProductImageCandidate> {
+  const accessToken = await getAccessToken();
+  if (!accessToken) throw new AdminApiError("Please sign in to regenerate product images.", 401);
+  return fetchAdminResource<ProductImageCandidate>({
+    accessToken,
+    method: "POST",
+    path: `/api/v1/admin/image-generations/candidates/${encodeURIComponent(candidateId)}/regenerate`,
+    body: request,
+  });
+}
+
+export async function publishImageGeneration(
+  generationId: string,
+  publicationMode: ProductImagePublicationMode,
+): Promise<ProductImageGeneration> {
+  const accessToken = await getAccessToken();
+  if (!accessToken) throw new AdminApiError("Please sign in to publish product images.", 401);
+  return fetchAdminResource<ProductImageGeneration>({
+    accessToken,
+    method: "POST",
+    path: `/api/v1/admin/image-generations/${encodeURIComponent(generationId)}/publish`,
+    body: { publicationMode },
+  });
+}
+
+export async function restorePreviousProductGallery(
+  generationId: string,
+): Promise<ProductImageGeneration> {
+  const accessToken = await getAccessToken();
+  if (!accessToken) throw new AdminApiError("Please sign in to restore product images.", 401);
+  return fetchAdminResource<ProductImageGeneration>({
+    accessToken,
+    method: "POST",
+    path: `/api/v1/admin/image-generations/${encodeURIComponent(generationId)}/restore-previous`,
+  });
 }
 
 export async function createAdminVariant(productId: string, input: AdminVariantInput): Promise<ProductVariant> {
