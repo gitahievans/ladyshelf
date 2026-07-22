@@ -3,13 +3,14 @@
 import type { ReactElement } from "react";
 import { useState } from "react";
 import Image from "next/image";
-import { RefreshCw, RotateCcw, Send } from "lucide-react";
+import { RefreshCw, RotateCcw, Send, Trash2 } from "lucide-react";
 
 import AdminImageRegenerationDialog from "@/components/admin/AdminImageRegenerationDialog";
 import AdminImagePublicationDialog from "@/components/admin/AdminImagePublicationDialog";
 import { Button } from "@/components/ui/button";
 import {
   approveImageCandidate,
+  cancelImageGeneration,
   publishImageGeneration,
   rejectImageCandidate,
   restorePreviousProductGallery,
@@ -29,6 +30,13 @@ interface AdminImageGenerationReviewProps {
 }
 
 const shotOrder: ProductImageShotType[] = ["hero", "alternate", "detail"];
+const cancellableGenerationStatuses = new Set<ProductImageGeneration["status"]>([
+  "queued",
+  "ready_for_review",
+  "needs_regeneration",
+  "approved",
+  "failed",
+]);
 
 function shotLabel(shotType: ProductImageShotType): string {
   return shotType.charAt(0).toUpperCase() + shotType.slice(1);
@@ -93,6 +101,22 @@ export default function AdminImageGenerationReview({
     }
   }
 
+  async function cancel(): Promise<void> {
+    if (!window.confirm(`Remove AI image-generation work for ${generation.productName}?`)) return;
+    setPendingAction("cancel");
+    setError(null);
+    try {
+      await cancelImageGeneration(generation.id);
+      await onChanged();
+    } catch (actionError) {
+      setError(actionError instanceof Error ? actionError.message : "Unable to remove this image-generation work.");
+    } finally {
+      setPendingAction(null);
+    }
+  }
+
+  const canCancelGeneration = cancellableGenerationStatuses.has(generation.status);
+
   return (
     <article className="space-y-4 rounded-sm border border-border-warm bg-cream p-4">
       <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
@@ -118,6 +142,14 @@ export default function AdminImageGenerationReview({
               <RotateCcw className="mr-2 h-4 w-4" /> Restore previous gallery
             </Button>
           ) : null}
+          <Button
+            disabled={!canManage || !canCancelGeneration || pendingAction !== null}
+            onClick={() => void cancel()}
+            type="button"
+            variant="outline"
+          >
+            <Trash2 className="mr-2 h-4 w-4" /> Remove from workspace
+          </Button>
         </div>
       </div>
 
