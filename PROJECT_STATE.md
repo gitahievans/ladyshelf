@@ -138,8 +138,16 @@ AI-assisted catalog image generation is implemented on the feature branch:
 - Product galleries may contain any number and mixture of manual and AI images. Successfully
   published generations are hidden from the active Catalog workspace while their audit and rollback
   records remain stored.
+- Owners can remove queued, ready-for-review, needs-regeneration, approved, or failed AI generation
+  work from the Catalog workspace. This cancellation never changes the live product gallery and only
+  attempts cleanup of draft `ai-drafts/` storage objects.
 - Products require at least one nonblank catalog variant color before AI generation can be queued.
 - Manual product-image upload and manual draft publication remain available.
+- Candidate rejection deletes draft storage best-effort, keeps cleanup-needed metadata if draft
+  cleanup fails, and returns the generation to `needs_regeneration`.
+- Detail-shot provider failures include sanitized request/status metadata when Cloudflare returns
+  validation errors, and Detail prompts are softened for product-only accessory close-ups.
+- The production backend image-generation timer is enabled and processes queued work automatically.
 - The protected homepage Hero and Our Story media sources are guarded by `npm run check:protected-media`.
 
 ## Backend Current State
@@ -244,9 +252,8 @@ Key backend API areas currently consumed by the frontend:
 - There is no customer-facing real-time order tracking in MVP.
 - Some frontend mock data still exists and should not be mistaken for the primary source of truth.
 - Repo-wide frontend lint may include unrelated existing issues; check the latest task context before treating lint as a clean global signal.
-- AI product-image generation remains disabled until its protected backend credentials and bucket name are configured.
-- The image-generation systemd timer is supplied as a template only and must not be activated without a separately approved deployment phase.
-- A real Cloudflare/Supabase smoke test and production migration remain deferred until separately approved.
+- Owner browser verification of the production `/admin/catalog` AI image workflow remains required.
+- The AI image production smoke records and generated storage objects are intentionally retained for audit unless the owner separately approves cleanup.
 
 ## Historical Plan Status
 

@@ -658,6 +658,18 @@ export async function publishImageGeneration(
   });
 }
 
+export async function cancelImageGeneration(
+  generationId: string,
+): Promise<ProductImageGeneration> {
+  const accessToken = await getAccessToken();
+  if (!accessToken) throw new AdminApiError("Please sign in to manage product images.", 401);
+  return fetchAdminResource<ProductImageGeneration>({
+    accessToken,
+    method: "POST",
+    path: `/api/v1/admin/image-generations/${encodeURIComponent(generationId)}/cancel`,
+  });
+}
+
 export async function restorePreviousProductGallery(
   generationId: string,
 ): Promise<ProductImageGeneration> {
