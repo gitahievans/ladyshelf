@@ -120,6 +120,15 @@ AI-assisted catalog image generation is implemented on the feature branch:
 - Admins can manually select batches of one to five products and queue asynchronous generation.
 - Each product receives an all-or-nothing review set of three 768x1024 candidates: Hero, Alternate, and Detail.
 - Candidate review supports approval, rejection, regeneration, atomic publication, and restoration of the previous gallery.
+- New batches use the `v2-controlled-variety` prompt policy: Hero and Alternate receive distinct
+  adult Black-woman representation profiles and Detail is product-only.
+- Frozen real catalog colors are allocated deterministically across the three shots, using distinct
+  colors whenever at least three exist.
+- Owner regeneration uses a guarded per-shot dialog for catalog color, body/skin/composition or
+  detail focus, and bounded creative notes. Hero regeneration always replaces the full dependent set;
+  Alternate and Detail regeneration remain isolated.
+- Explicit regeneration records normalized controls, increments the prompt revision, and derives a
+  new seed. Automatic retries continue using the stored prompt and seed.
 - Draft candidate URLs remain separate from public product galleries until explicit publication.
 - Manual product-image upload and manual draft publication remain available.
 - The protected homepage Hero and Our Story media sources are guarded by `npm run check:protected-media`.

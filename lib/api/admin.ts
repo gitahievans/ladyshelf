@@ -26,6 +26,7 @@ import type {
   ImageGenerationBatch,
   ProductImageCandidate,
   ProductImageGeneration,
+  ProductImageRegenerationRequest,
   Category,
   Product,
   ProductVariant,
@@ -609,7 +610,7 @@ export async function createImageGenerationBatch(
 
 async function mutateImageCandidate(
   candidateId: string,
-  action: "approve" | "reject" | "regenerate",
+  action: "approve" | "reject",
 ): Promise<ProductImageCandidate> {
   const accessToken = await getAccessToken();
   if (!accessToken) throw new AdminApiError("Please sign in to review product images.", 401);
@@ -628,8 +629,18 @@ export async function rejectImageCandidate(candidateId: string): Promise<Product
   return mutateImageCandidate(candidateId, "reject");
 }
 
-export async function regenerateImageCandidate(candidateId: string): Promise<ProductImageCandidate> {
-  return mutateImageCandidate(candidateId, "regenerate");
+export async function regenerateImageCandidate(
+  candidateId: string,
+  request: ProductImageRegenerationRequest,
+): Promise<ProductImageCandidate> {
+  const accessToken = await getAccessToken();
+  if (!accessToken) throw new AdminApiError("Please sign in to regenerate product images.", 401);
+  return fetchAdminResource<ProductImageCandidate>({
+    accessToken,
+    method: "POST",
+    path: `/api/v1/admin/image-generations/candidates/${encodeURIComponent(candidateId)}/regenerate`,
+    body: request,
+  });
 }
 
 export async function publishImageGeneration(generationId: string): Promise<ProductImageGeneration> {

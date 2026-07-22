@@ -368,11 +368,89 @@ export type ProductImageCandidateStatus =
 
 export type ProductImageShotType = "hero" | "alternate" | "detail";
 
+export type ProductImageBodyProfile = "automatic" | "slim" | "curvy" | "athletic";
+export type ProductImageSkinTone =
+  | "automatic"
+  | "light_brown"
+  | "medium_brown"
+  | "deep_brown";
+export type ProductImageComposition =
+  | "automatic"
+  | "standing"
+  | "seated"
+  | "walking"
+  | "three_quarter";
+export type ProductImageDetailFocus =
+  | "automatic"
+  | "fabric"
+  | "pattern"
+  | "stitching"
+  | "closure"
+  | "construction";
+
+export interface ProductImageModelRegenerationSettings {
+  color: string | null;
+  bodyProfile: ProductImageBodyProfile;
+  skinTone: ProductImageSkinTone;
+  composition: ProductImageComposition;
+  instruction: string;
+}
+
+export interface ProductImageDetailRegenerationSettings {
+  color: string | null;
+  detailFocus: ProductImageDetailFocus;
+  instruction: string;
+}
+
+export interface ProductImageSetRegenerationRequest {
+  scope: "set";
+  shots: {
+    hero: ProductImageModelRegenerationSettings;
+    alternate: ProductImageModelRegenerationSettings;
+    detail: ProductImageDetailRegenerationSettings;
+  };
+}
+
+export interface ProductImageAlternateRegenerationRequest {
+  scope: "shot";
+  shots: { alternate: ProductImageModelRegenerationSettings };
+}
+
+export interface ProductImageDetailRegenerationRequest {
+  scope: "shot";
+  shots: { detail: ProductImageDetailRegenerationSettings };
+}
+
+export type ProductImageRegenerationRequest =
+  | ProductImageSetRegenerationRequest
+  | ProductImageAlternateRegenerationRequest
+  | ProductImageDetailRegenerationRequest;
+
+export interface ProductImageCandidateOverrides {
+  requested?: Partial<
+    ProductImageModelRegenerationSettings & ProductImageDetailRegenerationSettings
+  >;
+  resolved?: {
+    color?: string | null;
+    bodyProfile?: Exclude<ProductImageBodyProfile, "automatic">;
+    skinTone?: Exclude<ProductImageSkinTone, "automatic"> | "dark_brown";
+    composition?: ProductImageComposition;
+    detailFocus?: ProductImageDetailFocus;
+    identity?: string;
+    hair?: string;
+    stature?: string;
+    pose?: string;
+  };
+}
+
 export interface ProductImageCandidate {
   id: string;
   shotType: ProductImageShotType;
   status: ProductImageCandidateStatus;
   prompt: string;
+  promptPolicyVersion: string;
+  regenerationRevision: number;
+  manualOverrides: ProductImageCandidateOverrides;
   publicUrl: string;
   mimeType: string;
   width: number;
@@ -395,6 +473,7 @@ export interface ProductImageGeneration {
   errorCode: string;
   errorMessage: string;
   previousImages: string[];
+  catalogColors: string[];
   canPublish: boolean;
   canRestore: boolean;
   candidates: ProductImageCandidate[];

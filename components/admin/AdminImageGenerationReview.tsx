@@ -3,13 +3,13 @@
 import type { ReactElement } from "react";
 import { useState } from "react";
 import Image from "next/image";
-import { Loader2, RefreshCw, RotateCcw, Send } from "lucide-react";
+import { RefreshCw, RotateCcw, Send } from "lucide-react";
 
+import AdminImageRegenerationDialog from "@/components/admin/AdminImageRegenerationDialog";
 import { Button } from "@/components/ui/button";
 import {
   approveImageCandidate,
   publishImageGeneration,
-  regenerateImageCandidate,
   rejectImageCandidate,
   restorePreviousProductGallery,
 } from "@/lib/api/admin";
@@ -40,20 +40,20 @@ export default function AdminImageGenerationReview({
 }: AdminImageGenerationReviewProps): ReactElement {
   const [pendingAction, setPendingAction] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [regenerationCandidate, setRegenerationCandidate] = useState<ProductImageCandidate | null>(null);
   const candidates = [...generation.candidates].sort(
     (left, right) => shotOrder.indexOf(left.shotType) - shotOrder.indexOf(right.shotType),
   );
 
   async function runCandidateAction(
     candidate: ProductImageCandidate,
-    action: "approve" | "reject" | "regenerate",
+    action: "approve" | "reject",
   ): Promise<void> {
     setPendingAction(`${candidate.id}-${action}`);
     setError(null);
     try {
       if (action === "approve") await approveImageCandidate(candidate.id);
       if (action === "reject") await rejectImageCandidate(candidate.id);
-      if (action === "regenerate") await regenerateImageCandidate(candidate.id);
       await onChanged();
     } catch (actionError) {
       setError(actionError instanceof Error ? actionError.message : "Unable to update this candidate.");
@@ -139,8 +139,8 @@ export default function AdminImageGenerationReview({
                 <div className="grid grid-cols-3 gap-2">
                   <Button disabled={candidate.status !== "ready" || pendingAction !== null} onClick={() => void runCandidateAction(candidate, "approve")} size="sm" type="button">Approve</Button>
                   <Button disabled={!candidate.publicUrl || pendingAction !== null} onClick={() => void runCandidateAction(candidate, "reject")} size="sm" type="button" variant="outline">Reject</Button>
-                  <Button disabled={candidate.status === "generating" || candidate.status === "queued" || pendingAction !== null} onClick={() => void runCandidateAction(candidate, "regenerate")} size="icon-sm" title="Regenerate" type="button" variant="outline">
-                    {pendingAction === `${candidate.id}-regenerate` ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCw className="h-4 w-4" />}
+                  <Button aria-label={`Regenerate ${shotLabel(candidate.shotType)}`} disabled={generation.status === "published" || generation.status === "cancelled" || candidate.status === "generating" || candidate.status === "queued" || pendingAction !== null} onClick={() => setRegenerationCandidate(candidate)} size="icon-sm" title="Regenerate" type="button" variant="outline">
+                    <RefreshCw className="h-4 w-4" />
                   </Button>
                 </div>
               ) : null}
@@ -148,6 +148,17 @@ export default function AdminImageGenerationReview({
           </div>
         ))}
       </div>
+      {regenerationCandidate ? (
+        <AdminImageRegenerationDialog
+          candidate={regenerationCandidate}
+          generation={generation}
+          key={`${regenerationCandidate.id}-${regenerationCandidate.regenerationRevision}`}
+          onOpenChange={(open) => {
+            if (!open) setRegenerationCandidate(null);
+          }}
+          onRegenerated={onChanged}
+        />
+      ) : null}
     </article>
   );
 }
