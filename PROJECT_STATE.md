@@ -130,6 +130,15 @@ AI-assisted catalog image generation is implemented on the feature branch:
 - Explicit regeneration records normalized controls, increments the prompt revision, and derives a
   new seed. Automatic retries continue using the stored prompt and seed.
 - Draft candidate URLs remain separate from public product galleries until explicit publication.
+- AI publication requires an explicit per-publication choice to append the fixed Hero, Alternate,
+  and Detail set to the current gallery or replace the complete current gallery. The locked
+  publication-time gallery is retained exactly for rollback, and the chosen mode is stored for audit.
+- Append publication preserves variant image assignments. Replace publication clears only variant
+  assignments that point to gallery URLs removed by the replacement.
+- Product galleries may contain any number and mixture of manual and AI images. Successfully
+  published generations are hidden from the active Catalog workspace while their audit and rollback
+  records remain stored.
+- Products require at least one nonblank catalog variant color before AI generation can be queued.
 - Manual product-image upload and manual draft publication remain available.
 - The protected homepage Hero and Our Story media sources are guarded by `npm run check:protected-media`.
 

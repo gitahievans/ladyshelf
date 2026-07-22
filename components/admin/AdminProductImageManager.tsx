@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useEffect, useId, useState } from "react";
-import { ArrowDown, ArrowUp, Loader2, Trash2, Upload } from "lucide-react";
+import { ArrowDown, ArrowUp, Loader2, Sparkles, Trash2, Upload } from "lucide-react";
 
 import { deleteAdminProductImages, uploadAdminProductImages } from "@/lib/api/admin";
 import { Button } from "@/components/ui/button";
@@ -20,6 +20,9 @@ interface AdminProductImageManagerProps {
   productLabel: string;
   productSlug?: string;
   successMessage?: string;
+  generateDisabledReason?: string;
+  isGenerating?: boolean;
+  onGenerateWithAI?: () => Promise<void>;
 }
 
 const PRODUCT_IMAGES_PREFIX = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/product-images/`;
@@ -49,6 +52,9 @@ export default function AdminProductImageManager({
   productLabel,
   productSlug,
   successMessage,
+  generateDisabledReason,
+  isGenerating = false,
+  onGenerateWithAI,
 }: AdminProductImageManagerProps) {
   const inputId = useId();
   const [assets, setAssets] = useState<ProductImageAsset[]>(images.map(buildAssetFromUrl));
@@ -176,7 +182,7 @@ export default function AdminProductImageManager({
         </div>
 
         {canManage ? (
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-3">
             <input
               id={inputId}
               type="file"
@@ -201,6 +207,29 @@ export default function AdminProductImageManager({
                 Upload images
               </span>
             </label>
+            {onGenerateWithAI ? (
+              <div>
+                <Button
+                  disabled={Boolean(generateDisabledReason) || isGenerating}
+                  onClick={() => void onGenerateWithAI()}
+                  title={generateDisabledReason}
+                  type="button"
+                  variant="outline"
+                >
+                  {isGenerating ? (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  ) : (
+                    <Sparkles className="mr-2 h-4 w-4" />
+                  )}
+                  Generate with AI
+                </Button>
+                {generateDisabledReason ? (
+                  <p className="mt-1 max-w-64 font-dm-sans text-caption text-text-muted">
+                    {generateDisabledReason}
+                  </p>
+                ) : null}
+              </div>
+            ) : null}
           </div>
         ) : null}
       </div>

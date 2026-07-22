@@ -6,6 +6,7 @@ import Image from "next/image";
 import { RefreshCw, RotateCcw, Send } from "lucide-react";
 
 import AdminImageRegenerationDialog from "@/components/admin/AdminImageRegenerationDialog";
+import AdminImagePublicationDialog from "@/components/admin/AdminImagePublicationDialog";
 import { Button } from "@/components/ui/button";
 import {
   approveImageCandidate,
@@ -16,6 +17,7 @@ import {
 import type {
   ProductImageCandidate,
   ProductImageGeneration,
+  ProductImagePublicationMode,
   ProductImageShotType,
 } from "@/lib/types";
 
@@ -41,6 +43,7 @@ export default function AdminImageGenerationReview({
   const [pendingAction, setPendingAction] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [regenerationCandidate, setRegenerationCandidate] = useState<ProductImageCandidate | null>(null);
+  const [isPublicationDialogOpen, setIsPublicationDialogOpen] = useState(false);
   const candidates = [...generation.candidates].sort(
     (left, right) => shotOrder.indexOf(left.shotType) - shotOrder.indexOf(right.shotType),
   );
@@ -62,12 +65,12 @@ export default function AdminImageGenerationReview({
     }
   }
 
-  async function publish(): Promise<void> {
-    if (!window.confirm("Replace the live gallery with this complete approved image set?")) return;
+  async function publish(publicationMode: ProductImagePublicationMode): Promise<void> {
     setPendingAction("publish");
     setError(null);
     try {
-      await publishImageGeneration(generation.id);
+      await publishImageGeneration(generation.id, publicationMode);
+      setIsPublicationDialogOpen(false);
       await Promise.all([onChanged(), onGalleryChanged()]);
     } catch (actionError) {
       setError(actionError instanceof Error ? actionError.message : "Unable to publish this image set.");
@@ -100,7 +103,14 @@ export default function AdminImageGenerationReview({
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
-          <Button disabled={!canManage || !generation.canPublish || pendingAction !== null} onClick={() => void publish()} type="button">
+          <Button
+            disabled={!canManage || !generation.canPublish || pendingAction !== null}
+            onClick={() => {
+              setError(null);
+              setIsPublicationDialogOpen(true);
+            }}
+            type="button"
+          >
             <Send className="mr-2 h-4 w-4" /> Publish approved set
           </Button>
           {generation.canRestore ? (
@@ -157,6 +167,16 @@ export default function AdminImageGenerationReview({
             if (!open) setRegenerationCandidate(null);
           }}
           onRegenerated={onChanged}
+        />
+      ) : null}
+      {isPublicationDialogOpen ? (
+        <AdminImagePublicationDialog
+          currentGalleryCount={generation.currentGalleryCount}
+          error={error}
+          isPublishing={pendingAction === "publish"}
+          onOpenChange={setIsPublicationDialogOpen}
+          onPublish={publish}
+          productName={generation.productName}
         />
       ) : null}
     </article>

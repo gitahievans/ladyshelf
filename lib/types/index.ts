@@ -358,6 +358,8 @@ export type ProductImageGenerationStatus =
   | "failed"
   | "cancelled";
 
+export type ProductImagePublicationMode = "append" | "replace";
+
 export type ProductImageCandidateStatus =
   | "queued"
   | "generating"
@@ -473,6 +475,8 @@ export interface ProductImageGeneration {
   errorCode: string;
   errorMessage: string;
   previousImages: string[];
+  publicationMode: ProductImagePublicationMode | null;
+  currentGalleryCount: number;
   catalogColors: string[];
   canPublish: boolean;
   canRestore: boolean;

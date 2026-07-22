@@ -15,6 +15,7 @@ interface AdminImageGenerationPanelProps {
   onGalleryChanged: () => Promise<void>;
   onSelectionCleared: () => void;
   selectedProductIds: string[];
+  refreshRevision: number;
 }
 
 const activeGenerationStatuses = new Set([
@@ -31,6 +32,7 @@ export default function AdminImageGenerationPanel({
   onGalleryChanged,
   onSelectionCleared,
   selectedProductIds,
+  refreshRevision,
 }: AdminImageGenerationPanelProps): ReactElement {
   const [batches, setBatches] = useState<ImageGenerationBatch[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -39,7 +41,7 @@ export default function AdminImageGenerationPanel({
 
   const loadBatches = useCallback(async (): Promise<void> => {
     try {
-      const nextBatches = await fetchImageGenerationBatches();
+      const nextBatches = await fetchImageGenerationBatches("active");
       setBatches(nextBatches);
       const activeIds = nextBatches.flatMap((batch) =>
         batch.generations
@@ -57,7 +59,7 @@ export default function AdminImageGenerationPanel({
 
   useEffect((): void => {
     void loadBatches();
-  }, [loadBatches]);
+  }, [loadBatches, refreshRevision]);
 
   useEffect((): (() => void) | undefined => {
     const hasProcessingWork = batches.some((batch) =>
@@ -83,17 +85,30 @@ export default function AdminImageGenerationPanel({
     }
   }
 
+  const visibleGenerations = batches
+    .flatMap((batch) => batch.generations)
+    .filter((generation) => generation.status !== "published" && generation.status !== "cancelled");
+  const isExpanded = selectedProductIds.length > 0 || visibleGenerations.length > 0 || error !== null;
+
   return (
-    <section className="space-y-4 rounded-lg border border-border-warm bg-ivory p-5 shadow-card">
+    <section className="space-y-4 rounded-lg border border-border-warm bg-ivory p-4 shadow-card md:p-5">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
         <div>
           <p className="font-dm-sans text-caption uppercase tracking-widest text-gold">AI product imagery</p>
-          <h3 className="mt-1 font-cormorant text-h3 text-obsidian">Generate review candidates</h3>
-          <p className="mt-2 max-w-3xl font-dm-sans text-body-sm text-text-secondary">
-            Select up to five products below. Three candidates are generated asynchronously per product, and nothing reaches the storefront until every shot is approved and the complete set is published.
-          </p>
+          <h3 className="mt-1 font-cormorant text-h4 text-obsidian">
+            {isExpanded ? "Generate review candidates" : "AI image workspace"}
+          </h3>
+          {isExpanded ? (
+            <p className="mt-2 max-w-3xl font-dm-sans text-body-sm text-text-secondary">
+              Select up to five products below. Every product receives Hero, Alternate, and Detail candidates, and nothing reaches the storefront without review and explicit publication.
+            </p>
+          ) : (
+            <p className="mt-1 font-dm-sans text-caption text-text-muted">
+              Select eligible products below or use Generate with AI beside their gallery controls.
+            </p>
+          )}
         </div>
-        {canManage ? (
+        {canManage && isExpanded ? (
           <div className="flex items-center gap-3">
             <span className="font-dm-sans text-caption uppercase tracking-widest text-text-muted">{selectedProductIds.length}/5 selected</span>
             <Button disabled={selectedProductIds.length === 0 || selectedProductIds.length > 5 || isCreating} onClick={() => void createBatch()} type="button">
@@ -104,11 +119,11 @@ export default function AdminImageGenerationPanel({
         ) : null}
       </div>
 
-      {error ? <p className="rounded-sm border border-error bg-cream p-3 font-dm-sans text-caption text-error">{error}</p> : null}
-      {isLoading ? <p className="font-dm-sans text-body-sm text-text-muted">Loading generation queue…</p> : null}
-      {!isLoading && batches.length === 0 ? <p className="rounded-sm border border-dashed border-border-warm bg-cream p-4 font-dm-sans text-body-sm text-text-muted">No image-generation batches yet.</p> : null}
-      <div className="space-y-4">
-        {batches.flatMap((batch) => batch.generations).map((generation) => (
+      {isExpanded && error ? <p className="rounded-sm border border-error bg-cream p-3 font-dm-sans text-caption text-error">{error}</p> : null}
+      {isExpanded && isLoading ? <p className="font-dm-sans text-body-sm text-text-muted">Loading generation queue…</p> : null}
+      {isExpanded && !isLoading && visibleGenerations.length === 0 ? <p className="rounded-sm border border-dashed border-border-warm bg-cream p-4 font-dm-sans text-body-sm text-text-muted">No active generation work. Queue the selected products when ready.</p> : null}
+      <div className={isExpanded ? "space-y-4" : "hidden"}>
+        {visibleGenerations.map((generation) => (
           <AdminImageGenerationReview canManage={canManage} generation={generation} key={generation.id} onChanged={loadBatches} onGalleryChanged={onGalleryChanged} />
         ))}
       </div>

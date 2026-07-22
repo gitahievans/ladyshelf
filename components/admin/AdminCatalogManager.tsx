@@ -1,7 +1,7 @@
 "use client";
 
 import type { ReactElement } from "react";
-import { useEffect, useState } from "react";
+import { useEffect, useEffectEvent, useState } from "react";
 import Link from "next/link";
 import { Loader2, Save, Search } from "lucide-react";
 
@@ -14,6 +14,7 @@ import {
   createAdminCategory,
   createAdminProduct,
   createAdminVariant,
+  createImageGenerationBatch,
   fetchAdminCategories,
   fetchAdminProducts,
   updateAdminProduct,
@@ -73,6 +74,7 @@ interface ProductRowProps {
     productId: string,
     input: Partial<AdminCatalogProductInput>,
   ) => Promise<Product>;
+  onGenerateWithAI: (productId: string) => Promise<void>;
   onSelectionChange: (productId: string, selected: boolean) => void;
   product: Product;
 }
@@ -148,6 +150,10 @@ function validateVariantInput(variantInput: AdminVariantInput): string | null {
   return null;
 }
 
+function hasUsableColoredVariant(product: Product): boolean {
+  return product.variants.some((variant) => variant.color.trim().length > 0);
+}
+
 function slugify(value: string): string {
   return value
     .trim()
@@ -213,6 +219,7 @@ export default function AdminCatalogManager({
   const [categoryName, setCategoryName] = useState("");
   const [selectedProductIds, setSelectedProductIds] = useState<string[]>([]);
   const [activeProductIds, setActiveProductIds] = useState<string[]>([]);
+  const [generationRefreshRevision, setGenerationRefreshRevision] = useState(0);
 
   async function loadCatalog(): Promise<void> {
     setIsLoading(true);
@@ -233,8 +240,10 @@ export default function AdminCatalogManager({
     }
   }
 
+  const loadInitialCatalog = useEffectEvent(loadCatalog);
+
   useEffect((): void => {
-    void loadCatalog();
+    void loadInitialCatalog();
   }, []);
 
   async function saveProduct(
@@ -244,6 +253,9 @@ export default function AdminCatalogManager({
     const updated = await updateAdminProduct(productId, input);
 
     setProducts((current) => current.map((item) => (item.id === updated.id ? updated : item)));
+    if (input.images) {
+      setGenerationRefreshRevision((current) => current + 1);
+    }
     return updated;
   }
 
@@ -315,6 +327,12 @@ export default function AdminCatalogManager({
     });
   }
 
+  async function generateSingleProduct(productId: string): Promise<void> {
+    await createImageGenerationBatch([productId]);
+    setSelectedProductIds((current) => current.filter((id) => id !== productId));
+    setGenerationRefreshRevision((current) => current + 1);
+  }
+
   return (
     <section className="space-y-6">
       <div className="rounded-lg border border-border-warm bg-cream p-6 shadow-card">
@@ -337,6 +355,7 @@ export default function AdminCatalogManager({
         onActiveProductIdsChange={setActiveProductIds}
         onGalleryChanged={loadCatalog}
         onSelectionCleared={() => setSelectedProductIds([])}
+        refreshRevision={generationRefreshRevision}
         selectedProductIds={selectedProductIds}
       />
 
@@ -518,6 +537,7 @@ export default function AdminCatalogManager({
                 hasActiveGeneration={activeProductIds.includes(product.adminId ?? product.id)}
                 isSelected={selectedProductIds.includes(product.adminId ?? product.id)}
                 isAlternate={index % 2 === 1}
+                onGenerateWithAI={generateSingleProduct}
                 onSave={saveProduct}
                 onSelectionChange={handleSelectionChange}
               />
@@ -535,6 +555,7 @@ function ProductRow({
   hasActiveGeneration,
   isSelected,
   isAlternate,
+  onGenerateWithAI,
   onSave,
   onSelectionChange,
   product,
@@ -543,6 +564,7 @@ function ProductRow({
   const [savedProduct, setSavedProduct] = useState<Product>(product);
   const [variantDraft, setVariantDraft] = useState<AdminVariantInput>(defaultVariantInput);
   const [isSaving, setIsSaving] = useState(false);
+  const [isGeneratingAI, setIsGeneratingAI] = useState(false);
   const [localError, setLocalError] = useState<string | null>(null);
   const [localMessage, setLocalMessage] = useState<string | null>(null);
 
@@ -670,6 +692,24 @@ function ProductRow({
     }
   }
 
+  async function generateWithAI(): Promise<void> {
+    setIsGeneratingAI(true);
+    setLocalError(null);
+    setLocalMessage(null);
+    try {
+      await onGenerateWithAI(savedProduct.adminId ?? savedProduct.id);
+      setLocalMessage("AI image generation queued. Review progress in the Catalog workspace above.");
+    } catch (generationError) {
+      setLocalError(
+        generationError instanceof Error
+          ? generationError.message
+          : "Unable to queue AI image generation.",
+      );
+    } finally {
+      setIsGeneratingAI(false);
+    }
+  }
+
   return (
     <div className={cn("space-y-4 p-5", isAlternate ? "bg-cream/60" : "bg-ivory")}>
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -678,7 +718,12 @@ function ProductRow({
             <Checkbox
               aria-label={`Select ${draft.name} for image generation`}
               checked={isSelected}
-              disabled={hasActiveGeneration}
+              disabled={hasActiveGeneration || !hasUsableColoredVariant(draft)}
+              title={
+                !hasUsableColoredVariant(draft)
+                  ? "Add and save at least one colored variant before generating AI images."
+                  : undefined
+              }
               onCheckedChange={(checked) =>
                 onSelectionChange(draft.adminId ?? draft.id, checked === true)
               }
@@ -795,8 +840,17 @@ function ProductRow({
 
       <AdminProductImageManager
         canManage={canManage}
+        generateDisabledReason={
+          hasActiveGeneration
+            ? "This product already has active image-generation work."
+            : !hasUsableColoredVariant(draft)
+              ? "Add and save at least one colored variant before generating AI images."
+              : undefined
+        }
         images={draft.images}
+        isGenerating={isGeneratingAI}
         onChange={handleProductImagesChange}
+        onGenerateWithAI={canManage ? generateWithAI : undefined}
         productLabel={draft.name}
         productSlug={draft.slug}
         successMessage="Product images saved."

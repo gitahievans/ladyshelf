@@ -26,6 +26,7 @@ import type {
   ImageGenerationBatch,
   ProductImageCandidate,
   ProductImageGeneration,
+  ProductImagePublicationMode,
   ProductImageRegenerationRequest,
   Category,
   Product,
@@ -643,13 +644,17 @@ export async function regenerateImageCandidate(
   });
 }
 
-export async function publishImageGeneration(generationId: string): Promise<ProductImageGeneration> {
+export async function publishImageGeneration(
+  generationId: string,
+  publicationMode: ProductImagePublicationMode,
+): Promise<ProductImageGeneration> {
   const accessToken = await getAccessToken();
   if (!accessToken) throw new AdminApiError("Please sign in to publish product images.", 401);
   return fetchAdminResource<ProductImageGeneration>({
     accessToken,
     method: "POST",
     path: `/api/v1/admin/image-generations/${encodeURIComponent(generationId)}/publish`,
+    body: { publicationMode },
   });
 }
 
