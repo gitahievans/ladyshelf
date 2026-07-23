@@ -3,7 +3,7 @@
 import type { FormEvent, ReactElement } from "react";
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { ExternalLink, MapPin, Phone } from "lucide-react";
+import { CheckCircle2, ExternalLink, MapPin, Phone } from "lucide-react";
 
 import LocationSearch from "@/components/checkout/LocationSearch";
 import PhoneField from "@/components/shared/PhoneField";
@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { searchKenyanLocations } from "@/lib/mapbox";
+import { cn } from "@/lib/utils/cn";
 import {
   type PhoneSelection,
   validateInternationalPhone,
@@ -41,6 +42,9 @@ const fieldClassName =
 
 const textAreaClassName =
   "min-h-28 w-full rounded-2xl border border-border-warm bg-ivory px-4 py-3 font-dm-sans text-body-sm text-obsidian outline-none transition-colors placeholder:text-text-muted focus-visible:border-gold focus-visible:ring-3 focus-visible:ring-gold/20";
+
+const optionButtonClassName =
+  "rounded-2xl border p-4 text-left transition-colors focus-visible:border-gold focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-gold/30";
 
 const initialValues: DeliveryDetails = {
   fullName: "",
@@ -297,6 +301,26 @@ export default function DeliveryForm({
     });
   }
 
+  function getDeliveryMethodClassName(method: DeliveryDetails["deliveryMethod"]): string {
+    const isSelected = formValues.deliveryMethod === method;
+
+    return cn(
+      optionButtonClassName,
+      isSelected
+        ? "border-2 border-gold bg-gold/15 ring-2 ring-gold/30"
+        : "border-border-warm bg-ivory hover:border-gold/60 hover:bg-cream",
+    );
+  }
+
+  function renderSelectedBadge(): ReactElement {
+    return (
+      <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-gold px-3 py-1 font-dm-sans text-caption font-medium text-obsidian">
+        <CheckCircle2 className="size-3.5" />
+        Selected
+      </span>
+    );
+  }
+
   return (
     <form
       className="space-y-8 rounded-[28px] border border-border-warm bg-cream p-6 shadow-card sm:p-8"
@@ -320,17 +344,17 @@ export default function DeliveryForm({
         </p>
         <div className="grid gap-3">
           <button
-            className={
-              formValues.deliveryMethod === "delivery"
-                ? "rounded-2xl border border-gold bg-ivory p-4 text-left transition-colors"
-                : "rounded-2xl border border-border-warm bg-ivory p-4 text-left transition-colors hover:border-gold/60"
-            }
+            aria-pressed={formValues.deliveryMethod === "delivery"}
+            className={getDeliveryMethodClassName("delivery")}
             onClick={(): void => updateField("deliveryMethod", "delivery")}
             type="button"
           >
-            <p className="font-dm-sans text-body-sm font-medium text-obsidian">
-              Standard Delivery
-            </p>
+            <div className="flex items-start justify-between gap-3">
+              <p className="min-w-0 font-dm-sans text-body-sm font-medium text-obsidian">
+                Standard Delivery
+              </p>
+              {formValues.deliveryMethod === "delivery" ? renderSelectedBadge() : null}
+            </div>
             <p className="mt-1 font-dm-sans text-body-sm text-text-secondary">
               Rider delivery is automatic within the set radius. Beyond that,
               checkout switches to parcel delivery.
@@ -338,17 +362,17 @@ export default function DeliveryForm({
           </button>
 
           <button
-            className={
-              formValues.deliveryMethod === "pickup"
-                ? "rounded-2xl border border-gold bg-ivory p-4 text-left transition-colors"
-                : "rounded-2xl border border-border-warm bg-ivory p-4 text-left transition-colors hover:border-gold/60"
-            }
+            aria-pressed={formValues.deliveryMethod === "pickup"}
+            className={getDeliveryMethodClassName("pickup")}
             onClick={(): void => updateField("deliveryMethod", "pickup")}
             type="button"
           >
-            <p className="font-dm-sans text-body-sm font-medium text-obsidian">
-              Pickup from Store
-            </p>
+            <div className="flex items-start justify-between gap-3">
+              <p className="min-w-0 font-dm-sans text-body-sm font-medium text-obsidian">
+                Pickup from Store
+              </p>
+              {formValues.deliveryMethod === "pickup" ? renderSelectedBadge() : null}
+            </div>
             <p className="mt-1 font-dm-sans text-body-sm text-text-secondary">
               Lumumba Drive, Roysambu. Mon-Sat 9am-7pm.
             </p>
@@ -566,14 +590,24 @@ export default function DeliveryForm({
           </p>
         </div>
       ) : formValues.deliveryMethod === "delivery" ? (
-        <label className="flex items-center gap-3 rounded-2xl border border-bark/20 bg-ivory p-4 font-dm-sans text-body-sm text-obsidian">
+        <label
+          className={cn(
+            "flex items-center gap-3 rounded-2xl border p-4 font-dm-sans text-body-sm text-obsidian transition-colors focus-within:border-gold focus-within:outline-none focus-within:ring-3 focus-within:ring-gold/30",
+            shouldSaveAddress
+              ? "border-2 border-gold bg-gold/15 ring-2 ring-gold/30"
+              : "border-bark/20 bg-ivory hover:border-gold/60 hover:bg-cream",
+          )}
+        >
           <input
             checked={shouldSaveAddress}
             className="size-4 rounded border-border-warm text-gold focus:ring-gold"
             onChange={(event): void => setShouldSaveAddress(event.target.checked)}
             type="checkbox"
           />
-          Save this delivery address to my account for next time.
+          <span className="flex-1">Save this delivery address to my account for next time.</span>
+          {shouldSaveAddress ? (
+            <CheckCircle2 className="size-5 shrink-0 text-gold" aria-hidden="true" />
+          ) : null}
         </label>
       ) : null}
 

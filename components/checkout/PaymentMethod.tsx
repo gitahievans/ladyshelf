@@ -2,7 +2,7 @@
 
 import type { FormEvent, ReactElement } from "react";
 import { useEffect, useState } from "react";
-import { Banknote, Smartphone } from "lucide-react";
+import { Banknote, CheckCircle2, Smartphone } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils/cn";
@@ -44,6 +44,15 @@ function getSelectionKey(selection: CheckoutPaymentSelection | null | undefined)
   }
 
   return `${selection.method}-${selection.timing}`;
+}
+
+function SelectedBadge(): ReactElement {
+  return (
+    <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-gold px-3 py-1 font-dm-sans text-caption font-medium text-obsidian">
+      <CheckCircle2 className="size-3.5" />
+      Selected
+    </span>
+  );
 }
 
 export default function PaymentMethod({
@@ -138,25 +147,34 @@ export default function PaymentMethod({
 
           return (
             <button
+              aria-pressed={isSelected}
               className={cn(
-                "w-full rounded-2xl border p-5 text-left transition-colors",
+                "w-full rounded-2xl border p-5 text-left transition-colors focus-visible:border-gold focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-gold/30",
                 hasSinglePrepayOption ? "pointer-events-none" : "",
                 isSelected
-                  ? "border-gold bg-cream"
-                  : "border-border-warm bg-ivory hover:border-gold/60",
+                  ? "border-2 border-gold bg-gold/15 ring-2 ring-gold/30"
+                  : "border-border-warm bg-ivory hover:border-gold/60 hover:bg-cream",
               )}
               key={option.key}
               onClick={(): void => chooseOption(option)}
               type="button"
             >
               <div className="flex items-start gap-4">
-                <div className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-obsidian text-gold">
+                <div
+                  className={cn(
+                    "inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full",
+                    isSelected ? "bg-gold text-obsidian" : "bg-obsidian text-gold",
+                  )}
+                >
                   {getOptionIcon(option)}
                 </div>
                 <div className="flex-1 space-y-1">
-                  <p className="font-dm-sans text-body-sm font-medium text-obsidian">
-                    {option.label}
-                  </p>
+                  <div className="flex items-start justify-between gap-3">
+                    <p className="min-w-0 font-dm-sans text-body-sm font-medium text-obsidian">
+                      {option.label}
+                    </p>
+                    {isSelected ? <SelectedBadge /> : null}
+                  </div>
                   <p className="font-dm-sans text-body-sm text-text-secondary">
                     {option.description}
                   </p>
