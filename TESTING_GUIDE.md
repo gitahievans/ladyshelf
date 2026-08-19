@@ -1,4 +1,4 @@
-# Wahi Fashion End-to-End Testing Guide
+# End-to-End Testing Guide
 
 Use this guide to test the website from a shopper's first visit through payment and order confirmation. Please test on both mobile and desktop if possible.
 
@@ -31,7 +31,7 @@ Check that:
 
 ## 2. Account Creation
 
-Go to `Join Wahi` or `/auth/register`.
+Go to `Join Ladyshelf` or `/auth/register`.
 
 Test:
 
@@ -255,8 +255,8 @@ Test:
 Expected result:
 
 - For prepaid M-Pesa, the site should open the secure SasaPay checkout page.
-- The customer enters the M-Pesa number on the SasaPay page, not on Wahi checkout.
-- After payment, the customer should return to Wahi confirmation.
+- The customer enters the M-Pesa number on the SasaPay page, not on Ladyshelf checkout.
+- After payment, the customer should return to Ladyshelf confirmation.
 - The confirmation page should show order number, delivery or pickup details, payment status, order status, and total.
 - If payment fails, the page should offer a clear retry option when available.
 
