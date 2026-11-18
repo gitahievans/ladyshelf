@@ -10,6 +10,9 @@ export const metadata: Metadata = {
     "Explore Lady Shelf's curated fashion collections for work, weekends, celebrations, and heritage-led dressing.",
 };
 
+// Cached and refreshed every 5 minutes (matches CATALOG_REVALIDATE_SECONDS).
+export const revalidate = 300;
+
 export default async function CollectionsPage(): Promise<ReactElement> {
   const collections = await fetchCatalogCategories();
 

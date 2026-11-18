@@ -2,6 +2,32 @@ import type { Category, CategorySlug, Product, UIStore } from "@/lib/types";
 import { getApiBaseUrl } from "@/lib/api/baseUrl";
 import { getCatalogColors } from "@/lib/utils/catalog";
 
+// Server renders reuse catalog responses for a few minutes so product pages can be
+// served from Vercel's cache instead of re-rendering (and calling the backend) on
+// every visit. Browser calls (cart, checkout, live stock checks) always fetch fresh.
+export const CATALOG_REVALIDATE_SECONDS = 300;
+export const CATALOG_CACHE_TAG = "catalog";
+
+const isServer = typeof window === "undefined";
+const isBuild = process.env.NEXT_PHASE === "phase-production-build";
+
+function catalogRequestInit(): RequestInit {
+  return isServer
+    ? { next: { revalidate: CATALOG_REVALIDATE_SECONDS, tags: [CATALOG_CACHE_TAG] } }
+    : { cache: "no-store" };
+}
+
+// On the server at runtime, rethrow so a backend blip can't be cached as an empty
+// shop or a 404 product: Next keeps serving the last good page instead. During the
+// build and in the browser, fall back so the build and the UI still work.
+function catalogFallback<T>(error: unknown, fallback: T): T {
+  if (isServer && !isBuild) {
+    throw error;
+  }
+
+  return fallback;
+}
+
 export interface CatalogSnapshot {
   categories: Category[];
   colors: ReturnType<typeof getCatalogColors>;
@@ -51,17 +77,18 @@ function buildProductsUrl(options: FetchCatalogProductsOptions): string {
 
 export async function fetchCatalogCategories(): Promise<Category[]> {
   try {
-    const response = await fetch(`${getApiBaseUrl()}/api/v1/catalog/categories`, {
-      cache: "no-store",
-    });
+    const response = await fetch(
+      `${getApiBaseUrl()}/api/v1/catalog/categories`,
+      catalogRequestInit(),
+    );
 
     if (!response.ok) {
       throw new Error("Unable to load categories.");
     }
 
     return (await response.json()) as Category[];
-  } catch {
-    return [];
+  } catch (error) {
+    return catalogFallback(error, []);
   }
 }
 
@@ -69,17 +96,15 @@ export async function fetchCatalogProducts(
   options: FetchCatalogProductsOptions = {},
 ): Promise<Product[]> {
   try {
-    const response = await fetch(buildProductsUrl(options), {
-      cache: "no-store",
-    });
+    const response = await fetch(buildProductsUrl(options), catalogRequestInit());
 
     if (!response.ok) {
       throw new Error("Unable to load products.");
     }
 
     return (await response.json()) as Product[];
-  } catch {
-    return [];
+  } catch (error) {
+    return catalogFallback(error, []);
   }
 }
 
@@ -89,9 +114,7 @@ export async function fetchCatalogProductBySlug(
   try {
     const response = await fetch(
       `${getApiBaseUrl()}/api/v1/catalog/products/${encodeURIComponent(slug)}`,
-      {
-        cache: "no-store",
-      },
+      catalogRequestInit(),
     );
 
     if (response.status === 404) {
@@ -103,8 +126,8 @@ export async function fetchCatalogProductBySlug(
     }
 
     return (await response.json()) as Product;
-  } catch {
-    return null;
+  } catch (error) {
+    return catalogFallback(error, null);
   }
 }
 

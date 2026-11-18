@@ -16,7 +16,8 @@ interface ProductDetailPageProps {
   }>;
 }
 
-export const dynamic = "force-dynamic";
+// Cached and refreshed every 5 minutes (matches CATALOG_REVALIDATE_SECONDS).
+export const revalidate = 300;
 
 export async function generateStaticParams(): Promise<Array<{ slug: string }>> {
   return [];

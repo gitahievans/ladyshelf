@@ -7,7 +7,14 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
+  // Only signed-in areas need the server-side session refresh. Running it on
+  // public shop pages cost a function run and a Supabase call on every request.
   matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+    "/admin/:path*",
+    "/api/admin/:path*",
+    "/account/:path*",
+    "/auth/:path*",
+    "/checkout/:path*",
+    "/wishlist/:path*",
   ],
 };

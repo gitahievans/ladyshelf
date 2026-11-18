@@ -9,6 +9,9 @@ import NewArrivals from "@/components/landing/NewArrivals";
 import Footer from "@/components/layout/Footer";
 import { fetchCatalogSnapshot } from "@/lib/api/catalog";
 
+// Cached and refreshed every 5 minutes (matches CATALOG_REVALIDATE_SECONDS).
+export const revalidate = 300;
+
 export default async function Home(): Promise<ReactElement> {
   const { categories, products } = await fetchCatalogSnapshot();
   const featuredProducts = products
